@@ -4,7 +4,12 @@
   outline: none;
 }
 
+button {
+  @apply cursor-pointer;
+}
+
 @theme {
   --color-accent: hsl(245, 81%, 57%);
   --color-accent-black: rgb(16, 25, 45);
+  --color-accent-black-200: rgb(29, 33, 48);
 }

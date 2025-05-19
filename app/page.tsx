@@ -10,16 +10,13 @@ export default async function Home() {
   }
 
   return (
-    <main className=" w-full">
-      <div className="flex justify-between p-4">
-        <h1>
-          Hello,{" "}
-          <span className="font-semibold">{user.fullName.split(" ")[0]}</span>
-          {". "}
-          You are an {user.role}
+    <main className="flex-1">
+      <div className="flex border-b border-gray-200 py-4">
+        <h1 className="mx-auto w-[95%] max-w-7xl text-3xl font-bold">
+          Admin Dashboard
         </h1>
-        <LogoutButton />
       </div>
+      <div className="mx-auto w-[90%] max-w-7xl"></div>
     </main>
   );
 }
