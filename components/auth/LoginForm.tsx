@@ -14,8 +14,12 @@ export default function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage("");
+
     const data = await loginUser(email, password);
-    if (data?.error) setErrorMessage(data.error);
+    if (data?.error) {
+      setErrorMessage(data.error);
+    }
 
     setIsLoading(false);
   }
