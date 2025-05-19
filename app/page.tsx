@@ -15,6 +15,8 @@ export default async function Home() {
         <h1>
           Hello,{" "}
           <span className="font-semibold">{user.fullName.split(" ")[0]}</span>
+          {". "}
+          You are an {user.role}
         </h1>
         <LogoutButton />
       </div>
