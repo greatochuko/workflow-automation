@@ -57,7 +57,7 @@ export default function LoginForm() {
       <CustomButton
         type="submit"
         disabled={isLoading}
-        className="flex h-10 items-center justify-center gap-2"
+        className="flex h-10 items-center justify-center gap-2 w-full"
       >
         {isLoading ? (
           <>
