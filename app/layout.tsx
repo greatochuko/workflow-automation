@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/ui/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import { getUser } from "@/services/authServices";
-import { User } from "@prisma/client";
+import SidebarProvider from "@/context/SidebarContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,8 +29,10 @@ export default async function RootLayout({
       <body
         className={`${inter.className} flex min-h-dvh text-neutral-800 antialiased`}
       >
-        <Sidebar user={user as User} />
-        <div className="flex flex-1">{children}</div>
+        <SidebarProvider>
+          {user && <Sidebar user={user} />}
+          <div className="flex flex-1">{children}</div>
+        </SidebarProvider>
       </body>
     </html>
   );

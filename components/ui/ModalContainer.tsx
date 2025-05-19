@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactElement } from "react";
+import React from "react";
 
 interface ModalContainerProps {
   open: boolean;

@@ -1,3 +1,4 @@
+import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import { getUser } from "@/services/authServices";
 import { redirect } from "next/navigation";
 
@@ -11,7 +12,8 @@ export default async function Home() {
   return (
     <main className="flex-1">
       <div className="flex border-b border-gray-200 py-4">
-        <h1 className="mx-auto w-[95%] max-w-7xl text-3xl font-bold">
+        <h1 className="mx-auto w-[95%] max-w-7xl text-xl font-bold md:text-2xl">
+          <ToggleSidebarButton />
           Admin Dashboard
         </h1>
       </div>

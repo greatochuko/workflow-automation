@@ -11,9 +11,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
-import Avatar from "./Avatar";
+import React from "react";
+import Avatar from "../ui/Avatar";
 import LogoutButton from "../auth/LogoutButton";
+import useSidebarContext from "@/hooks/useSidebarContext";
 
 const sidebarLinks = [
   { title: "Main", url: "/", icon: HomeIcon },
@@ -22,8 +23,8 @@ const sidebarLinks = [
 ];
 
 export default function Sidebar({ user }: { user: User }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
+  const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
   if (pathname.startsWith("/login")) return null;
 
