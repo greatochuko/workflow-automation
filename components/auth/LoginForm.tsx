@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import CustomButton from "../ui/CustomButton";
-import { InfoIcon, Loader2Icon, LoaderIcon } from "lucide-react";
+import { InfoIcon, LoaderIcon } from "lucide-react";
 import { loginUser } from "@/actions/authActions";
 
 export default function LoginForm() {
