@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { getUser } from "@/services/authServices";
+import { getSession } from "@/services/authServices";
 import SidebarProvider from "@/context/SidebarContext";
 
 const inter = Inter({
@@ -19,7 +19,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { data: user } = await getUser();
+  const { data: user } = await getSession();
 
   return (
     <html lang="en">
@@ -27,11 +27,11 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon-2.svg" type="image/png" sizes="32x32" />
       </head>
       <body
-        className={`${inter.className} flex min-h-dvh text-neutral-800 antialiased`}
+        className={`${inter.className} text-foreground flex min-h-dvh antialiased`}
       >
         <SidebarProvider>
           {user && <Sidebar user={user} />}
-          <div className="flex flex-1">{children}</div>
+          <div className="bg-background flex flex-1">{children}</div>
         </SidebarProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { User } from "@prisma/client";
 import {
   FileVideoIcon,
   HomeIcon,
+  LogOutIcon,
   PanelLeftIcon,
   SettingsIcon,
   UserCogIcon,
@@ -11,13 +12,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "../ui/Avatar";
-import LogoutButton from "../auth/LogoutButton";
 import useSidebarContext from "@/hooks/useSidebarContext";
+import LogoutModal from "../auth/LogoutModal";
 
 const sidebarLinks = [
-  { title: "Main", url: "/", icon: HomeIcon },
+  // { title: "Main", url: "/", icon: HomeIcon },
   { title: "Users", url: "/users", icon: UsersIcon },
   { title: "Settings", url: "/settings", icon: SettingsIcon },
 ];
@@ -25,6 +26,8 @@ const sidebarLinks = [
 export default function Sidebar({ user }: { user: User }) {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
+
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   if (pathname.startsWith("/login")) return null;
 
@@ -48,14 +51,21 @@ export default function Sidebar({ user }: { user: User }) {
           <h3 className="px-2 text-gray-400">Navigation</h3>
           <nav>
             <ul className="flex flex-col gap-2">
-              {sidebarLinks.map((link) => (
-                <li
-                  key={link.title}
-                  hidden={
-                    (link.title === "Settings" || link.title === "Users") &&
-                    user.role !== "ADMIN"
-                  }
+              <li>
+                <Link
+                  href={"/"}
+                  className={`flex items-center gap-4 rounded-md p-2 ${
+                    pathname === "/"
+                      ? "text-accent-black-200 bg-white font-semibold"
+                      : "font-medium hover:bg-white/10"
+                  }`}
                 >
+                  <HomeIcon className="h-4 w-4" />
+                  Main
+                </Link>
+              </li>
+              {sidebarLinks.map((link) => (
+                <li key={link.title} hidden={user.role !== "ADMIN"}>
                   <Link
                     href={link.url}
                     className={`flex items-center gap-4 rounded-md p-2 ${
@@ -93,10 +103,20 @@ export default function Sidebar({ user }: { user: User }) {
               <span>Profile</span>
             </Link>
 
-            <LogoutButton />
+            <button
+              onClick={() => setLogoutModalOpen(true)}
+              className="flex items-center justify-center gap-1 rounded-md bg-white/[.02] px-3 py-1.5 text-xs duration-200 hover:bg-white/10"
+            >
+              <LogOutIcon className="h-3 w-3" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       </aside>
+      <LogoutModal
+        open={logoutModalOpen}
+        closeModal={() => setLogoutModalOpen(false)}
+      />
     </>
   );
 }

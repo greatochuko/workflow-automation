@@ -2,28 +2,28 @@ import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
-export async function getSession() {
+export async function getNonAdminUsers() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
 
     if (!token) {
-      return { data: null, error: "No token found" };
+      throw new Error("No token found");
     }
 
     const payload = await verifyToken(token);
 
-    if (!payload?.user.id) {
-      return { data: null, error: "Invalid token" };
+    if (payload?.user.role !== "ADMIN") {
+      throw new Error("User is not an Admin");
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: payload.user.id },
+    const users = await prisma.user.findMany({
+      where: { role: { not: "ADMIN" } },
     });
 
-    return { data: user, error: null };
+    return { data: users, error: null };
   } catch (err) {
     const error = err as Error;
-    return { data: null, error: error.message };
+    return { data: [], error: error.message };
   }
 }

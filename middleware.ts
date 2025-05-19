@@ -4,15 +4,19 @@ import { verifyToken } from "./lib/auth/jwt";
 
 const authRoutes = ["/login"];
 
+const adminRoutes = ["/users", "/settings"];
+
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value || "";
 
   let isAuthenticated = false;
+  let userRole;
 
   if (token) {
     const payload = await verifyToken(token);
     if (payload?.user.id) {
       isAuthenticated = true;
+      userRole = payload.user.role;
     }
   }
 
@@ -20,6 +24,14 @@ export async function middleware(request: NextRequest) {
 
   // If authenticated and trying to access login, redirect to /
   if (isAuthenticated && authRoutes.includes(pathname)) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  if (
+    isAuthenticated &&
+    userRole !== "ADMIN" &&
+    adminRoutes.includes(pathname)
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

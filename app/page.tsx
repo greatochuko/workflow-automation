@@ -1,20 +1,15 @@
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
-import { getUser } from "@/services/authServices";
-import { redirect } from "next/navigation";
+import { getSession } from "@/services/authServices";
 
 export default async function Home() {
-  const { data: user } = await getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  const { data: user } = await getSession();
 
   return (
     <main className="flex-1">
-      <div className="flex border-b border-gray-200 py-4">
-        <h1 className="mx-auto w-[95%] max-w-7xl text-xl font-bold md:text-2xl">
+      <div className="flex items-center justify-between border-b border-gray-200 px-[5%] py-4">
+        <h1 className="text-xl font-bold capitalize md:text-2xl xl:text-[28px]">
           <ToggleSidebarButton />
-          Admin Dashboard
+          {user?.role.toLocaleLowerCase()} Dashboard
         </h1>
       </div>
       <div className="mx-auto w-[90%] max-w-7xl"></div>

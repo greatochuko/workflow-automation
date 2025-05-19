@@ -27,6 +27,7 @@ model User {
   role           UserRole
   profilePicture String   @default("")
   companyName    String   @default("")
+  specialties    String[]
   phoneNumber    String   @default("")
   website        String   @default("")
   threads        String   @default("")
