@@ -79,7 +79,7 @@ export default function UserManagementCard({
           <Select
             value={assignedFreelancers[0] || ""}
             onChange={(value) => handleAssignFreelancer(value)}
-            containerClassName="w-32"
+            containerClassName="w-40"
             options={[
               { id: "", fullName: "Select a freelancer" },
               ...freelancers,

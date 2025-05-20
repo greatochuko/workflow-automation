@@ -1,8 +1,12 @@
 import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
+import { UserType } from "@/types/user";
 import { cookies } from "next/headers";
 
-export async function getSession() {
+export async function getSession(): Promise<{
+  data: UserType | null;
+  error: string | null;
+}> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
@@ -21,7 +25,7 @@ export async function getSession() {
       where: { id: payload.user.id },
     });
 
-    return { data: user, error: null };
+    return { data: user as UserType, error: null };
   } catch (err) {
     const error = err as Error;
     return { data: null, error: error.message };

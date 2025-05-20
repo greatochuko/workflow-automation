@@ -14,6 +14,7 @@ export default function Select({
   className,
   containerClassName,
   disabled = false,
+  showCheckmark = false,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -22,6 +23,7 @@ export default function Select({
   className?: string;
   containerClassName?: string;
   disabled?: boolean;
+  showCheckmark?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [selectRef] = useClickOutside(() => setOpen(false));
@@ -95,11 +97,12 @@ export default function Select({
                 value === opt.value && "bg-gray-100",
               )}
             >
-              {value === opt.value ? (
-                <CheckIcon className="h-4 w-4" />
-              ) : (
-                <div className="h-4 w-4" />
-              )}
+              {showCheckmark &&
+                (value === opt.value ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : (
+                  <div className="h-4 w-4" />
+                ))}
               {opt.label}
             </div>
           ))}
