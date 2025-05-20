@@ -26,7 +26,7 @@ export async function getNonAdminUsers(): Promise<{
       include: { assignedClients: true, assignedFreelancers: true },
     });
 
-    return { data: users as UserType[], error: null };
+    return { data: users as unknown as UserType[], error: null };
   } catch (err) {
     const error = err as Error;
     return { data: [], error: error.message };
