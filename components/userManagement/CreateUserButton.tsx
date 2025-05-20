@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomButton from "../ui/CustomButton";
+import Button from "../ui/Button";
 import { UserPlus } from "lucide-react";
 import CreateUserModal from "./CreateUserModal";
 
@@ -10,10 +10,10 @@ export default function CreateUserButton() {
 
   return (
     <>
-      <CustomButton onClick={() => setCreateUserModalOpen(true)}>
+      <Button onClick={() => setCreateUserModalOpen(true)}>
         <UserPlus className="h-4 w-4" />
         Create User
-      </CustomButton>
+      </Button>
       <CreateUserModal
         closeModal={() => setCreateUserModalOpen(false)}
         open={createUserModalOpen}

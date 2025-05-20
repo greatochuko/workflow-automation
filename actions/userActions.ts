@@ -29,21 +29,60 @@ export async function createUser(userData: {
   }
 }
 
-export async function assignFreelancerToClient(
+export async function toggleAssignClientToFreelancer(
+  freelancerId: string,
   clientId: string,
-  freelancer: UserType | null,
+) {
+  try {
+    const userToUpdate = await prisma.user.findFirst({
+      where: { id: freelancerId, role: "FREELANCER" },
+      include: { assignedClients: true, assignedFreelancers: true },
+    });
+    if (!userToUpdate) throw new Error("Invalid freelancer ID");
+
+    let updatedUser;
+    if (userToUpdate.assignedClients.some((client) => client.id === clientId)) {
+      updatedUser = await prisma.user.update({
+        where: { id: freelancerId, role: "FREELANCER" },
+        data: {
+          assignedClients: {
+            disconnect: { id: clientId },
+          },
+        },
+      });
+    } else {
+      updatedUser = await prisma.user.update({
+        where: { id: freelancerId, role: "FREELANCER" },
+        data: {
+          assignedClients: {
+            connect: { id: clientId },
+          },
+        },
+      });
+    }
+
+    revalidatePath("/users");
+
+    return { data: updatedUser, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
+
+export async function toggleAssignFreelancerToClient(
+  clientId: string,
+  freelancerId: string,
 ) {
   try {
     const updatedUser = await prisma.user.update({
-      where: { id: clientId },
+      where: { id: clientId, role: "CLIENT" },
       data: {
         assignedFreelancers: {
           set: [],
-          connect: freelancer ? { id: freelancer.id } : undefined,
+          connect: freelancerId ? { id: freelancerId } : undefined,
         },
       },
     });
-
     revalidatePath("/users");
 
     return { data: updatedUser, error: null };

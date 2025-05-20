@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { LoaderIcon, UploadIcon, UserIcon, UserPlus } from "lucide-react";
-import CustomButton from "../ui/CustomButton";
+import Button from "../ui/Button";
 import Image from "next/image";
 import { resizeImage } from "@/lib/utils/imageResize";
 import { createUser } from "@/actions/userActions";
@@ -261,7 +261,7 @@ export default function CreateUserModal({
           >
             Cancel
           </button>
-          <CustomButton disabled={loading} type="submit" className="w-fit">
+          <Button disabled={loading} type="submit" className="w-fit">
             {loading ? (
               <>
                 <LoaderIcon className="h-4 w-4 animate-spin" />
@@ -270,7 +270,7 @@ export default function CreateUserModal({
             ) : (
               "Create User"
             )}
-          </CustomButton>
+          </Button>
         </div>
       </form>
     </ModalContainer>

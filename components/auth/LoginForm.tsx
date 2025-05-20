@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomButton from "../ui/CustomButton";
+import Button from "../ui/Button";
 import { InfoIcon, LoaderIcon } from "lucide-react";
 import { loginUser } from "@/actions/authActions";
 
@@ -54,10 +54,10 @@ export default function LoginForm() {
         />
       </div>
 
-      <CustomButton
+      <Button
         type="submit"
         disabled={isLoading}
-        className="flex h-10 items-center justify-center gap-2 w-full"
+        className="flex h-10 w-full items-center justify-center gap-2"
       >
         {isLoading ? (
           <>
@@ -69,7 +69,7 @@ export default function LoginForm() {
         ) : (
           "Sign In"
         )}
-      </CustomButton>
+      </Button>
 
       {errorMessage && (
         <span className="flex w-fit items-center gap-1 rounded-md bg-red-100/80 px-2 py-1.5 text-xs text-red-500">

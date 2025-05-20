@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
-export default function CustomButton({
+export default function Button({
   children,
   className = "",
   ...props

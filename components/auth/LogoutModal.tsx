@@ -1,7 +1,7 @@
 import React from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { LogOutIcon } from "lucide-react";
-import CustomButton from "../ui/CustomButton";
+import Button from "../ui/Button";
 import { logoutUser } from "@/actions/authActions";
 
 export default function LogoutModal({
@@ -26,15 +26,15 @@ export default function LogoutModal({
           Are you sure you want to log out?
         </p>
         <div className="flex w-full flex-col gap-4">
-          <CustomButton className="rounded-full py-4" onClick={logoutUser}>
+          <Button className="rounded-full py-4" onClick={logoutUser}>
             Logout
-          </CustomButton>
-          <CustomButton
+          </Button>
+          <Button
             className="rounded-full border border-gray-300 bg-white py-4 text-gray-700 hover:bg-gray-100"
             onClick={closeModal}
           >
             Cancel
-          </CustomButton>
+          </Button>
         </div>
       </div>
     </ModalContainer>

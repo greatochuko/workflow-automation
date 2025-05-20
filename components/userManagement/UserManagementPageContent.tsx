@@ -79,6 +79,7 @@ export default function UserManagementPageContent({
                 user={user}
                 key={user.id}
                 freelancers={freelanceUsers}
+                clients={clientUsers}
               />
             ))}
           </ul>
