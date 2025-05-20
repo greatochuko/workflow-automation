@@ -33,15 +33,28 @@ model User {
   assignedFreelancers User[] @relation("FreelancerToClient")
   assignedClients     User[] @relation("FreelancerToClient")
 
-  phoneNumber String @default("")
-  website     String @default("")
-  threads     String @default("")
-  instagram   String @default("")
-  facebook    String @default("")
-  twitter     String @default("")
-  linkedin    String @default("")
-  youtube     String @default("")
-  tiktok      String @default("")
-  snapchat    String @default("")
-  pinterest   String @default("")
+  phoneNumber String   @default("")
+  website     String   @default("")
+  threads     String   @default("")
+  instagram   String   @default("")
+  facebook    String   @default("")
+  twitter     String   @default("")
+  linkedin    String   @default("")
+  youtube     String   @default("")
+  tiktok      String   @default("")
+  snapchat    String   @default("")
+  pinterest   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  videoTypesCreated VideoType[]
+}
+
+model VideoType {
+  id          String   @id @default(cuid())
+  name        String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 }

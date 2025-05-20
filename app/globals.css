@@ -5,7 +5,11 @@
 }
 
 button {
-  @apply cursor-pointer;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
 }
 
 @theme {

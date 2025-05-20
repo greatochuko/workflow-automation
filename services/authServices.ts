@@ -25,7 +25,7 @@ export async function getSession(): Promise<{
       where: { id: payload.user.id },
     });
 
-    return { data: user as UserType, error: null };
+    return { data: user as unknown as UserType, error: null };
   } catch (err) {
     const error = err as Error;
     return { data: null, error: error.message };
