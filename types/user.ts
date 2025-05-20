@@ -1,0 +1,23 @@
+export type UserType = {
+  id: string;
+  fullName: string;
+  email: string;
+  password: string;
+  role: "CLIENT" | "FREELANCER" | "ADMIN";
+  profilePicture: string;
+  companyName: string;
+  specialties: string[];
+  assignedFreelancers: UserType[];
+  assignedClients: UserType[];
+  phoneNumber: string;
+  website: string;
+  threads: string;
+  instagram: string;
+  facebook: string;
+  twitter: string;
+  linkedin: string;
+  youtube: string;
+  tiktok: string;
+  snapchat: string;
+  pinterest: string;
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "@prisma/client";
+import { type UserType } from "@/types/user";
 import {
   FileVideoIcon,
   HomeIcon,
@@ -23,7 +23,7 @@ const sidebarLinks = [
   { title: "Settings", url: "/settings", icon: SettingsIcon },
 ];
 
-export default function Sidebar({ user }: { user: User }) {
+export default function Sidebar({ user }: { user: UserType }) {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 

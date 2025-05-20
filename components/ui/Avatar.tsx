@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "@prisma/client";
+import { type UserType } from "@/types/user";
 import Image from "next/image";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -9,7 +9,7 @@ export default function Avatar({
   user,
   className = "",
 }: {
-  user: User;
+  user: UserType;
   className?: string;
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);

@@ -1,11 +1,11 @@
-import { User } from "@prisma/client";
+import { type UserType } from "@/types/user";
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret",
 ); // Ensure this is set in .env
 
-type AuthTokenPayload = { id: string; role: User["role"] };
+type AuthTokenPayload = { id: string; role: UserType["role"] };
 
 export async function signToken(payload: AuthTokenPayload) {
   return await new SignJWT({ user: payload })
