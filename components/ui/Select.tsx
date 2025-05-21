@@ -39,8 +39,6 @@ export default function Select({
     setOpen(false);
   }
 
-  //   console.log(value);
-
   return (
     <div
       className={twMerge("relative text-sm", containerClassName)}

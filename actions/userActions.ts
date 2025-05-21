@@ -8,39 +8,32 @@ import { revalidatePath } from "next/cache";
 
 const DEFAULT_KNOWLEDGE_BASE_ITEMS = [
   {
-    id: "voice",
-    title: "Brand Voice & Tone",
+    id: "basic",
+    title: "Basic Instructions",
     content:
-      "Friendly, professional, and approachable. Use conversational language that avoids jargon.",
+      "Include any fundamental guidelines or instructions for content creation here.",
   },
   {
-    id: "products",
-    title: "Product/Service Descriptions",
-    content:
-      "Our software helps businesses streamline their workflow and increase productivity. Focus on time-saving features and user-friendly interface.",
+    id: "objective",
+    title: "Objective",
+    content: "Define the primary goals and purpose of the content.",
   },
   {
-    id: "pillars",
-    title: "Messaging Pillars",
-    content: "1. Efficiency\n2. Reliability\n3. Support\n4. Innovation",
+    id: "structure",
+    title: "Structure",
+    content: "Outline how the content should be organized and formatted.",
   },
   {
-    id: "objections",
-    title: "Objections/Pain Points",
+    id: "additional",
+    title: "Additional Information",
     content:
-      '1. "It\'s too expensive" - Focus on ROI and long-term value\n2. "It\'s too complicated" - Emphasize ease of use and training',
+      "Any supplementary details or context that would be helpful for content creation.",
   },
   {
-    id: "cta",
-    title: "CTA Library",
+    id: "examples",
+    title: "Examples",
     content:
-      '1. "Start your free trial today"\n2. "Book a demo"\n3. "Join thousands of satisfied customers"\n4. "See how it works in 2 minutes"',
-  },
-  {
-    id: "keywords",
-    title: "Keywords/Themes",
-    content:
-      "productivity, efficiency, time-saving, automation, workflow, business solution",
+      "Provide sample content or references that demonstrate the desired output.",
   },
 ];
 

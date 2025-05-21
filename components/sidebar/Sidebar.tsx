@@ -51,19 +51,21 @@ export default function Sidebar({ user }: { user: UserType }) {
           <h3 className="px-2 text-gray-400">Navigation</h3>
           <nav>
             <ul className="flex flex-col gap-2">
-              <li>
-                <Link
-                  href={"/"}
-                  className={`flex items-center gap-4 rounded-md p-2 ${
-                    pathname === "/"
-                      ? "text-accent-black-200 bg-white font-semibold"
-                      : "font-medium hover:bg-white/10"
-                  }`}
-                >
-                  <HomeIcon className="h-4 w-4" />
-                  Main
-                </Link>
-              </li>
+              {user.role !== "ADMIN" && (
+                <li>
+                  <Link
+                    href={"/"}
+                    className={`flex items-center gap-4 rounded-md p-2 ${
+                      pathname === "/"
+                        ? "text-accent-black-200 bg-white font-semibold"
+                        : "font-medium hover:bg-white/10"
+                    }`}
+                  >
+                    <HomeIcon className="h-4 w-4" />
+                    Main
+                  </Link>
+                </li>
+              )}
               {sidebarLinks.map((link) => (
                 <li key={link.title} hidden={user.role !== "ADMIN"}>
                   <Link
