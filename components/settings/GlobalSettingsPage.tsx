@@ -17,8 +17,10 @@ import { VideoType } from "@prisma/client";
 import { toast } from "sonner";
 
 export default function GlobalSettingsPage({
+  visible,
   videoTypes: initialVideoTypes,
 }: {
+  visible: boolean;
   videoTypes: VideoType[];
 }) {
   const [videoTypes, setVideoTypes] = useState(initialVideoTypes);
@@ -27,6 +29,8 @@ export default function GlobalSettingsPage({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [updating, setUpdating] = useState(false);
+
+  if (!visible) return;
 
   async function handleAddVideoType(e: React.FormEvent) {
     e.preventDefault();

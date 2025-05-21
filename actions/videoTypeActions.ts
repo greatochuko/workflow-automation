@@ -2,7 +2,6 @@
 
 import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function createVideoType(name: string) {
@@ -24,7 +23,6 @@ export async function createVideoType(name: string) {
       data: { name, createdById: payload.user.id },
     });
 
-    revalidatePath("/settings");
     return { data: newVideoType, error: null };
   } catch (err) {
     const error = err as Error;
@@ -38,7 +36,6 @@ export async function updateVideoType(videoTypeId: string, name: string) {
       where: { id: videoTypeId },
       data: { name },
     });
-    revalidatePath("/settings");
     return { data: updatedVideoType, error: null };
   } catch (err) {
     const error = err as Error;

@@ -31,11 +31,8 @@ export default function AdminSettingsPageContent({
           Client Settings
         </button>
       </div>
-      {tab === "global" ? (
-        <GlobalSettingsPage videoTypes={videoTypes} />
-      ) : (
-        <ClientSettingsPage clients={clients} />
-      )}
+      <GlobalSettingsPage videoTypes={videoTypes} visible={tab === "global"} />
+      <ClientSettingsPage clients={clients} visible={tab === "client"} />
     </div>
   );
 }

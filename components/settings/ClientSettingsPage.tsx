@@ -5,8 +5,10 @@ import KnowledgeBase from "./KnowledgeBase";
 
 export default function ClientSettingsPage({
   clients,
+  visible,
 }: {
   clients: UserType[];
+  visible: boolean;
 }) {
   const [selectedClientId, setSelectedClientId] = useState("");
 
@@ -14,6 +16,8 @@ export default function ClientSettingsPage({
     () => clients.find((cl) => cl.id === selectedClientId),
     [clients, selectedClientId],
   );
+
+  if (!visible) return;
 
   return (
     <>
