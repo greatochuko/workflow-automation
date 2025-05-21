@@ -2,6 +2,7 @@
 
 import { hashPassword } from "@/lib/auth/hashPassword";
 import { prisma } from "@/lib/prisma";
+import { getVideoTypes } from "@/services/videoTypeServices";
 import { KnowledgeBaseItemType, type UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
 
@@ -55,11 +56,25 @@ export async function createUser(userData: {
   try {
     const hashedPassword = await hashPassword(userData.password);
 
+    const { data } = await getVideoTypes();
+
     const newUser = await prisma.user.create({
       data: {
         ...userData,
         password: hashedPassword,
-        knowledgeBase: DEFAULT_KNOWLEDGE_BASE_ITEMS,
+        knowledgeBase:
+          userData.role === "CLIENT" ? DEFAULT_KNOWLEDGE_BASE_ITEMS : undefined,
+        videoTypes:
+          userData.role === "CLIENT"
+            ? {
+                createMany: {
+                  data: data.map((vt) => ({
+                    name: vt.name,
+                    createdById: vt.createdById,
+                  })),
+                },
+              }
+            : undefined,
       },
     });
 

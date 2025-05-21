@@ -8,7 +8,12 @@ export async function getNonAdminUsers(): Promise<{
   try {
     const users = await prisma.user.findMany({
       where: { role: { not: "ADMIN" } },
-      include: { assignedClients: true, assignedFreelancers: true },
+      include: {
+        assignedClients: true,
+        assignedFreelancers: true,
+        videoTypes: true,
+      },
+      orderBy: { createdAt: "desc" },
     });
 
     return { data: users as unknown as UserType[], error: null };
@@ -25,7 +30,12 @@ export async function getClients(): Promise<{
   try {
     const users = await prisma.user.findMany({
       where: { role: "CLIENT" },
-      include: { assignedClients: true, assignedFreelancers: true },
+      include: {
+        assignedClients: true,
+        assignedFreelancers: true,
+        videoTypes: { orderBy: { createdAt: "desc" } },
+      },
+      orderBy: { createdAt: "desc" },
     });
 
     return { data: users as unknown as UserType[], error: null };

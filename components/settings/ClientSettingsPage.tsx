@@ -2,6 +2,14 @@ import React, { useMemo, useState } from "react";
 import { UserType } from "@/types/user";
 import Select from "../ui/Select";
 import KnowledgeBase from "./KnowledgeBase";
+import VideoTypesManager from "./VideoTypesManager";
+import {
+  addVideoTypeToClient,
+  deleteVideoType,
+  updateVideoType,
+} from "@/actions/videoTypeActions";
+import { VideoType } from "@prisma/client";
+import { toast } from "sonner";
 
 export default function ClientSettingsPage({
   clients,
@@ -11,6 +19,7 @@ export default function ClientSettingsPage({
   visible: boolean;
 }) {
   const [selectedClientId, setSelectedClientId] = useState("");
+  const [videoTypes, setVideoTypes] = useState<VideoType[]>([]);
 
   const selectedClient = useMemo(
     () => clients.find((cl) => cl.id === selectedClientId),
@@ -18,6 +27,38 @@ export default function ClientSettingsPage({
   );
 
   if (!visible) return;
+
+  async function handleAddVideoTypeToClient(name: string) {
+    if (!selectedClient) return false;
+    const { data } = await addVideoTypeToClient(selectedClient.id, name);
+    if (data) {
+      setVideoTypes((prev) => [data, ...prev]);
+    }
+    return !!data;
+  }
+
+  async function handleUpdateVideoType(editingId: string, editValue: string) {
+    const { data } = await updateVideoType(editingId, editValue);
+    if (data) {
+      setVideoTypes((prev) =>
+        prev.map((vidType) => (vidType.id === editingId ? data : vidType)),
+      );
+    }
+    return data;
+  }
+
+  async function handleDeleteVideoType(id: string) {
+    setVideoTypes((prev) => prev.filter((vidType) => vidType.id !== id));
+    toast.success("Video type deleted successfully");
+    await deleteVideoType(id);
+  }
+
+  function handleChangeSelectedClient(value: string) {
+    setSelectedClientId(value);
+    const foundClient = clients.find((cl) => cl.id === value);
+    if (!foundClient) return;
+    setVideoTypes(foundClient.videoTypes);
+  }
 
   return (
     <>
@@ -28,7 +69,7 @@ export default function ClientSettingsPage({
           </h2>
           <Select
             value={selectedClientId}
-            onChange={(value) => setSelectedClientId(value)}
+            onChange={handleChangeSelectedClient}
             containerClassName="w-40"
             options={[{ id: "", fullName: "Select a client" }, ...clients].map(
               (client) => ({
@@ -47,7 +88,18 @@ export default function ClientSettingsPage({
         </div>
       </div>
 
-      {selectedClient && <KnowledgeBase client={selectedClient} />}
+      {selectedClient && (
+        <>
+          <VideoTypesManager
+            onAddVideoType={handleAddVideoTypeToClient}
+            onDeleteVideoType={handleDeleteVideoType}
+            onUpdateVideoType={handleUpdateVideoType}
+            videoTypes={videoTypes}
+            user={selectedClient}
+          />
+          <KnowledgeBase client={selectedClient} />
+        </>
+      )}
     </>
   );
 }

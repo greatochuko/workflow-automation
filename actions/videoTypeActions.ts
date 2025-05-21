@@ -26,7 +26,7 @@ export async function createVideoType(name: string) {
     return { data: newVideoType, error: null };
   } catch (err) {
     const error = err as Error;
-    return { error: error.message };
+    return { data: null, error: error.message };
   }
 }
 
@@ -52,5 +52,38 @@ export async function deleteVideoType(videoTypeId: string) {
   } catch (err) {
     const error = err as Error;
     return { error: error.message };
+  }
+}
+
+export async function addVideoTypeToClient(
+  clientId: string,
+  videoTypeName: string,
+) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
+
+    if (!token) {
+      return { data: null, error: "No token found" };
+    }
+
+    const payload = await verifyToken(token);
+
+    if (!payload?.user.id) {
+      return { data: null, error: "Invalid token" };
+    }
+
+    const newVideoType = await prisma.videoType.create({
+      data: {
+        name: videoTypeName,
+        createdById: payload.user.id,
+        userid: clientId,
+      },
+    });
+
+    return { data: newVideoType, error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { data: null, error: error.message };
   }
 }
