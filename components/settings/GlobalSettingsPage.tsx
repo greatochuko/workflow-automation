@@ -14,6 +14,7 @@ import {
   updateVideoType,
 } from "@/actions/videoTypeActions";
 import { VideoType } from "@prisma/client";
+import { toast } from "sonner";
 
 export default function GlobalSettingsPage({
   videoTypes: initialVideoTypes,
@@ -70,6 +71,7 @@ export default function GlobalSettingsPage({
 
   async function handleDeleteVideoType(id: string) {
     setVideoTypes((prev) => prev.filter((vidType) => vidType.id !== id));
+    toast.success("Video type deleted successfully");
     await deleteVideoType(id);
   }
 
