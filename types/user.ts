@@ -1,3 +1,9 @@
+export type KnowledgeBaseItemType = {
+  id: string;
+  title: string;
+  content: string;
+};
+
 export type UserType = {
   id: string;
   fullName: string;
@@ -9,6 +15,7 @@ export type UserType = {
   specialties: string[];
   assignedFreelancers: UserType[];
   assignedClients: UserType[];
+  knowledgeBase: KnowledgeBaseItemType[];
   phoneNumber: string;
   website: string;
   threads: string;

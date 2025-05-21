@@ -1,10 +1,10 @@
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import AdminSettingsPageContent from "@/components/settings/AdminSettingsPageContent";
-// import { getNonAdminUsers } from "@/services/userServices";
+import { getClients } from "@/services/userServices";
 import { getVideoTypes } from "@/services/videoTypeServices";
 
 export default async function UserManagementPage() {
-  // const { data: users } = await getNonAdminUsers();
+  const { data: clients } = await getClients();
   const { data: videoTypes } = await getVideoTypes();
 
   return (
@@ -15,7 +15,7 @@ export default async function UserManagementPage() {
           Admin Settings
         </h1>
       </div>
-      <AdminSettingsPageContent videoTypes={videoTypes} />
+      <AdminSettingsPageContent clients={clients} videoTypes={videoTypes} />
     </main>
   );
 }
