@@ -6,8 +6,6 @@ import { cookies } from "next/headers";
 
 export async function addToDefaultVideoTypes(newVideoType: string) {
   try {
-    await prisma.appSettings.create({});
-    return { error: null };
     const updatedSettings = await prisma.appSettings.updateManyAndReturn({
       data: { defaultTypes: { push: newVideoType.toLowerCase() } },
     });
