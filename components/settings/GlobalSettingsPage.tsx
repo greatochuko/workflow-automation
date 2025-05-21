@@ -38,7 +38,7 @@ export default function GlobalSettingsPage({
     setCreating(true);
     const { data } = await createVideoType(videoTypeInput);
     if (data) {
-      setVideoTypes((prev) => [...prev, data]);
+      setVideoTypes((prev) => [data, ...prev]);
       setVideoTypeInput("");
     }
     setCreating(false);
@@ -68,6 +68,7 @@ export default function GlobalSettingsPage({
           prev.map((vidType) => (vidType.id === editingId ? data : vidType)),
         );
         setEditingId(null);
+        toast.success("Video type edited successfully");
       }
       setUpdating(false);
     }
