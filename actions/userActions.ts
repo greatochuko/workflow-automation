@@ -142,6 +142,7 @@ export async function saveUserKnowledgeBase(
       where: { id: clientId },
       data: { knowledgeBase },
     });
+    revalidatePath("/settings");
     return { error: null };
   } catch {
     return { error: "Server Error: Unable to update user knowledge base" };
