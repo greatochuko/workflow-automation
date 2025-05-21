@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import GlobalSettingsPage from "./GlobalSettingsPage";
-import { VideoType } from "@prisma/client";
 import ClientSettingsPage from "./ClientSettingsPage";
 import { UserType } from "@/types/user";
 
@@ -10,7 +9,7 @@ export default function AdminSettingsPageContent({
   videoTypes,
   clients,
 }: {
-  videoTypes: VideoType[];
+  videoTypes: string[];
   clients: UserType[];
 }) {
   const [tab, setTab] = useState<"global" | "client">("global");

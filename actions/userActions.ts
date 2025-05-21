@@ -56,7 +56,7 @@ export async function createUser(userData: {
   try {
     const hashedPassword = await hashPassword(userData.password);
 
-    const { data } = await getVideoTypes();
+    const { data: defaultVideoTypes } = await getVideoTypes();
 
     const newUser = await prisma.user.create({
       data: {
@@ -64,17 +64,7 @@ export async function createUser(userData: {
         password: hashedPassword,
         knowledgeBase:
           userData.role === "CLIENT" ? DEFAULT_KNOWLEDGE_BASE_ITEMS : undefined,
-        videoTypes:
-          userData.role === "CLIENT"
-            ? {
-                createMany: {
-                  data: data.map((vt) => ({
-                    name: vt.name,
-                    createdById: vt.createdById,
-                  })),
-                },
-              }
-            : undefined,
+        videoTypes: defaultVideoTypes,
       },
     });
 

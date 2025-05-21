@@ -11,7 +11,6 @@ export async function getNonAdminUsers(): Promise<{
       include: {
         assignedClients: true,
         assignedFreelancers: true,
-        videoTypes: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -33,7 +32,6 @@ export async function getClients(): Promise<{
       include: {
         assignedClients: true,
         assignedFreelancers: true,
-        videoTypes: { orderBy: { createdAt: "desc" } },
       },
       orderBy: { createdAt: "desc" },
     });

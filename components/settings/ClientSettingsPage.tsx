@@ -1,15 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { UserType } from "@/types/user";
 import Select from "../ui/Select";
 import KnowledgeBase from "./KnowledgeBase";
 import VideoTypesManager from "./VideoTypesManager";
+import { toast } from "sonner";
 import {
   addVideoTypeToClient,
-  deleteVideoType,
-  updateVideoType,
+  updateClientVideoTypes,
 } from "@/actions/videoTypeActions";
-import { VideoType } from "@prisma/client";
-import { toast } from "sonner";
 
 export default function ClientSettingsPage({
   clients,
@@ -18,13 +16,7 @@ export default function ClientSettingsPage({
   clients: UserType[];
   visible: boolean;
 }) {
-  const [selectedClientId, setSelectedClientId] = useState("");
-  const [videoTypes, setVideoTypes] = useState<VideoType[]>([]);
-
-  const selectedClient = useMemo(
-    () => clients.find((cl) => cl.id === selectedClientId),
-    [clients, selectedClientId],
-  );
+  const [selectedClient, setSelectedClient] = useState<UserType | null>(null);
 
   if (!visible) return;
 
@@ -32,32 +24,46 @@ export default function ClientSettingsPage({
     if (!selectedClient) return false;
     const { data } = await addVideoTypeToClient(selectedClient.id, name);
     if (data) {
-      setVideoTypes((prev) => [data, ...prev]);
+      setSelectedClient({
+        ...selectedClient,
+        videoTypes: [name, ...selectedClient.videoTypes].sort((a, b) =>
+          a.localeCompare(b),
+        ),
+      });
     }
     return !!data;
   }
 
-  async function handleUpdateVideoType(editingId: string, editValue: string) {
-    const { data } = await updateVideoType(editingId, editValue);
+  async function handleUpdateVideoType(index: number, editValue: string) {
+    if (!selectedClient) return false;
+    const newVideoTypes = selectedClient.videoTypes.map((vidType, idx) =>
+      idx === index ? editValue : vidType,
+    );
+    const { data } = await updateClientVideoTypes(
+      selectedClient.id,
+      newVideoTypes,
+    );
     if (data) {
-      setVideoTypes((prev) =>
-        prev.map((vidType) => (vidType.id === editingId ? data : vidType)),
-      );
+      setSelectedClient({ ...selectedClient, videoTypes: newVideoTypes });
+      return true;
     }
-    return data;
+    return false;
   }
 
-  async function handleDeleteVideoType(id: string) {
-    setVideoTypes((prev) => prev.filter((vidType) => vidType.id !== id));
+  async function handleDeleteVideoType(vidType: string) {
+    if (!selectedClient) return;
+    const updatedVideoTypes = selectedClient.videoTypes.filter(
+      (vt) => vt.toLowerCase() !== vidType,
+    );
+    setSelectedClient({ ...selectedClient, videoTypes: updatedVideoTypes });
     toast.success("Video type deleted successfully");
-    await deleteVideoType(id);
+    await updateClientVideoTypes(selectedClient.id, updatedVideoTypes);
   }
 
   function handleChangeSelectedClient(value: string) {
-    setSelectedClientId(value);
     const foundClient = clients.find((cl) => cl.id === value);
     if (!foundClient) return;
-    setVideoTypes(foundClient.videoTypes);
+    setSelectedClient(foundClient);
   }
 
   return (
@@ -68,7 +74,7 @@ export default function ClientSettingsPage({
             Select Client
           </h2>
           <Select
-            value={selectedClientId}
+            value={selectedClient?.id || ""}
             onChange={handleChangeSelectedClient}
             containerClassName="w-40"
             options={[{ id: "", fullName: "Select a client" }, ...clients].map(
@@ -94,7 +100,7 @@ export default function ClientSettingsPage({
             onAddVideoType={handleAddVideoTypeToClient}
             onDeleteVideoType={handleDeleteVideoType}
             onUpdateVideoType={handleUpdateVideoType}
-            videoTypes={videoTypes}
+            videoTypes={selectedClient.videoTypes}
             user={selectedClient}
           />
           <KnowledgeBase client={selectedClient} />

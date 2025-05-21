@@ -1,46 +1,52 @@
 import React, { useState } from "react";
-import {
-  createVideoType,
-  deleteVideoType,
-  updateVideoType,
-} from "@/actions/videoTypeActions";
-import { VideoType } from "@prisma/client";
 import { toast } from "sonner";
 import VideoTypesManager from "./VideoTypesManager";
+import {
+  addToDefaultVideoTypes,
+  updateDefaultVideoTypes,
+} from "@/actions/videoTypeActions";
 
 export default function GlobalSettingsPage({
   visible,
   videoTypes: initialVideoTypes,
 }: {
   visible: boolean;
-  videoTypes: VideoType[];
+  videoTypes: string[];
 }) {
   const [videoTypes, setVideoTypes] = useState(initialVideoTypes);
 
   if (!visible) return;
 
   async function handleAddVideoType(name: string) {
-    const { data } = await createVideoType(name);
-    if (data) {
-      setVideoTypes((prev) => [data, ...prev]);
-    }
-    return !!data;
-  }
-
-  async function handleUpdateVideoType(editingId: string, editValue: string) {
-    const { data } = await updateVideoType(editingId, editValue);
-    if (data) {
+    const { error } = await addToDefaultVideoTypes(name);
+    if (!error) {
       setVideoTypes((prev) =>
-        prev.map((vidType) => (vidType.id === editingId ? data : vidType)),
+        [name, ...prev].sort((a, b) => a.localeCompare(b)),
       );
+      return true;
     }
-    return data;
+    return false;
   }
 
-  async function handleDeleteVideoType(id: string) {
-    setVideoTypes((prev) => prev.filter((vidType) => vidType.id !== id));
+  async function handleUpdateVideoType(index: number, editValue: string) {
+    const newVideoTypes = videoTypes.map((vidType, idx) =>
+      idx === index ? editValue : vidType,
+    );
+    const { error } = await updateDefaultVideoTypes(newVideoTypes);
+    if (!error) {
+      setVideoTypes(newVideoTypes);
+      return true;
+    }
+    return false;
+  }
+
+  async function handleDeleteVideoType(vidType: string) {
+    const updatedVideoTypes = videoTypes.filter(
+      (vt) => vt.toLowerCase() !== vidType,
+    );
+    setVideoTypes(updatedVideoTypes);
     toast.success("Video type deleted successfully");
-    await deleteVideoType(id);
+    await updateDefaultVideoTypes(updatedVideoTypes);
   }
 
   return (

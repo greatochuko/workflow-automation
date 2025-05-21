@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import Button from "../ui/Button";
-import { VideoType } from "@prisma/client";
 import { toast } from "sonner";
 import { UserType } from "@/types/user";
 
@@ -21,20 +20,17 @@ export default function VideoTypesManager({
   onDeleteVideoType,
   user,
 }: {
-  videoTypes: VideoType[];
-  onUpdateVideoType(
-    editingId: string,
-    editValue: string,
-  ): Promise<VideoType | undefined>;
+  videoTypes: string[];
   onAddVideoType(name: string): Promise<boolean>;
-  onDeleteVideoType(id: string): Promise<void>;
+  onUpdateVideoType: (index: number, editValue: string) => Promise<boolean>;
+  onDeleteVideoType: (vidType: string) => Promise<void>;
   user?: UserType;
 }) {
   const [videoTypeInput, setVideoTypeInput] = useState("");
   const [creating, setCreating] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [editValue, setEditValue] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   async function handleAddVideoType(e: React.FormEvent) {
     e.preventDefault();
@@ -51,31 +47,31 @@ export default function VideoTypesManager({
 
   async function handleSaveEdit() {
     if (!editValue.trim()) return;
-    if (editingId !== null) {
+    if (editingIndex !== null) {
       setUpdating(true);
-      const data = await onUpdateVideoType(editingId, editValue);
+      const data = await onUpdateVideoType(editingIndex, editValue);
       if (data) {
-        setEditingId(null);
+        setEditingIndex(null);
         toast.success("Video type edited successfully");
       }
       setUpdating(false);
     }
   }
 
-  async function handleDeleteVideoType(id: string) {
-    onDeleteVideoType(id);
+  async function handleDeleteVideoType(vidType: string) {
+    onDeleteVideoType(vidType);
   }
 
-  const handleStartEdit = (id: string) => {
-    const typeToEdit = videoTypes.find((vidType) => vidType.id === id);
+  const handleStartEdit = (index: number) => {
+    const typeToEdit = videoTypes[index];
     if (typeToEdit) {
-      setEditingId(id);
-      setEditValue(typeToEdit.name);
+      setEditingIndex(index);
+      setEditValue(typeToEdit);
     }
   };
 
   function handleCancelEdit() {
-    setEditingId(null);
+    setEditingIndex(null);
     setEditValue("");
   }
 
@@ -83,7 +79,9 @@ export default function VideoTypesManager({
     <div className="flex flex-col gap-4 rounded-md border border-gray-300 bg-white p-4 sm:gap-6 sm:p-6">
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold sm:text-xl lg:text-2xl">
-          Manage Default Video Types
+          {user
+            ? `Manage Video Types for ${user.fullName}`
+            : "Manage Default Video Types"}
         </h2>
         <p className="text-sm text-gray-500">
           Add, edit, or remove video types available to{" "}
@@ -125,7 +123,7 @@ export default function VideoTypesManager({
               key={`${vidType}-${index}`}
               className="flex items-center justify-between px-4 py-2"
             >
-              {editingId === vidType.id ? (
+              {editingIndex === index ? (
                 <div className="flex flex-1 items-center space-x-2">
                   <input
                     value={editValue}
@@ -154,16 +152,16 @@ export default function VideoTypesManager({
                 </div>
               ) : (
                 <>
-                  <span className="flex-1">{vidType.name}</span>
+                  <span className="flex-1">{vidType}</span>
                   <div className="flex items-center space-x-1">
                     <button
-                      onClick={() => handleStartEdit(vidType.id)}
+                      onClick={() => handleStartEdit(index)}
                       className="rounded-md p-3 duration-200 hover:bg-gray-100"
                     >
                       <EditIcon className="h-4 w-4 text-blue-500" />
                     </button>
                     <button
-                      onClick={() => handleDeleteVideoType(vidType.id)}
+                      onClick={() => handleDeleteVideoType(vidType)}
                       className="rounded-md p-3 duration-200 hover:bg-gray-100"
                     >
                       <Trash2Icon className="h-4 w-4 text-red-500" />

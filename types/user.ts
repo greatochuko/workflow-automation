@@ -1,5 +1,3 @@
-import { VideoType } from "@prisma/client";
-
 export type KnowledgeBaseItemType = {
   id: string;
   title: string;
@@ -15,7 +13,7 @@ export type UserType = {
   profilePicture: string;
   companyName: string;
   specialties: string[];
-  videoTypes: VideoType[];
+  videoTypes: string[];
   assignedFreelancers: UserType[];
   assignedClients: UserType[];
   knowledgeBase: KnowledgeBaseItemType[];
