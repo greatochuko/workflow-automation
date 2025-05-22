@@ -12,6 +12,10 @@ button:disabled {
   cursor: default;
 }
 
+:is(input, textarea) {
+  @apply ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2;
+}
+
 @theme {
   --color-accent: hsl(245, 81%, 57%);
   --color-accent-black: rgb(16, 25, 45);
@@ -19,4 +23,13 @@ button:disabled {
   --color-background: rgb(248, 249, 252);
   --color-foreground: #020817;
   /* --color-background-200: rgb(243, 245, 252); */
+}
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }

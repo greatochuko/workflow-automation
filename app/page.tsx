@@ -1,3 +1,4 @@
+import UploadVideoButton from "@/components/client-dashboard/UploadVideoButton";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import { getSession } from "@/services/authServices";
 
@@ -11,6 +12,7 @@ export default async function Home() {
           <ToggleSidebarButton />
           {user?.role.toLocaleLowerCase()} Dashboard
         </h1>
+        <UploadVideoButton videoTypes={user?.videoTypes || []} />
       </div>
       <div className="mx-auto w-[90%] max-w-7xl"></div>
     </main>
