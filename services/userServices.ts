@@ -27,7 +27,7 @@ export async function getClients(): Promise<{
   error: string | null;
 }> {
   try {
-    const users = await prisma.user.findMany({
+    let users = await prisma.user.findMany({
       where: { role: "CLIENT" },
       include: {
         assignedClients: true,
@@ -35,6 +35,11 @@ export async function getClients(): Promise<{
       },
       orderBy: { createdAt: "desc" },
     });
+
+    users = users.map((user) => ({
+      ...user,
+      videoTypes: user.videoTypes.sort((a, b) => a.localeCompare(b)),
+    }));
 
     return { data: users as unknown as UserType[], error: null };
   } catch (err) {

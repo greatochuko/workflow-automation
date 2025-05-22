@@ -21,11 +21,17 @@ export async function getSession(): Promise<{
       return { data: null, error: "Invalid token" };
     }
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { id: payload.user.id },
     });
 
-    return { data: user as unknown as UserType, error: null };
+    if (user)
+      user = {
+        ...user,
+        videoTypes: user.videoTypes.sort((a, b) => a.localeCompare(b)),
+      };
+
+    return { data: user as unknown as UserType | null, error: null };
   } catch (err) {
     const error = err as Error;
     return { data: null, error: error.message };
