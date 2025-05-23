@@ -1,11 +1,10 @@
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { FileWithPreview, MetadataRecord } from "@/types/video";
+import { FileWithPreview } from "@/types/video";
 import { VideoPreview } from "./VideoPreview";
 
 interface VideoCarouselProps {
   files: FileWithPreview[];
-  metadata: MetadataRecord;
   onRemove: (id: string) => void;
   onMetadataChange: (
     id: string,
@@ -16,7 +15,6 @@ interface VideoCarouselProps {
 
 export function VideoCarousel({
   files,
-  metadata,
   onRemove,
   onMetadataChange,
 }: VideoCarouselProps) {
@@ -73,9 +71,9 @@ export function VideoCarousel({
       >
         {files.map((file) => (
           <VideoPreview
-            key={file.id}
+            key={file.metadata.id}
             file={file}
-            metadata={metadata[file.id] || { title: "", description: "" }}
+            metadata={file.metadata}
             onRemove={onRemove}
             onMetadataChange={onMetadataChange}
           />

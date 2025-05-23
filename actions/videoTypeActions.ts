@@ -6,11 +6,10 @@ import { cookies } from "next/headers";
 
 export async function addToDefaultVideoTypes(newVideoType: string) {
   try {
-    const updatedSettings = await prisma.appSettings.updateManyAndReturn({
+    await prisma.appSettings.update({
+      where: { id: "default" },
       data: { defaultTypes: { push: newVideoType.toLowerCase() } },
     });
-
-    if (updatedSettings.length < 1) throw new Error("No settings updated");
 
     return { error: null };
   } catch (err) {
@@ -21,7 +20,8 @@ export async function addToDefaultVideoTypes(newVideoType: string) {
 
 export async function updateDefaultVideoTypes(updatedVideoTypes: string[]) {
   try {
-    await prisma.appSettings.updateMany({
+    await prisma.appSettings.update({
+      where: { id: "default" },
       data: { defaultTypes: updatedVideoTypes },
     });
     return { error: null };

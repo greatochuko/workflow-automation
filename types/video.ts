@@ -1,13 +1,10 @@
-export type FileWithPreview = File & {
-  preview: string;
-  id: string;
-};
-
 export type FileMetadata = {
-  title: string;
+  id: string;
   description: string;
+  preview: string;
 };
 
-export type MetadataRecord = {
-  [key: string]: FileMetadata;
+export type FileWithPreview = {
+  file: File;
+  metadata: FileMetadata;
 };

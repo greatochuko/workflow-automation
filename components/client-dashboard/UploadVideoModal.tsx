@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import Select from "../ui/Select";
 import { FileUploadZone } from "./FileUploadZone";
-import { NotificationBanner } from "./NotificationBanner";
-import { FileWithPreview, MetadataRecord } from "@/types/video";
+import { FileWithPreview } from "@/types/video";
 import { VideoCarousel } from "./VideoCarousel";
-import { XIcon } from "lucide-react";
+import { LoaderIcon, XIcon } from "lucide-react";
 import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
+import { toast } from "sonner";
+import { createProject } from "@/actions/projectActions";
 
 const MAX_NUMBER_OF_FILES = 5;
 
@@ -21,14 +22,15 @@ export default function UploadVideoModal({
   videoTypes: string[];
 }) {
   const [videoType, setVideoType] = useState("");
-  const [error, setError] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
-  const [metadata, setMetadata] = useState<MetadataRecord>({});
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [date, setDate] = useState<Date | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleFiles = (files: FileList) => {
     if (uploadedFiles.length + files.length > MAX_NUMBER_OF_FILES) {
-      setError(`You can only upload up to ${MAX_NUMBER_OF_FILES} files.`);
+      toast.error(`You can only upload up to ${MAX_NUMBER_OF_FILES} files.`);
       return;
     }
 
@@ -38,7 +40,7 @@ export default function UploadVideoModal({
     );
 
     if (validFiles.length !== files.length) {
-      setError("Only video and image files are allowed.");
+      toast.error("Only video and image files are allowed.");
       return;
     }
 
@@ -46,17 +48,10 @@ export default function UploadVideoModal({
       const id = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       const preview = URL.createObjectURL(file);
 
-      // Initialize metadata for new file
-      setMetadata((prev) => ({
-        ...prev,
-        [id]: { title: "", description: "" },
-      }));
-
-      return Object.assign(file, { id, preview }) as FileWithPreview;
+      return { file, metadata: { id, title: "", description: "", preview } };
     });
 
     setUploadedFiles((prev) => [...prev, ...newFiles]);
-    setError("");
   };
 
   function updateMetadata(
@@ -64,22 +59,42 @@ export default function UploadVideoModal({
     field: "title" | "description",
     value: string,
   ) {
-    setMetadata((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        [field]: value,
-      },
-    }));
+    setUploadedFiles((prev) =>
+      prev.map((file) =>
+        file.metadata.id === id
+          ? { ...file, metadata: { ...file.metadata, [field]: value } }
+          : file,
+      ),
+    );
   }
 
   function removeFile(id: string) {
-    setUploadedFiles((prev) => prev.filter((file) => file.id !== id));
-    setMetadata((prev) => {
-      const newMetadata = { ...prev };
-      delete newMetadata[id];
-      return newMetadata;
+    setUploadedFiles((prev) => prev.filter((file) => file.metadata.id !== id));
+  }
+
+  const cannotSubmit =
+    !title.trim() ||
+    !description.trim() ||
+    !date ||
+    !uploadedFiles.length ||
+    !videoType;
+
+  async function handleSubmit() {
+    if (cannotSubmit) return;
+    setLoading(true);
+    const { data, error } = await createProject({
+      date,
+      description,
+      title,
+      videoType,
+      uploadedFiles: uploadedFiles,
     });
+    if (data) {
+      closeModal();
+    } else {
+      toast.error(error);
+    }
+    setLoading(false);
   }
 
   return (
@@ -97,12 +112,7 @@ export default function UploadVideoModal({
             <XIcon className="h-4 w-4" />
           </button>
         </div>
-        <NotificationBanner
-          message={error}
-          onDismiss={() => setError("")}
-          type="error"
-        />
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-2 sm:p-6 sm:pt-3">
+        <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 pt-2 sm:p-6 sm:pt-3">
           <Select
             onChange={(value) => setVideoType(value)}
             value={videoType}
@@ -127,40 +137,62 @@ export default function UploadVideoModal({
 
                 <VideoCarousel
                   files={uploadedFiles}
-                  metadata={metadata}
                   onRemove={removeFile}
                   onMetadataChange={updateMetadata}
                 />
               </div>
 
-              <div className="flex flex-col gap-4 text-sm">
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="title" className="font-medium">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    placeholder="Enter a title"
-                    className="bg-background rounded-md border border-gray-300 p-2 px-3"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="description" className="font-medium">
-                    Description
-                  </label>
-                  <textarea
-                    rows={4}
-                    id="description"
-                    name="description"
-                    placeholder="Enter a description"
-                    className="bg-background resize-none rounded-md border border-gray-300 p-2 px-3"
-                  />
-                </div>
+              <div className="flex flex-col gap-2 text-sm">
+                <label htmlFor="title" className="font-medium">
+                  Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter a title"
+                  className="bg-background rounded-md border border-gray-300 p-2 px-3"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2 text-sm">
+                <label htmlFor="description" className="font-medium">
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  rows={4}
+                  id="description"
+                  name="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter a description"
+                  className="bg-background resize-none rounded-md border border-gray-300 p-2 px-3"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2 text-sm">
+                <label htmlFor="description" className="font-medium">
+                  Target Publish Date <span className="text-red-500">*</span>
+                </label>
                 <DatePicker date={date} onChange={setDate} />
               </div>
-              <Button className="py-2.5">Submit</Button>
+
+              <Button
+                disabled={cannotSubmit || loading}
+                onClick={handleSubmit}
+                className="py-2.5"
+              >
+                {loading ? (
+                  <>
+                    <LoaderIcon className="h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit"
+                )}
+              </Button>
             </>
           )}
         </div>

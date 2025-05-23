@@ -19,7 +19,7 @@ export function VideoPreview({
   onRemove,
   onMetadataChange,
 }: VideoPreviewProps) {
-  const isVideo = file.type.startsWith("video/");
+  const isVideo = file.file.type.startsWith("video/");
 
   return (
     <div className="bg-card w-72 flex-shrink-0 overflow-hidden rounded-md border border-gray-300">
@@ -27,13 +27,13 @@ export function VideoPreview({
         <div className="relative aspect-video">
           {isVideo ? (
             <video
-              src={file.preview}
+              src={file.metadata.preview}
               className="h-full w-full object-cover"
               controls
             />
           ) : (
             <Image
-              src={file.preview}
+              src={file.metadata.preview}
               alt="Preview"
               className="object-cover"
               fill
@@ -42,7 +42,7 @@ export function VideoPreview({
         </div>
         <button
           className="absolute top-2 right-2 grid h-7 w-7 place-content-center rounded-md bg-red-600 duration-200 hover:bg-red-600/80"
-          onClick={() => onRemove(file.id)}
+          onClick={() => onRemove(file.metadata.id)}
         >
           <Trash2 className="h-4 w-4 text-white" />
         </button>
@@ -53,7 +53,7 @@ export function VideoPreview({
         <textarea
           value={metadata.description}
           onChange={(e) =>
-            onMetadataChange(file.id, "description", e.target.value)
+            onMetadataChange(file.metadata.id, "description", e.target.value)
           }
           placeholder="Enter description"
           rows={4}
