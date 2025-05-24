@@ -42,6 +42,18 @@ export default function CalendarDayCell({
 
   const isBeforeToday = isBefore(day, new Date());
 
+  function handleDropProject(e: React.DragEvent) {
+    if (readOnly || isBeforeToday) return;
+    setIsDraggingOver(false);
+    const draggedProjectId = e.dataTransfer.getData("text/plain");
+    const draggedProject = projects.find((p) => p.id === draggedProjectId);
+    if (!draggedProject || isSameDay(draggedProject.scheduledDate, day)) {
+      return;
+    }
+
+    onDrop(e, day);
+  }
+
   return (
     <div
       onDragOver={(e) => {
@@ -49,20 +61,7 @@ export default function CalendarDayCell({
         setIsDraggingOver(true);
       }}
       onDragLeave={() => setIsDraggingOver(false)}
-      onDrop={(e) => {
-        setIsDraggingOver(false);
-        const draggedProjectId = e.dataTransfer.getData("text/plain");
-        const draggedProject = projects.find((p) => p.id === draggedProjectId);
-        if (
-          !draggedProject ||
-          isSameDay(draggedProject.scheduledDate, day) ||
-          isBeforeToday
-        ) {
-          return;
-        }
-
-        onDrop(e, day);
-      }}
+      onDrop={handleDropProject}
       className={twMerge(
         `flex h-24 flex-col items-end gap-1 rounded-md border p-1 duration-200 ${isToday(day) ? "border-foreground" : "border-gray-300"} ${
           isCurrentMonth
@@ -86,9 +85,9 @@ export default function CalendarDayCell({
               if (isBeforeToday || readOnly) return;
               setDraggingProjectId("");
             }}
-            className={`overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
+            className={`cursor-pointer overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
               draggingProjectId === project.id ? "opacity-50" : ""
-            } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-50" : ""} ${readOnly ? "" : "cursor-pointer"}`}
+            } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-50" : ""}`}
           >
             {project.title}
             <span className="text-gray-300"> [{project.videoType}]</span>

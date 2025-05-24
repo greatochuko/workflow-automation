@@ -23,6 +23,14 @@ export async function getSession(): Promise<{
 
     let user = await prisma.user.findUnique({
       where: { id: payload.user.id },
+      include: {
+        assignedClients: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+      },
     });
 
     if (user)

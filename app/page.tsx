@@ -1,12 +1,19 @@
 import ClientDashboardContent from "@/components/client-dashboard/ClientDashboardContent";
+import FreelancerDashboardContent from "@/components/freelancer-dashboard/FreelancerDashboardContent";
 import { getSession } from "@/services/authServices";
-import { getClientProjects } from "@/services/projectServices";
+import {
+  getClientProjects,
+  getFreelancerClientProjects,
+} from "@/services/projectServices";
 
 export default async function Home() {
   const { data: user } = await getSession();
-  const { data: projects } = user
-    ? await getClientProjects(user.id)
-    : { data: [] };
+  const { data: projects } =
+    user?.role === "CLIENT"
+      ? await getClientProjects(user.id)
+      : await getFreelancerClientProjects(
+          user?.assignedClients.map((cl) => cl.id) || [],
+        );
 
   return (
     <main className="flex-1">
@@ -15,7 +22,9 @@ export default async function Home() {
           clientVideoTypes={user?.videoTypes || []}
           projects={projects}
         />
-      ) : null}
+      ) : (
+        <FreelancerDashboardContent projects={projects} />
+      )}
     </main>
   );
 }
