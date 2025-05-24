@@ -54,3 +54,16 @@ export async function createProject(projectData: ProjectDataType) {
     return { data: null, error: "Server Error" };
   }
 }
+
+export async function updateProjectDate(projectId: string, newDate: Date) {
+  try {
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: { scheduledDate: newDate },
+    });
+
+    return { data: updatedProject, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
