@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { format, isSameDay, isToday } from "date-fns";
+import { format, isBefore, isSameDay, isToday } from "date-fns";
 import { ProjectType } from "@/types/project";
 import { ProjectStatus } from "@prisma/client";
 import { twMerge } from "tailwind-merge";
@@ -40,6 +40,8 @@ export default function CalendarDayCell({
   }, [projects, day]);
   const [draggingProjectId, setDraggingProjectId] = useState("");
 
+  const isBeforeToday = isBefore(day, new Date());
+
   return (
     <div
       onDragOver={(e) => {
@@ -51,9 +53,14 @@ export default function CalendarDayCell({
         setIsDraggingOver(false);
         const draggedProjectId = e.dataTransfer.getData("text/plain");
         const draggedProject = projects.find((p) => p.id === draggedProjectId);
-        if (!draggedProject || isSameDay(draggedProject.scheduledDate, day)) {
+        if (
+          !draggedProject ||
+          isSameDay(draggedProject.scheduledDate, day) ||
+          isBeforeToday
+        ) {
           return;
         }
+
         onDrop(e, day);
       }}
       className={twMerge(
@@ -61,7 +68,7 @@ export default function CalendarDayCell({
           isCurrentMonth
             ? "bg-white"
             : "border-gray-200 bg-gray-50 text-gray-500"
-        } ${isDraggingOver ? "bg-accent/10 border-accent border-dashed" : ""}`,
+        } ${isDraggingOver && !isBeforeToday ? "bg-accent/10 border-accent border-dashed" : ""}`,
       )}
     >
       <span className="block text-xs">{format(day, "d")}</span>
@@ -69,15 +76,19 @@ export default function CalendarDayCell({
         {dayProjects.map((project) => (
           <li
             key={project.id}
-            draggable={!readOnly}
+            draggable={!isBeforeToday && !readOnly}
             onDragStart={(e) => {
+              if (isBeforeToday || readOnly) return;
               setDraggingProjectId(project.id);
               e.dataTransfer.setData("text/plain", project.id);
             }}
-            onDragEnd={() => setDraggingProjectId("")}
+            onDragEnd={() => {
+              if (isBeforeToday || readOnly) return;
+              setDraggingProjectId("");
+            }}
             className={`overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
-              draggingProjectId === project.id ? "opacity-50-" : ""
-            } ${getEventColorClass(project.status)} ${readOnly ? "" : "cursor-pointer"}`}
+              draggingProjectId === project.id ? "opacity-50" : ""
+            } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-50" : ""} ${readOnly ? "" : "cursor-pointer"}`}
           >
             {project.title}
             <span className="text-gray-300"> [{project.videoType}]</span>

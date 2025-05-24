@@ -4,14 +4,13 @@ import React, { useState } from "react";
 import ContentCalendar from "@/components/client-dashboard/ContentCalendar";
 import UploadVideoButton from "@/components/client-dashboard/UploadVideoButton";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
-import { UserType } from "@/types/user";
 import { ProjectType } from "@/types/project";
 
 export default function ClientDashboardContent({
-  user,
+  clientVideoTypes,
   projects: fetchedProjects,
 }: {
-  user: UserType | null;
+  clientVideoTypes: string[];
   projects: ProjectType[];
 }) {
   const [projects, setProjects] = useState(fetchedProjects);
@@ -29,7 +28,7 @@ export default function ClientDashboardContent({
         </h1>
         <UploadVideoButton
           updateProjects={updateProjects}
-          videoTypes={user?.videoTypes || []}
+          videoTypes={clientVideoTypes}
         />
       </div>
       <ContentCalendar

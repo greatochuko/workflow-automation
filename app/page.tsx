@@ -10,7 +10,12 @@ export default async function Home() {
 
   return (
     <main className="flex-1">
-      <ClientDashboardContent user={user} projects={projects} />
+      {user?.role === "CLIENT" ? (
+        <ClientDashboardContent
+          clientVideoTypes={user?.videoTypes || []}
+          projects={projects}
+        />
+      ) : null}
     </main>
   );
 }

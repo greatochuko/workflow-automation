@@ -33,7 +33,7 @@ export default function ContentCalendar({
   return (
     <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold whitespace-nowrap sm:text-xl">
+        <h2 className="text-lg font-semibold whitespace-nowrap sm:text-xl lg:text-2xl">
           Content Calendar
         </h2>
         <div className="flex items-center gap-2 sm:gap-4">
