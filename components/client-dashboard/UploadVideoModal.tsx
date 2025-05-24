@@ -9,6 +9,7 @@ import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import { createProject } from "@/actions/projectActions";
+import { ProjectType } from "@/types/project";
 
 const MAX_NUMBER_OF_FILES = 5;
 
@@ -16,10 +17,12 @@ export default function UploadVideoModal({
   open,
   closeModal,
   videoTypes,
+  updateProjects,
 }: {
   open: boolean;
   closeModal: () => void;
   videoTypes: string[];
+  updateProjects: (project: ProjectType) => void;
 }) {
   const [videoType, setVideoType] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
@@ -90,6 +93,9 @@ export default function UploadVideoModal({
       uploadedFiles: uploadedFiles,
     });
     if (data) {
+      updateProjects(data as ProjectType);
+      toast.success("Project created successfully!");
+      setVideoType("");
       closeModal();
     } else {
       toast.error(error);
@@ -176,7 +182,11 @@ export default function UploadVideoModal({
                 <label htmlFor="description" className="font-medium">
                   Target Publish Date <span className="text-red-500">*</span>
                 </label>
-                <DatePicker date={date} onChange={setDate} />
+                <DatePicker
+                  className="ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2"
+                  date={date}
+                  onChange={setDate}
+                />
               </div>
 
               <Button

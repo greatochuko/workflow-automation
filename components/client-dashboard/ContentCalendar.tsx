@@ -9,14 +9,14 @@ import { updateProjectDate } from "@/actions/projectActions";
 interface CalendarContainerProps {
   projects: ProjectType[];
   readOnly?: boolean;
+  setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
 }
 
 export default function ContentCalendar({
-  projects: fetchedProjects,
+  projects,
   readOnly = false,
+  setProjects,
 }: CalendarContainerProps) {
-  const [projects, setProjects] = useState(fetchedProjects);
-
   const [viewMode, setViewMode] = useState<"twoWeeks" | "month">("month");
 
   async function handleProjectDrop(projectId: string, newDate: Date) {

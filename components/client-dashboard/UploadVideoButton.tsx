@@ -4,11 +4,14 @@ import React, { useState } from "react";
 import Button from "@/components/ui/Button";
 import { UploadIcon } from "lucide-react";
 import UploadVideoModal from "./UploadVideoModal";
+import { ProjectType } from "@/types/project";
 
 export default function UploadVideoButton({
   videoTypes,
+  updateProjects,
 }: {
   videoTypes: string[];
+  updateProjects: (project: ProjectType) => void;
 }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   return (
@@ -22,6 +25,7 @@ export default function UploadVideoButton({
         open={modalIsOpen}
         closeModal={() => setModalIsOpen(false)}
         videoTypes={videoTypes}
+        updateProjects={updateProjects}
       />
     </>
   );

@@ -14,13 +14,16 @@ import {
 } from "date-fns";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import React, { useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 export default function DatePicker({
   date,
   onChange,
+  className = "",
 }: {
   date: Date | null;
   onChange: (newDate: Date) => void;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(date || new Date());
@@ -113,7 +116,10 @@ export default function DatePicker({
     <div ref={datePickerRef} className="relative">
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`bg-background hover:bg-accent flex w-full items-center gap-2 rounded-md border border-gray-300 p-2 px-4 text-left duration-200 hover:text-white ${date ? "text-foreground" : "text-gray-500"}`}
+        className={twMerge(
+          `bg-background hover:bg-accent flex w-full items-center gap-2 rounded-md border border-gray-300 p-2 px-4 text-left duration-200 hover:text-white ${date ? "text-foreground" : "text-gray-500"}`,
+          className,
+        )}
       >
         <CalendarIcon className="h-4 w-4" />
         {date ? format(new Date(date), "MMMM do, yyyy") : "Select Date"}

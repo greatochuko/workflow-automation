@@ -3,7 +3,6 @@
 import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { FileWithPreview } from "@/types/video";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 type ProjectDataType = {
@@ -46,8 +45,6 @@ export async function createProject(projectData: ProjectDataType) {
         })),
       },
     });
-
-    revalidatePath("/");
 
     return { data: newProject, error: null };
   } catch {

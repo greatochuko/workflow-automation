@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { ProjectType } from "@/types/project";
 
 export async function getClientProjects(clientId: string) {
   try {
@@ -7,7 +8,7 @@ export async function getClientProjects(clientId: string) {
     });
 
     return {
-      data: projects,
+      data: projects as ProjectType[],
       error: null,
     };
   } catch (err) {
