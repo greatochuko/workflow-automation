@@ -33,7 +33,7 @@ export default async function RootLayout({
         <Toaster duration={5000} richColors={true} />
         <SidebarProvider>
           {user && <Sidebar user={user} />}
-          <div className="bg-background flex flex-1">{children}</div>
+          <div className="bg-background flex w-full flex-1">{children}</div>
         </SidebarProvider>
       </body>
     </html>

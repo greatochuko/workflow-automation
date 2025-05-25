@@ -107,7 +107,7 @@ export default function UploadVideoModal({
     <ModalContainer open={open} closeModal={closeModal}>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="mx-auto flex max-h-[85vh] w-9/10 max-w-4xl flex-col overflow-hidden rounded-md bg-white"
+        className={`mx-auto flex max-h-[85vh] w-9/10 max-w-4xl flex-col overflow-hidden rounded-md bg-white ${open ? "" : "scale-105"}`}
       >
         <div className="sticky top-0 z-10 flex items-center justify-between bg-white p-4 pb-2 shadow-xs sm:p-6 sm:pb-3">
           <h3 className="font-semibold sm:text-lg">Upload Videos & Photos</h3>

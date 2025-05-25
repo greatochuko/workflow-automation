@@ -157,7 +157,7 @@ export default function CalendarView({
             <ChevronRightIcon className="h-4 w-4" />
           </button>
         </div>
-        <ul className="flex items-center gap-2">
+        <ul className="flex items-center gap-1.5 sm:gap-2">
           {statusList.map((status) => (
             <li
               key={status.id}

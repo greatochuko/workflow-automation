@@ -16,7 +16,7 @@ export default async function Home() {
         );
 
   return (
-    <main className="flex-1">
+    <main className="w-full flex-1">
       {user?.role === "CLIENT" ? (
         <ClientDashboardContent
           clientVideoTypes={user?.videoTypes || []}

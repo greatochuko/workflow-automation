@@ -45,7 +45,7 @@ export default function FreelancerDashboardContent({
   return (
     <>
       <div className="flex items-center justify-between border-b border-gray-200 px-[5%] py-4">
-        <h1 className="text-xl font-bold capitalize md:text-2xl xl:text-[28px]">
+        <h1 className="flex text-xl font-bold capitalize md:text-2xl xl:text-[28px]">
           <ToggleSidebarButton />
           Freelancer Dashboard
         </h1>

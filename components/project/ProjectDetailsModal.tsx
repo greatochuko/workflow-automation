@@ -20,7 +20,7 @@ export default function ProjectDetailsModal({
     <ModalContainer open={open} closeModal={closeModal}>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-background flex max-h-[85%] w-[90%] max-w-3xl flex-col gap-4 overflow-hidden overflow-y-auto rounded-md p-4"
+        className={`bg-background flex max-h-[85%] w-[90%] max-w-3xl flex-col gap-4 overflow-hidden overflow-y-auto rounded-md p-4 ${open ? "" : "scale-105"}`}
       >
         <div className="flex items-center justify-between">
           <h4 className="text-lg font-semibold sm:text-xl">{project?.title}</h4>

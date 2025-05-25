@@ -12,11 +12,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import Avatar from "../ui/Avatar";
+import ModalContainer from "../ui/ModalContainer";
 import useSidebarContext from "@/hooks/useSidebarContext";
-import LogoutModal from "../auth/LogoutModal";
-import MobileSidebar from "./MobileSidebar";
 
 const sidebarLinks = [
   // { title: "Main", url: "/", icon: HomeIcon },
@@ -24,26 +23,33 @@ const sidebarLinks = [
   { title: "Settings", url: "/settings", icon: SettingsIcon },
 ];
 
-export default function Sidebar({ user }: { user: UserType }) {
-  const pathname = usePathname();
+export default function MobileSidebar({
+  user,
+  setLogoutModalOpen,
+}: {
+  setLogoutModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  user: UserType;
+}) {
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
-  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
-
-  if (pathname.startsWith("/login")) return null;
+  const pathname = usePathname();
 
   return (
-    <>
-      <MobileSidebar setLogoutModalOpen={setLogoutModalOpen} user={user} />
+    <ModalContainer
+      open={!sidebarOpen}
+      closeModal={() => setSidebarOpen(true)}
+      className="sm:hidden"
+    >
       <aside
-        className={`bg-accent-black-200 sticky top-0 hidden h-dvh flex-col overflow-hidden text-sm text-white duration-200 sm:flex ${sidebarOpen ? "w-50" : "w-0"}`}
+        onClick={(e) => e.stopPropagation()}
+        className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-50 flex-col overflow-hidden text-sm text-white duration-200 ${!sidebarOpen ? "" : "-translate-x-full"}`}
       >
         <div className="flex items-center gap-2 p-4 font-semibold">
           <FileVideoIcon className="h-6 w-6" />
           <span>VideoFlow</span>
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className={`ml-auto duration-200 ${!sidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}
+            className={`ml-auto duration-200 ${sidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}
           >
             <PanelLeftIcon className="h-5 w-5" />
           </button>
@@ -117,10 +123,6 @@ export default function Sidebar({ user }: { user: UserType }) {
           </div>
         </div>
       </aside>
-      <LogoutModal
-        open={logoutModalOpen}
-        closeModal={() => setLogoutModalOpen(false)}
-      />
-    </>
+    </ModalContainer>
   );
 }

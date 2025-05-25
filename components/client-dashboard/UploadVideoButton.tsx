@@ -16,7 +16,7 @@ export default function UploadVideoButton({
   const [modalIsOpen, setModalIsOpen] = useState(false);
   return (
     <>
-      <Button onClick={() => setModalIsOpen(true)}>
+      <Button onClick={() => setModalIsOpen(true)} className="px-3 sm:px-4">
         <UploadIcon className="h-4 w-4" />
         <span className="sm:hidden">New Video</span>
         <span className="hidden sm:inline">Upload New Video</span>

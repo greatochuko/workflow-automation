@@ -102,7 +102,7 @@ export default function CreateUserModal({
       <form
         onSubmit={handleCreateUser}
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[85%] w-[90%] max-w-xl flex-col overflow-y-auto rounded-md bg-white text-sm shadow"
+        className={`flex max-h-[85%] w-[90%] max-w-xl flex-col overflow-y-auto rounded-md bg-white text-sm shadow ${open ? "" : "scale-105"}`}
       >
         <h3 className="sticky top-0 z-[1] flex items-center justify-center gap-3 bg-white p-4 pb-2 text-lg font-semibold sm:p-6 sm:pb-3 sm:text-xl">
           <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
