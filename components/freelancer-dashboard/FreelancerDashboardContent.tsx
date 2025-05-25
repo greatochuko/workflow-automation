@@ -53,7 +53,7 @@ export default function FreelancerDashboardContent({
       <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
         <div className="flex flex-col gap-4">
           <h3 className="text-lg font-semibold sm:text-xl">
-            Videos requiring your attendtion ({unCompletedProjects.length})
+            Videos requiring your attention ({unCompletedProjects.length})
           </h3>
           <div className="w-full overflow-x-auto">
             <div className="flex gap-3">
