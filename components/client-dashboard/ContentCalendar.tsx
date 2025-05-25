@@ -10,12 +10,17 @@ interface CalendarContainerProps {
   projects: ProjectType[];
   readOnly?: boolean;
   setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
+  setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
 }
 
 export default function ContentCalendar({
   projects,
   readOnly = false,
   setProjects,
+  setProjectDetailsModalOpen,
+
+  setProjectToView,
 }: CalendarContainerProps) {
   const [viewMode, setViewMode] = useState<"twoWeeks" | "month">("month");
 
@@ -31,7 +36,7 @@ export default function ContentCalendar({
   }
 
   return (
-    <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
+    <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-lg font-semibold whitespace-nowrap sm:text-xl lg:text-2xl">
           Content Calendar
@@ -56,6 +61,8 @@ export default function ContentCalendar({
         onProjectDrop={handleProjectDrop}
         readOnly={readOnly}
         viewMode={viewMode}
+        setProjectToView={setProjectToView}
+        setProjectDetailsModalOpen={setProjectDetailsModalOpen}
       />
     </div>
   );

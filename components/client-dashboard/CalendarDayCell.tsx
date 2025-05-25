@@ -25,6 +25,8 @@ interface CalendarDayCellProps {
   isCurrentMonth: boolean;
   onDrop: (e: React.DragEvent, date: Date) => void;
   readOnly: boolean;
+  setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
 }
 
 export default function CalendarDayCell({
@@ -33,6 +35,8 @@ export default function CalendarDayCell({
   isCurrentMonth,
   readOnly,
   onDrop,
+  setProjectDetailsModalOpen,
+  setProjectToView,
 }: CalendarDayCellProps) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const dayProjects = useMemo(() => {
@@ -71,10 +75,14 @@ export default function CalendarDayCell({
       )}
     >
       <span className="block text-xs">{format(day, "d")}</span>
-      <ul className="flex w-full flex-col gap-1">
+      <ul className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto">
         {dayProjects.map((project) => (
           <li
             key={project.id}
+            onClick={() => {
+              setProjectToView(project);
+              setProjectDetailsModalOpen(true);
+            }}
             draggable={!isBeforeToday && !readOnly}
             onDragStart={(e) => {
               if (isBeforeToday || readOnly) return;
@@ -85,7 +93,7 @@ export default function CalendarDayCell({
               if (isBeforeToday || readOnly) return;
               setDraggingProjectId("");
             }}
-            className={`cursor-pointer overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
+            className={`min-h-5 cursor-pointer overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
               draggingProjectId === project.id ? "opacity-50" : ""
             } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-50" : ""}`}
           >

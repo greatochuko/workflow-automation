@@ -5,6 +5,7 @@ import ContentCalendar from "@/components/client-dashboard/ContentCalendar";
 import UploadVideoButton from "@/components/client-dashboard/UploadVideoButton";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import { ProjectType } from "@/types/project";
+import ProjectDetailsModal from "../project/ProjectDetailsModal";
 
 export default function ClientDashboardContent({
   clientVideoTypes,
@@ -14,9 +15,18 @@ export default function ClientDashboardContent({
   projects: ProjectType[];
 }) {
   const [projects, setProjects] = useState(fetchedProjects);
+  const [projectDetailsModalOpen, setProjectDetailsModalOpen] = useState(false);
+  const [projectToView, setProjectToView] = useState<ProjectType | null>(null);
 
   function updateProjects(updatedProject: ProjectType) {
     setProjects((prev) => [...prev, updatedProject]);
+  }
+
+  function closeProjectDetailsModal() {
+    setProjectDetailsModalOpen(false);
+    setTimeout(() => {
+      setProjectToView(null);
+    }, 300);
   }
 
   return (
@@ -31,9 +41,19 @@ export default function ClientDashboardContent({
           videoTypes={clientVideoTypes}
         />
       </div>
-      <ContentCalendar
-        projects={projects as ProjectType[]}
-        setProjects={setProjects}
+      <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
+        <ContentCalendar
+          projects={projects as ProjectType[]}
+          setProjects={setProjects}
+          setProjectToView={setProjectToView}
+          setProjectDetailsModalOpen={setProjectDetailsModalOpen}
+        />
+      </div>
+
+      <ProjectDetailsModal
+        closeModal={closeProjectDetailsModal}
+        open={projectDetailsModalOpen}
+        project={projectToView}
       />
     </>
   );

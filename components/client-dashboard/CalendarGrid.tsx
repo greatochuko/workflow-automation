@@ -11,6 +11,8 @@ interface CalendarGridProps {
   currentDate: Date;
   onDrop: (e: React.DragEvent, date: Date) => void;
   readOnly: boolean;
+  setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
 }
 
 export default function CalendarGrid({
@@ -21,6 +23,8 @@ export default function CalendarGrid({
   currentDate,
   onDrop,
   readOnly,
+  setProjectDetailsModalOpen,
+  setProjectToView,
 }: CalendarGridProps) {
   return (
     <div className="flex flex-col gap-2">
@@ -48,6 +52,8 @@ export default function CalendarGrid({
                       isCurrentMonth={isSameMonth(day, currentDate)}
                       onDrop={onDrop}
                       readOnly={readOnly}
+                      setProjectToView={setProjectToView}
+                      setProjectDetailsModalOpen={setProjectDetailsModalOpen}
                     />
                   ))}
                 </React.Fragment>
@@ -61,6 +67,8 @@ export default function CalendarGrid({
                 isCurrentMonth={true}
                 onDrop={onDrop}
                 readOnly={readOnly}
+                setProjectToView={setProjectToView}
+                setProjectDetailsModalOpen={setProjectDetailsModalOpen}
               />
             ))}
       </div>
