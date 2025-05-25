@@ -22,7 +22,7 @@ export default function ContentCalendar({
 
   setProjectToView,
 }: CalendarContainerProps) {
-  const [viewMode, setViewMode] = useState<"twoWeeks" | "month">("month");
+  const [viewMode, setViewMode] = useState<"twoWeeks" | "month">("twoWeeks");
 
   async function handleProjectDrop(projectId: string, newDate: Date) {
     if (readOnly) return;

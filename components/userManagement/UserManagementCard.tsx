@@ -39,7 +39,7 @@ export default function UserManagementCard({
 
   return (
     <li
-      className="flex items-center justify-between gap-4 border-b border-gray-200 py-4 last:border-b-0"
+      className="flex flex-col flex-wrap justify-between gap-4 border-b border-gray-200 py-4 last:border-b-0 sm:flex-row sm:items-center"
       key={user.id}
     >
       <div className="flex items-center gap-3">
@@ -56,13 +56,13 @@ export default function UserManagementCard({
       </div>
       {user.role === "FREELANCER" ? (
         <div className="flex items-center gap-4">
-          <p className="ml-auto text-sm">
+          <p className="text-sm sm:ml-auto">
             {assignedClients.length} Client
             {assignedClients.length === 1 ? "" : "s"}
           </p>
           <button
             onClick={() => setAssignModalIsOpen(true)}
-            className="rounded-md border border-gray-300 bg-gray-50 px-3 py-1.5 text-sm font-medium duration-200 hover:bg-gray-100"
+            className="flex-1 rounded-md border border-gray-300 bg-gray-50 px-3 py-1.5 text-sm font-medium duration-200 hover:bg-gray-100 sm:flex-none"
           >
             Assign to
           </button>
@@ -71,34 +71,37 @@ export default function UserManagementCard({
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-4">
-          <p className="ml-auto text-sm">
+        <div className="flex flex-wrap items-center gap-4">
+          <p className="text-sm sm:ml-auto">
             {assignedFreelancers.length} Freelancer
             {assignedFreelancers.length === 1 ? "" : "s"}
           </p>
-          <Select
-            value={assignedFreelancers[0] || ""}
-            onChange={(value) => handleAssignFreelancer(value)}
-            containerClassName="w-40"
-            options={[
-              { id: "", fullName: "Select a freelancer" },
-              ...freelancers,
-            ].map((freelancer) => ({
-              value: freelancer.id,
-              label: (
-                <div
-                  key={freelancer.id}
-                  // className="whitespace-nowrap "
-                >
-                  {freelancer.fullName}
-                </div>
-              ),
-            }))}
-          />
+          <div className="flex items-center gap-4">
+            <Select
+              value={assignedFreelancers[0] || ""}
+              onChange={(value) => handleAssignFreelancer(value)}
+              containerClassName="w-40 flex-1 sm:flex-none"
+              options={[
+                { id: "", fullName: "Select a freelancer" },
+                ...freelancers,
+              ].map((freelancer) => ({
+                value: freelancer.id,
 
-          <button className="hover:bg-accent rounded-md p-2 duration-200 hover:text-white">
-            <PencilIcon className="h-4 w-4" />
-          </button>
+                label: (
+                  <div
+                    key={freelancer.id}
+                    // className="whitespace-nowrap "
+                  >
+                    {freelancer.fullName}
+                  </div>
+                ),
+              }))}
+            />
+
+            <button className="hover:bg-accent rounded-md p-2 duration-200 hover:text-white">
+              <PencilIcon className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       )}
       {user.role === "FREELANCER" && (

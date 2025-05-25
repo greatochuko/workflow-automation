@@ -139,33 +139,31 @@ export default function ProjectDetailsModal({
           </ul>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-4">
-          {showAiResponse && (
-            <div className="flex flex-col gap-2">
-              {Object.entries(AIGeneratedResponse).map(([key, value]) => (
-                <div key={key} className="flex flex-col gap-1">
-                  <h5 className="font-medium">{key}</h5>
-                  <p className="text-sm text-gray-500">
-                    {value}{" "}
-                    <button
-                      type="button"
-                      className="ml-2 rounded-md p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
-                      title="Copy to clipboard"
-                      onClick={() => {
-                        navigator.clipboard.writeText(value);
-                        toast.success("Copied to clipboard!", {
-                          duration: 2000,
-                        });
-                      }}
-                    >
-                      <CopyIcon className="h-3.5 w-3.5" />
-                    </button>
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {showAiResponse && (
+          <div className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-4">
+            {Object.entries(AIGeneratedResponse).map(([key, value]) => (
+              <div key={key} className="flex flex-col gap-1">
+                <h5 className="font-medium">{key}</h5>
+                <p className="text-sm text-gray-500">
+                  {value}{" "}
+                  <button
+                    type="button"
+                    className="ml-2 rounded-md p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
+                    title="Copy to clipboard"
+                    onClick={() => {
+                      navigator.clipboard.writeText(value);
+                      toast.success("Copied to clipboard!", {
+                        duration: 2000,
+                      });
+                    }}
+                  >
+                    <CopyIcon className="h-3.5 w-3.5" />
+                  </button>
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </ModalContainer>
   );

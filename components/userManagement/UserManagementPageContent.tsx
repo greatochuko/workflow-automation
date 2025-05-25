@@ -44,13 +44,13 @@ export default function UserManagementPageContent({
 
   return (
     <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-4">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search users..."
-          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm"
+          className="w-0 max-w-60 flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm"
         />
         <CreateUserButton />
       </div>
