@@ -8,7 +8,7 @@ import {
   VideoIcon,
   XIcon,
 } from "lucide-react";
-import { getEventColorClass } from "../client-dashboard/CalendarDayCell";
+import { getEventColorClass } from "./CalendarDayCell";
 import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";

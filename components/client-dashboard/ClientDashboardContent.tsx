@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import ContentCalendar from "@/components/client-dashboard/ContentCalendar";
+import ContentCalendar from "@/components/project/ContentCalendar";
 import UploadVideoButton from "@/components/client-dashboard/UploadVideoButton";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import { ProjectType } from "@/types/project";
 import ProjectDetailsModal from "../project/ProjectDetailsModal";
+import ProjectsAwaitingApprovalSection from "./ProjectsAwaitingAprovalSection";
 
 export default function ClientDashboardContent({
   clientVideoTypes,
@@ -29,6 +30,14 @@ export default function ClientDashboardContent({
     }, 300);
   }
 
+  function updateProjectList(updatedProject: ProjectType) {
+    setProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === updatedProject.id ? updatedProject : project,
+      ),
+    );
+  }
+
   return (
     <>
       <div className="flex items-center justify-between border-b border-gray-200 px-[5%] py-4">
@@ -41,9 +50,17 @@ export default function ClientDashboardContent({
           videoTypes={clientVideoTypes}
         />
       </div>
+
       <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
+        <ProjectsAwaitingApprovalSection
+          projects={projects}
+          updateProjectList={updateProjectList}
+          setProjectDetailsModalOpen={setProjectDetailsModalOpen}
+          setProjectToView={setProjectToView}
+        />
+
         <ContentCalendar
-          projects={projects as ProjectType[]}
+          projects={projects}
           setProjects={setProjects}
           setProjectToView={setProjectToView}
           setProjectDetailsModalOpen={setProjectDetailsModalOpen}
@@ -54,6 +71,7 @@ export default function ClientDashboardContent({
         closeModal={closeProjectDetailsModal}
         open={projectDetailsModalOpen}
         project={projectToView}
+        showAiResponse={projectToView?.status === "SUBMITTED"}
       />
     </>
   );
