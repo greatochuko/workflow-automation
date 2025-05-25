@@ -5,6 +5,7 @@ export async function getClientProjects(clientId: string) {
   try {
     const projects = await prisma.project.findMany({
       where: { createdById: clientId },
+      orderBy: { createdAt: "desc" },
     });
 
     return {
@@ -21,6 +22,7 @@ export async function getFreelancerClientProjects(clientIds: string[]) {
   try {
     const projects = await prisma.project.findMany({
       where: { createdById: { in: clientIds } },
+      orderBy: { createdAt: "desc" },
     });
 
     return {
