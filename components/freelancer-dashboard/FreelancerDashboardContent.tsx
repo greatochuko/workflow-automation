@@ -7,6 +7,7 @@ import ContentCalendar from "../client-dashboard/ContentCalendar";
 import Button from "../ui/Button";
 import { UploadIcon } from "lucide-react";
 import ProjectDetailsModal from "../project/ProjectDetailsModal";
+import ProjectSubmissionModal from "../project/ProjectSubmissionModal";
 
 export default function FreelancerDashboardContent({
   projects: fetchedProjects,
@@ -16,6 +17,11 @@ export default function FreelancerDashboardContent({
   const [projects, setProjects] = useState(fetchedProjects);
   const [projectDetailsModalOpen, setProjectDetailsModalOpen] = useState(false);
   const [projectToView, setProjectToView] = useState<ProjectType | null>(null);
+  const [projectSubmissionModalOpen, setProjectSubmissionModalOpen] =
+    useState(false);
+  const [projectToSubmit, setProjectToSubmit] = useState<ProjectType | null>(
+    null,
+  );
 
   const unCompletedProjects = projects.filter(
     (project) =>
@@ -26,6 +32,13 @@ export default function FreelancerDashboardContent({
     setProjectDetailsModalOpen(false);
     setTimeout(() => {
       setProjectToView(null);
+    }, 300);
+  }
+
+  function closeProjectSubmissionModal() {
+    setProjectSubmissionModalOpen(false);
+    setTimeout(() => {
+      setProjectToSubmit(null);
     }, 300);
   }
 
@@ -56,7 +69,13 @@ export default function FreelancerDashboardContent({
                         <h4 className="font-medium">{project.title}</h4>
                         <p className="text-gray-500">{project.videoType}</p>
                       </div>
-                      <Button className="px-3 py-1.5 text-xs">
+                      <Button
+                        onClick={() => {
+                          setProjectToSubmit(project);
+                          setProjectSubmissionModalOpen(true);
+                        }}
+                        className="px-3 py-1.5 text-xs"
+                      >
                         <UploadIcon className="h-4 w-4" />
                         Submit Edited Video
                       </Button>
@@ -95,6 +114,12 @@ export default function FreelancerDashboardContent({
         open={projectDetailsModalOpen}
         project={projectToView}
         showAiResponse={true}
+      />
+
+      <ProjectSubmissionModal
+        closeModal={closeProjectSubmissionModal}
+        open={projectSubmissionModalOpen}
+        project={projectToSubmit}
       />
     </>
   );

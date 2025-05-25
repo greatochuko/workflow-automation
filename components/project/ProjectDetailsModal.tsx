@@ -90,7 +90,7 @@ export default function ProjectDetailsModal({
           </div>
           {showAiResponse && (
             <div className="flex flex-col gap-1">
-              <h4 className="font-medium">AI Generated Response</h4>
+              <h4 className="font-medium">AI Generated Caption</h4>
               <p className="text-sm text-gray-500">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
                 nobis, reprehenderit nam unde accusamus natus aspernatur ipsum
