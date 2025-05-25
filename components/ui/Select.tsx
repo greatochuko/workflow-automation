@@ -19,7 +19,7 @@ export default function Select({
   value: string;
   onChange: (value: string) => void;
   options: OptionType[];
-  placeholder?: string;
+  placeholder?: React.ReactNode;
   className?: string;
   containerClassName?: string;
   disabled?: boolean;

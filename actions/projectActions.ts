@@ -2,15 +2,20 @@
 
 import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
-import { FileWithPreview } from "@/types/video";
 import { cookies } from "next/headers";
 
 type ProjectDataType = {
   title: string;
   description: string;
+  scheduledDate: Date;
   videoType: string;
-  uploadedFiles: FileWithPreview[];
-  date: Date;
+  files: {
+    id: string;
+    name: string;
+    description: string;
+    url: string;
+    type: string;
+  }[];
 };
 
 export async function createProject(projectData: ProjectDataType) {
@@ -30,19 +35,9 @@ export async function createProject(projectData: ProjectDataType) {
 
     const newProject = await prisma.project.create({
       data: {
-        title: projectData.title,
-        description: projectData.description,
-        scheduledDate: projectData.date,
-        status: "IN_PROGRESS",
-        videoType: projectData.videoType,
+        ...projectData,
         createdById: payload.user.id,
-        files: projectData.uploadedFiles.map((file) => ({
-          id: file.metadata.id,
-          name: file.file.name,
-          description: file.metadata.description,
-          url: "",
-          type: file.file.type,
-        })),
+        status: "IN_PROGRESS",
       },
     });
 

@@ -4,7 +4,7 @@ import Select from "../ui/Select";
 import { FileUploadZone } from "./FileUploadZone";
 import { FileWithPreview } from "@/types/video";
 import { VideoCarousel } from "./VideoCarousel";
-import { LoaderIcon, XIcon } from "lucide-react";
+import { LoaderIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ export default function UploadVideoModal({
   const [description, setDescription] = useState("");
   const [date, setDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleFiles = (files: FileList) => {
     if (uploadedFiles.length + files.length > MAX_NUMBER_OF_FILES) {
@@ -75,23 +76,42 @@ export default function UploadVideoModal({
     setUploadedFiles((prev) => prev.filter((file) => file.metadata.id !== id));
   }
 
-  const cannotSubmit =
-    !title.trim() ||
-    !description.trim() ||
-    !date ||
-    !uploadedFiles.length ||
-    !videoType;
-
   async function handleSubmit() {
-    if (cannotSubmit) return;
+    setError("");
+    if (uploadedFiles.length === 0) {
+      setError("Please upload at least one video or image file.");
+      return;
+    }
+    if (!title) {
+      setError("Title is required");
+      return;
+    } else if (!description) {
+      setError("Description is required");
+      return;
+    } else if (!date) {
+      setError("Target publish date is required");
+      return;
+    } else if (!videoType) {
+      setError("Video type is required");
+      return;
+    }
     setLoading(true);
-    const { data, error } = await createProject({
-      date,
-      description,
-      title,
-      videoType,
-      uploadedFiles: uploadedFiles,
-    });
+
+    const projectData = {
+      title: title,
+      description: description,
+      scheduledDate: date,
+      videoType: videoType,
+      files: uploadedFiles.map((file) => ({
+        id: file.metadata.id,
+        name: file.file.name,
+        description: file.metadata.description,
+        url: "",
+        type: file.file.type,
+      })),
+    };
+
+    const { data, error } = await createProject(projectData);
     if (data) {
       updateProjects(data as ProjectType);
       toast.success("Project created successfully!");
@@ -126,7 +146,11 @@ export default function UploadVideoModal({
               label: <span>{vt}</span>,
               value: vt,
             }))}
-            placeholder="Select Video Type"
+            placeholder={
+              <span>
+                Select Video Type <span className="text-red-500">*</span>
+              </span>
+            }
             showCheckmark
           />
           <FileUploadZone
@@ -189,8 +213,14 @@ export default function UploadVideoModal({
                 />
               </div>
 
+              {error && (
+                <div className="flex w-fit items-center gap-2 rounded-md border border-red-500 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500">
+                  <TriangleAlertIcon className="h-3.5 w-3.5" />
+                  {error}
+                </div>
+              )}
               <Button
-                disabled={cannotSubmit || loading}
+                disabled={loading}
                 onClick={handleSubmit}
                 className="py-2.5"
               >
