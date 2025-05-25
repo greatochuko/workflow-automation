@@ -1,9 +1,27 @@
 import React from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { ProjectType } from "@/types/project";
-import { CloudDownloadIcon, ImageIcon, VideoIcon, XIcon } from "lucide-react";
+import {
+  CloudDownloadIcon,
+  CopyIcon,
+  ImageIcon,
+  VideoIcon,
+  XIcon,
+} from "lucide-react";
 import { getEventColorClass } from "../client-dashboard/CalendarDayCell";
 import Link from "next/link";
+import { toast } from "sonner";
+import Image from "next/image";
+
+const AIGeneratedResponse = {
+  Hook: "Discover the magic of AI-generated content with our latest project!",
+  "CTA 1":
+    "Discover the magic of AI-generated content with our latest project!",
+  "CTA 2":
+    "Discover the magic of AI-generated content with our latest project!",
+  "Caption Content":
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+};
 
 export default function ProjectDetailsModal({
   open,
@@ -23,10 +41,12 @@ export default function ProjectDetailsModal({
         className={`bg-background flex max-h-[85%] w-[90%] max-w-3xl flex-col gap-4 overflow-hidden overflow-y-auto rounded-md p-4 ${open ? "" : "scale-105"}`}
       >
         <div className="flex items-center justify-between">
-          <h4 className="text-lg font-semibold sm:text-xl">{project?.title}</h4>
+          <h4 className="text-lg font-semibold sm:text-xl">
+            Project Title: {project?.title}
+          </h4>
           <button
             onClick={closeModal}
-            className="hover:text-foreground p-2 text-gray-500 duration-200"
+            className="hover:text-foreground self-start p-2 text-gray-500 duration-200"
           >
             <XIcon className="h-4 w-4" />
           </button>
@@ -49,23 +69,58 @@ export default function ProjectDetailsModal({
             {project?.status.replace("_", "-").toLowerCase() || "No status"}
           </span>
         </div>
+
+        <div className="flex flex-col gap-1">
+          <h4 className="font-medium">Description</h4>
+          <p className="text-sm text-gray-500">{project?.description}</p>
+        </div>
+
         <div className="flex flex-col gap-2">
-          <h5>Project Files</h5>
-          <ul>
+          <h4 className="font-medium">Project Files</h4>
+          <ul className="flex flex-col gap-2">
             {project?.files.map((file) => (
               <li
                 key={file.id}
-                className="flex items-center gap-2 rounded-md border border-gray-200 p-2"
+                className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-2"
               >
-                <span className="self-start p-2 pr-0">
-                  {file.type.startsWith("image/") ? (
-                    <ImageIcon className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <VideoIcon className="h-5 w-5 text-gray-500" />
-                  )}
-                </span>
+                {file.thumbnailUrl ? (
+                  <Image
+                    src={file.thumbnailUrl}
+                    alt={file.name}
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 rounded-md border border-gray-300 object-cover"
+                  />
+                ) : (
+                  <span className="flex h-12 w-12 items-center justify-center self-start rounded-md border border-gray-300">
+                    {file.type.startsWith("image/") ? (
+                      <ImageIcon className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <VideoIcon className="h-5 w-5 text-gray-500" />
+                    )}
+                  </span>
+                )}
                 <div className="flex flex-1 flex-col gap-1">
                   <p className="text-sm font-medium"> {file.name}</p>
+                  <p className="text-xs text-gray-500">
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                    Incidunt sit et harum corporis ducimus enim exercitationem,
+                    optio eveniet. Soluta quibusdam voluptate repudiandae earum
+                    ex provident architecto, consequuntur quod modi nostrum?
+                    <button
+                      type="button"
+                      className="ml-2 rounded p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
+                      title="Copy to clipboard"
+                      onClick={() => {
+                        navigator.clipboard.writeText("value");
+                        toast.success("Copied to clipboard!", {
+                          duration: 2000,
+                        });
+                      }}
+                    >
+                      <CopyIcon className="h-3 w-3" />
+                    </button>
+                  </p>
                   {file.description && (
                     <p className="text-xs text-gray-500">{file.description}</p>
                   )}
@@ -83,20 +138,31 @@ export default function ProjectDetailsModal({
             ))}
           </ul>
         </div>
+
         <div className="flex flex-col gap-3 rounded-md border border-gray-200 bg-white p-4">
-          <div className="flex flex-col gap-1">
-            <h4 className="font-medium">Description</h4>
-            <p className="text-sm text-gray-500">{project?.description}</p>
-          </div>
           {showAiResponse && (
-            <div className="flex flex-col gap-1">
-              <h4 className="font-medium">AI Generated Caption</h4>
-              <p className="text-sm text-gray-500">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-                nobis, reprehenderit nam unde accusamus natus aspernatur ipsum
-                hic beatae. Tempora rerum libero reprehenderit reiciendis saepe?
-                Expedita sint eos consequuntur magnam.
-              </p>
+            <div className="flex flex-col gap-2">
+              {Object.entries(AIGeneratedResponse).map(([key, value]) => (
+                <div key={key} className="flex flex-col gap-1">
+                  <h5 className="font-medium">{key}</h5>
+                  <p className="text-sm text-gray-500">
+                    {value}{" "}
+                    <button
+                      type="button"
+                      className="ml-2 rounded-md p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
+                      title="Copy to clipboard"
+                      onClick={() => {
+                        navigator.clipboard.writeText(value);
+                        toast.success("Copied to clipboard!", {
+                          duration: 2000,
+                        });
+                      }}
+                    >
+                      <CopyIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </p>
+                </div>
+              ))}
             </div>
           )}
         </div>

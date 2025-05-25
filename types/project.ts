@@ -12,6 +12,7 @@ export type ProjectType = {
     name: string;
     description: string;
     url: string;
+    thumbnailUrl: string;
     type: string;
   }[];
   status: ProjectStatus;
