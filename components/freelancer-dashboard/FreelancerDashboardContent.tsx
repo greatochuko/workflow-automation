@@ -25,7 +25,7 @@ export default function FreelancerDashboardContent({
 
   const unCompletedProjects = projects.filter(
     (project) =>
-      project.status === "IN_PROGRESS" || project.status !== "REJECTED",
+      project.status === "IN_PROGRESS" || project.status === "REJECTED",
   );
 
   function closeProjectDetailsModal() {
@@ -40,6 +40,14 @@ export default function FreelancerDashboardContent({
     setTimeout(() => {
       setProjectToSubmit(null);
     }, 300);
+  }
+
+  function updateProjectList(updatedProject: ProjectType) {
+    setProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === updatedProject.id ? updatedProject : project,
+      ),
+    );
   }
 
   return (
@@ -120,6 +128,7 @@ export default function FreelancerDashboardContent({
         closeModal={closeProjectSubmissionModal}
         open={projectSubmissionModalOpen}
         project={projectToSubmit}
+        updateProjectList={updateProjectList}
       />
     </>
   );

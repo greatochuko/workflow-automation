@@ -7,6 +7,15 @@ export type ProjectType = {
   description: string;
   scheduledDate: Date;
   videoType: string;
+  feedback: string;
+  submissionDate: Date;
+  completedFile: {
+    id: string;
+    name: string;
+    url: string;
+    thumbnailUrl: string;
+    type: string;
+  }[];
   files: {
     id: string;
     name: string;

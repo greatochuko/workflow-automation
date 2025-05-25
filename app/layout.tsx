@@ -30,7 +30,7 @@ export default async function RootLayout({
       <body
         className={`${inter.className} text-foreground flex min-h-dvh antialiased`}
       >
-        <Toaster duration={5000} richColors={true} />
+        <Toaster duration={4000} richColors={true} />
         <SidebarProvider>
           {user && <Sidebar user={user} />}
           <div className="bg-background flex w-full flex-1">{children}</div>

@@ -107,6 +107,7 @@ export default function UploadVideoModal({
         name: file.file.name,
         description: file.metadata.description,
         url: "",
+        thumbnailUrl: "",
         type: file.file.type,
       })),
     };
