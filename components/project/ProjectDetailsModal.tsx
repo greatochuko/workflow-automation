@@ -125,7 +125,7 @@ export default function ProjectDetailsModal({
                       className="ml-2 rounded p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
                       title="Copy to clipboard"
                       onClick={() => {
-                        navigator.clipboard.writeText("value");
+                        navigator.clipboard.writeText(file.description);
                         toast.success("Copied to clipboard!", {
                           duration: 2000,
                         });
