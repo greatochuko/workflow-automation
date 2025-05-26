@@ -1,11 +1,13 @@
 "use server";
 
 import { hashPassword } from "@/lib/auth/hashPassword";
+import { verifyToken } from "@/lib/auth/jwt";
 import { defaultKnowledgeBaseItems } from "@/lib/data/knowledgeBase";
 import { prisma } from "@/lib/prisma";
 import { getVideoTypes } from "@/services/videoTypeServices";
 import { KnowledgeBaseItemType, type UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function createUser(userData: {
   fullName: string;
@@ -32,6 +34,51 @@ export async function createUser(userData: {
     });
 
     revalidatePath("/users");
+
+    return { data: newUser, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
+
+export async function updateUserProfile(userData: UserType) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
+
+    if (!token) {
+      return { data: null, error: "No token found" };
+    }
+
+    const payload = await verifyToken(token);
+
+    if (!payload?.user.id) {
+      return { data: null, error: "Invalid token" };
+    }
+
+    const newUser = await prisma.user.update({
+      where: { id: payload.user.id },
+      data: {
+        fullName: userData.fullName,
+        email: userData.email,
+        profilePicture: userData.profilePicture,
+        companyName: userData.companyName,
+        specialties: userData.specialties,
+        certifications: userData.certifications,
+        phoneNumber: userData.phoneNumber,
+        website: userData.website,
+        threads: userData.threads,
+        instagram: userData.instagram,
+        facebook: userData.facebook,
+        twitter: userData.twitter,
+        linkedin: userData.linkedin,
+        youtube: userData.youtube,
+        tiktok: userData.tiktok,
+        snapchat: userData.snapchat,
+      },
+    });
+
+    revalidatePath("/", "layout");
 
     return { data: newUser, error: null };
   } catch {
