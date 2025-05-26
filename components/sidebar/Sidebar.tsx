@@ -40,7 +40,7 @@ export default function Sidebar({ user }: { user: UserType }) {
       >
         <div className="flex items-center gap-2 p-4 font-semibold">
           <FileVideoIcon className="h-6 w-6" />
-          <span>VideoFlow</span>
+          <span>VidLeads</span>
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
             className={`ml-auto duration-200 ${!sidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}
