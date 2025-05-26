@@ -1,3 +1,4 @@
+import ChangePasswordForm from "@/components/profile/ChangePasswordForm";
 import ProfileForm from "@/components/profile/ProfileForm";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import { getSession } from "@/services/authServices";
@@ -18,7 +19,12 @@ export default async function page() {
         </p>
       </div>
       <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
-        {user && <ProfileForm user={user} />}
+        {user && (
+          <>
+            <ProfileForm user={user} />
+            <ChangePasswordForm />
+          </>
+        )}
       </div>
     </main>
   );

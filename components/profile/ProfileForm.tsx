@@ -4,7 +4,13 @@ import React, { useState } from "react";
 import Avatar from "../ui/Avatar";
 import { UserType } from "@/types/user";
 import { resizeImage } from "@/lib/utils/imageResize";
-import { LoaderIcon, PlusIcon, UploadIcon, XIcon } from "lucide-react";
+import {
+  LoaderIcon,
+  PlusIcon,
+  UploadIcon,
+  UserIcon,
+  XIcon,
+} from "lucide-react";
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import { uploadImage } from "@/lib/utils/imageUpload";
@@ -15,6 +21,7 @@ type PersonalInfoFieldType = {
   placeholder: string;
   name: keyof UserType;
   type?: string;
+  required?: boolean;
 };
 
 const personalInfoFields: PersonalInfoFieldType[] = [
@@ -22,11 +29,13 @@ const personalInfoFields: PersonalInfoFieldType[] = [
     name: "fullName",
     label: "Full Name",
     placeholder: "John Doe",
+    required: true,
   },
   {
     name: "email",
     label: "Email",
     placeholder: "user@example.com",
+    required: true,
   },
   {
     name: "companyName",
@@ -188,6 +197,10 @@ export default function ProfileForm({ user }: { user: UserType }) {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 text-sm sm:p-6"
     >
+      <h2 className="flex items-center gap-2 text-xl font-semibold sm:text-2xl">
+        <UserIcon className="h-5 w-5" />
+        Profile Information
+      </h2>
       <div className="flex flex-col items-center">
         <Avatar user={userData} className="h-24 w-24" />
         <input
@@ -225,6 +238,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
                   id={field.name}
                   placeholder={field.placeholder}
                   autoComplete="off"
+                  required={field.required}
                   value={userData[field.name] as string}
                   disabled={loading}
                   onChange={(e) => updateUserData(field.name, e.target.value)}

@@ -1,9 +1,9 @@
 "use server";
 
-import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
+import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { ProjectType } from "@/types/project";
-import { cookies } from "next/headers";
+
 type ProjectFileType = {
   id: string;
   name: string;
@@ -23,14 +23,7 @@ type ProjectDataType = {
 
 export async function createProject(projectData: ProjectDataType) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return { data: null, error: "No token found" };
-    }
-
-    const payload = await verifyToken(token);
+    const { payload } = await getTokenFromCookie();
 
     if (!payload?.user.id) {
       return { data: null, error: "Invalid token" };

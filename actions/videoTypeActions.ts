@@ -1,8 +1,7 @@
 "use server";
 
-import { verifyToken } from "@/lib/auth/jwt";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 
 export async function addToDefaultVideoTypes(newVideoType: string) {
   try {
@@ -36,14 +35,7 @@ export async function addVideoTypeToClient(
   videoType: string,
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return { data: null, error: "No token found" };
-    }
-
-    const payload = await verifyToken(token);
+    const { payload } = await getTokenFromCookie();
 
     if (!payload?.user.id) {
       return { data: null, error: "Invalid token" };

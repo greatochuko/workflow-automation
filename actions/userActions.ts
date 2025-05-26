@@ -1,13 +1,12 @@
 "use server";
 
-import { hashPassword } from "@/lib/auth/hashPassword";
-import { verifyToken } from "@/lib/auth/jwt";
+import { comparePassword, hashPassword } from "@/lib/auth/hashPassword";
 import { defaultKnowledgeBaseItems } from "@/lib/data/knowledgeBase";
 import { prisma } from "@/lib/prisma";
+import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { getVideoTypes } from "@/services/videoTypeServices";
 import { KnowledgeBaseItemType, type UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 
 export async function createUser(userData: {
   fullName: string;
@@ -43,20 +42,13 @@ export async function createUser(userData: {
 
 export async function updateUserProfile(userData: UserType) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return { data: null, error: "No token found" };
-    }
-
-    const payload = await verifyToken(token);
+    const { payload } = await getTokenFromCookie();
 
     if (!payload?.user.id) {
       return { data: null, error: "Invalid token" };
     }
 
-    const newUser = await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: payload.user.id },
       data: {
         fullName: userData.fullName,
@@ -80,7 +72,51 @@ export async function updateUserProfile(userData: UserType) {
 
     revalidatePath("/", "layout");
 
-    return { data: newUser, error: null };
+    return { data: updatedUser, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
+
+export async function changeUserPassword(
+  oldPassword: string,
+  newPassword: string,
+) {
+  try {
+    const { payload } = await getTokenFromCookie();
+
+    if (!payload?.user.id) {
+      return { data: null, error: "Invalid token" };
+    }
+
+    const userToUpdate = await prisma.user.findFirst({
+      where: { id: payload.user.id },
+    });
+
+    const passwordsMatch = await comparePassword(
+      oldPassword,
+      userToUpdate?.password || "",
+    );
+
+    if (!passwordsMatch) {
+      return { data: null, error: "Current password is incorrect" };
+    }
+
+    const newHashedPassword = await hashPassword(newPassword);
+    if (!newHashedPassword) {
+      return { data: null, error: "Failed to hash new password" };
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: payload.user.id },
+      data: {
+        password: newHashedPassword,
+      },
+    });
+
+    revalidatePath("/", "layout");
+
+    return { data: updatedUser, error: null };
   } catch {
     return { data: null, error: "Server Error" };
   }
