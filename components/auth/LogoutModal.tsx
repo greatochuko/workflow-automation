@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
-import { LogOutIcon } from "lucide-react";
+import { LoaderIcon, LogOutIcon } from "lucide-react";
 import Button from "../ui/Button";
 import { logoutUser } from "@/actions/authActions";
 
@@ -11,6 +11,15 @@ export default function LogoutModal({
   open: boolean;
   closeModal: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleLogout() {
+    setLoading(true);
+    await logoutUser();
+    setLoading(false);
+    closeModal();
+  }
+
   return (
     <ModalContainer open={open} closeModal={closeModal}>
       <div
@@ -26,8 +35,18 @@ export default function LogoutModal({
           Are you sure you want to log out?
         </p>
         <div className="flex w-full flex-col gap-4">
-          <Button className="rounded-full py-4" onClick={logoutUser}>
-            Logout
+          <Button
+            disabled={loading}
+            className="rounded-full py-4"
+            onClick={handleLogout}
+          >
+            {loading ? (
+              <>
+                <LoaderIcon className="h-4 w-4 animate-spin" /> Logging out...
+              </>
+            ) : (
+              "Logout"
+            )}
           </Button>
           <Button
             className="rounded-full border border-gray-300 bg-white py-4 text-gray-700 hover:bg-gray-100"

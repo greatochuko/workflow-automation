@@ -129,6 +129,7 @@ export default function CreateUserModal({
                   src={userData.profilePicture}
                   alt={`${userData.fullName} profile picture`}
                   fill
+                  className="object-cover"
                 />
               ) : (
                 <UserIcon className="text-gray-500 duration-200 group-hover:scale-110 group-hover:text-gray-600" />

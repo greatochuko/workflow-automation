@@ -117,7 +117,7 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
                   onChange={(e) =>
                     handleChangeKnowledgeBaseItem(kb.id, e.target.value)
                   }
-                  className="bg-background resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="bg-background mx-1 resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
                 ></textarea>
               </div>
             </div>

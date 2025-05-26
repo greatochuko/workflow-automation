@@ -31,7 +31,7 @@ export default function Avatar({
         <Image
           src={user.profilePicture}
           alt={user.fullName}
-          className={imageLoaded ? "" : "invisible"}
+          className={`object-cover ${imageLoaded ? "" : "invisible"}`}
           fill
           sizes="128px"
           onLoad={() => setImageLoaded(true)}

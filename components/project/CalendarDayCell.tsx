@@ -95,7 +95,7 @@ export default function CalendarDayCell({
             }}
             className={`min-h-5 cursor-pointer overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
               draggingProjectId === project.id ? "opacity-50" : ""
-            } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-50" : ""}`}
+            } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-70" : ""}`}
           >
             {project.title}
             <span className="text-gray-300"> [{project.videoType}]</span>
