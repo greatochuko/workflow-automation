@@ -13,6 +13,7 @@ export type UserType = {
   profilePicture: string;
   companyName: string;
   specialties: string[];
+  certifications: string[];
   videoTypes: string[];
   assignedFreelancers: UserType[];
   assignedClients: UserType[];

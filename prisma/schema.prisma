@@ -28,6 +28,7 @@ model User {
   profilePicture String   @default("")
   companyName    String   @default("")
   specialties    String[]
+  certifications String[]
   knowledgeBase  Json[]
   videoTypes     String[]
 
