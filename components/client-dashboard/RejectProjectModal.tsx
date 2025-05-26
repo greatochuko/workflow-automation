@@ -15,7 +15,8 @@ export default function RejectProjectModal({
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
 
-  function handleSubmit() {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
     if (!project || !feedback.trim()) return;
 
     setLoading(true);
@@ -33,6 +34,7 @@ export default function RejectProjectModal({
           <div className="flex items-center justify-between">
             <h4 className="text-lg font-semibold">Reject Video</h4>
             <button
+              type="button"
               onClick={closeModal}
               className="hover:text-foreground p-2 text-gray-500 duration-200"
             >
