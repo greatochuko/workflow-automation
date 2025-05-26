@@ -102,7 +102,6 @@ export default function ClientSettingsPage({
             onUpdateVideoType={handleUpdateVideoType}
             videoTypes={selectedClient.videoTypes}
             user={selectedClient}
-            key={selectedClient.id}
           />
           <KnowledgeBase client={selectedClient} key={selectedClient.id} />
         </>
