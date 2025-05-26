@@ -47,7 +47,7 @@ export function VideoCarousel({
 
   return (
     <div className="relative">
-      {files.length > 1 && (
+      {files.length > 0 && (
         <>
           <button
             className="bg-background text-foreground hover:bg-accent hover:border-accent absolute top-1/2 -left-4 z-10 -translate-y-1/2 transform rounded-md border border-gray-300 p-2.5 duration-200 hover:text-white"

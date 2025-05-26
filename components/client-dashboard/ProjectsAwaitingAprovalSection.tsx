@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { ProjectType } from "@/types/project";
-import RejectProjectModal from "./RejectProjectModal";
+import RejectProjectModal from "./ProjectActionModal";
 
 export default function ProjectsAwaitingApprovalSection({
   projects,
@@ -13,11 +13,11 @@ export default function ProjectsAwaitingApprovalSection({
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
 }) {
-  const [projectToReject, setProjectToReject] = useState<ProjectType | null>(
-    null,
-  );
-  const [projectApprovalModalOpen, setProjectRejectionModalOpen] =
-    useState(false);
+  const [projectActionModal, setProjectActionModal] = useState<{
+    open: boolean;
+    type: "approve" | "reject" | "";
+    projectId: string;
+  }>({ open: false, type: "", projectId: "" });
 
   const submittedProjects = useMemo(
     () => projects.filter((project) => project.status === "SUBMITTED"),
@@ -32,7 +32,7 @@ export default function ProjectsAwaitingApprovalSection({
         </h3>
         <div className="w-full overflow-x-auto">
           <div className="flex gap-3">
-            {submittedProjects.length > 1 ? (
+            {submittedProjects.length > 0 ? (
               submittedProjects.map((project) => (
                 <div
                   key={project.id}
@@ -49,15 +49,27 @@ export default function ProjectsAwaitingApprovalSection({
 
                     <div className="flex gap-2">
                       <button
-                        onClick={() => {
-                          setProjectRejectionModalOpen(true);
-                          setProjectToReject(project);
-                        }}
+                        onClick={() =>
+                          setProjectActionModal({
+                            open: true,
+                            type: "reject",
+                            projectId: project.id,
+                          })
+                        }
                         className="flex-1 rounded-md border border-red-200 py-1.5 text-xs text-red-600 duration-200 hover:bg-red-50"
                       >
                         Reject
                       </button>
-                      <button className="flex-1 rounded-md border border-emerald-600 bg-emerald-600 py-1.5 text-xs text-white duration-200 hover:bg-emerald-700">
+                      <button
+                        onClick={() =>
+                          setProjectActionModal({
+                            open: true,
+                            type: "approve",
+                            projectId: project.id,
+                          })
+                        }
+                        className="flex-1 rounded-md border border-emerald-600 bg-emerald-600 py-1.5 text-xs text-white duration-200 hover:bg-emerald-700"
+                      >
                         Approve
                       </button>
                     </div>
@@ -85,9 +97,17 @@ export default function ProjectsAwaitingApprovalSection({
       </div>
 
       <RejectProjectModal
-        closeModal={() => setProjectRejectionModalOpen(false)}
-        open={projectApprovalModalOpen}
-        project={projectToReject}
+        closeModal={() =>
+          setProjectActionModal((prev) => ({
+            ...prev,
+            open: false,
+            projectId: "",
+          }))
+        }
+        open={projectActionModal.open}
+        projectId={projectActionModal.projectId}
+        actionType={projectActionModal.type}
+        updateProjectList={updateProjectList}
       />
     </>
   );

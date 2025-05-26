@@ -66,7 +66,12 @@ export default function ProjectDetailsModal({
             className={`rounded-full px-2 py-1 text-xs font-medium text-white ${project?.status ? getEventColorClass(project.status) : "bg-gray-200 text-gray-600"}`}
             title={project?.status || "No status"}
           >
-            {project?.status.replace("_", "-").toLowerCase() || "No status"}
+            {project?.status
+              ? project.status
+                  .replace("_", " ")
+                  .toLowerCase()
+                  .replace(/^\w/, (c) => c.toUpperCase())
+              : "No status"}
           </span>
         </div>
 
@@ -74,6 +79,17 @@ export default function ProjectDetailsModal({
           <h4 className="font-medium">Description</h4>
           <p className="text-sm text-gray-500">{project?.description}</p>
         </div>
+
+        {(project?.status === "APPROVED" || project?.status === "REJECTED") && (
+          <div className="flex flex-col gap-1">
+            <h4 className="font-medium">Feedback</h4>
+            <p
+              className={`rounded-md text-sm ${project?.feedback ? (project?.status === "REJECTED" ? "border border-red-200 bg-red-50 p-2 text-red-600" : "border border-emerald-200 bg-emerald-50 p-2 text-emerald-600") : "text-gray-500"}`}
+            >
+              {project?.feedback || "No feedback provided"}
+            </p>
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <h4 className="font-medium">Project Files</h4>

@@ -45,7 +45,7 @@ export default function PendingProjectsSection({
         </h3>
         <div className="w-full overflow-x-auto">
           <div className="flex gap-3">
-            {unCompletedProjects.length > 1 ? (
+            {unCompletedProjects.length > 0 ? (
               unCompletedProjects.map((project) => (
                 <div
                   key={project.id}
