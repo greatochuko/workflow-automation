@@ -19,6 +19,7 @@ button:disabled {
 @theme {
   --color-accent: hsl(245, 81%, 57%);
   --color-accent-black: rgb(16, 25, 45);
+  --color-accent-red: rgb(239, 67, 67);
   --color-accent-black-200: rgb(29, 33, 48);
   --color-background: rgb(248, 249, 252);
   --color-foreground: #020817;

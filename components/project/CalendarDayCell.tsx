@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { format, isBefore, isSameDay, isToday } from "date-fns";
 import { ProjectType } from "@/types/project";
 import { ProjectStatus } from "@prisma/client";
@@ -23,10 +23,12 @@ interface CalendarDayCellProps {
   day: Date;
   projects: ProjectType[];
   isCurrentMonth: boolean;
-  onDrop: (e: React.DragEvent, date: Date) => void;
+  onDrop: (projectId: string, date: Date) => void;
   readOnly: boolean;
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
+  draggingProjectId: string;
+  setDraggingProjectId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function CalendarDayCell({
@@ -37,29 +39,75 @@ export default function CalendarDayCell({
   onDrop,
   setProjectDetailsModalOpen,
   setProjectToView,
+  draggingProjectId,
+  setDraggingProjectId,
 }: CalendarDayCellProps) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const touchItemRef = useRef<HTMLElement | null>(null);
+
   const dayProjects = useMemo(() => {
     return projects.filter((event) => isSameDay(event.scheduledDate, day));
   }, [projects, day]);
-  const [draggingProjectId, setDraggingProjectId] = useState("");
 
   const isBeforeToday = isBefore(day, new Date());
 
   function handleDropProject(e: React.DragEvent) {
+    e.preventDefault();
     if (readOnly || isBeforeToday) return;
     setIsDraggingOver(false);
-    const draggedProjectId = e.dataTransfer.getData("text/plain");
-    const draggedProject = projects.find((p) => p.id === draggedProjectId);
-    if (!draggedProject || isSameDay(draggedProject.scheduledDate, day)) {
-      return;
-    }
+    const draggedProject = projects.find((p) => p.id === draggingProjectId);
+    if (!draggedProject || isSameDay(draggedProject.scheduledDate, day)) return;
+    onDrop(draggedProject.id, day);
+    setDraggingProjectId("");
+  }
 
-    onDrop(e, day);
+  function handleTouchStart(
+    projectId: string,
+    e: React.TouchEvent<HTMLElement>,
+  ) {
+    if (isBeforeToday || readOnly) return;
+    setDraggingProjectId(projectId);
+    touchItemRef.current = e.currentTarget;
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (isBeforeToday || readOnly) return;
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const dropCell = target?.closest("[data-date]");
+
+    if (dropCell && dropCell.getAttribute("data-date") === day.toISOString()) {
+      setIsDraggingOver(true);
+    } else {
+      setIsDraggingOver(false);
+    }
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (isBeforeToday || readOnly) return;
+    const touch = e.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!dropTarget) return;
+
+    // Find closest CalendarDayCell container
+    const dropCell = dropTarget.closest("[data-date]");
+    if (!dropCell) return;
+
+    const dropDateStr = dropCell.getAttribute("data-date");
+    if (!dropDateStr) return;
+
+    const dropDate = new Date(dropDateStr);
+    const draggedProject = projects.find((p) => p.id === draggingProjectId);
+    if (!draggedProject || isSameDay(draggedProject.scheduledDate, dropDate))
+      return;
+
+    onDrop(draggedProject.id, dropDate);
+    setDraggingProjectId("");
   }
 
   return (
     <div
+      data-date={day.toISOString()}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDraggingOver(true);
@@ -67,11 +115,17 @@ export default function CalendarDayCell({
       onDragLeave={() => setIsDraggingOver(false)}
       onDrop={handleDropProject}
       className={twMerge(
-        `flex h-24 flex-col items-end gap-1 rounded-md border p-1 duration-200 ${isToday(day) ? "border-foreground" : "border-gray-300"} ${
+        `flex h-24 flex-col items-end gap-1 rounded-md border p-1 duration-200 ${
+          isToday(day) ? "border-foreground" : "border-gray-300"
+        } ${
           isCurrentMonth
             ? "bg-white"
             : "border-gray-200 bg-gray-50 text-gray-500"
-        } ${isDraggingOver && !isBeforeToday ? "bg-accent/10 border-accent border-dashed" : ""}`,
+        } ${
+          isDraggingOver && !isBeforeToday
+            ? "bg-accent/10 border-accent border-dashed"
+            : ""
+        }`,
       )}
     >
       <span className="block text-xs">{format(day, "d")}</span>
@@ -79,23 +133,29 @@ export default function CalendarDayCell({
         {dayProjects.map((project) => (
           <li
             key={project.id}
-            onClick={() => {
-              setProjectToView(project);
-              setProjectDetailsModalOpen(true);
-            }}
-            draggable={!isBeforeToday && !readOnly}
-            onDragStart={(e) => {
+            draggable={
+              project.status === "IN_PROGRESS" || !isBeforeToday || !readOnly
+            }
+            onDragStart={() => {
               if (isBeforeToday || readOnly) return;
               setDraggingProjectId(project.id);
-              e.dataTransfer.setData("text/plain", project.id);
             }}
             onDragEnd={() => {
               if (isBeforeToday || readOnly) return;
               setDraggingProjectId("");
             }}
+            onTouchStart={(e) => handleTouchStart(project.id, e)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => {
+              setProjectToView(project);
+              setProjectDetailsModalOpen(true);
+            }}
             className={`min-h-5 cursor-pointer overflow-hidden rounded px-1 py-0.5 text-[10.5px] overflow-ellipsis whitespace-nowrap text-white ${
               draggingProjectId === project.id ? "opacity-50" : ""
-            } ${getEventColorClass(project.status)} ${isBeforeToday ? "opacity-70" : ""}`}
+            } ${getEventColorClass(project.status)} ${
+              isBeforeToday ? "opacity-70" : ""
+            }`}
           >
             {project.title}
             <span className="text-gray-300"> [{project.videoType}]</span>

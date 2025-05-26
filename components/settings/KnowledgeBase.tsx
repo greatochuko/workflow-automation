@@ -4,6 +4,11 @@ import { ChevronDownIcon, LoaderIcon } from "lucide-react";
 import Button from "../ui/Button";
 import { saveUserKnowledgeBase } from "@/actions/userActions";
 import { toast } from "sonner";
+import { defaultKnowledgeBaseItems } from "@/lib/data/knowledgeBase";
+
+function getKnowledgeBasePlaceholder(kbId: string) {
+  return defaultKnowledgeBaseItems.find((kb) => kb.id === kbId)?.placeholder;
+}
 
 export default function KnowledgeBase({ client }: { client: UserType }) {
   const [openItems, setOpenItems] = useState<string[]>([]);
@@ -114,6 +119,7 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
                   rows={4}
                   disabled={loading}
                   value={kb.content}
+                  placeholder={getKnowledgeBasePlaceholder(kb.id)}
                   onChange={(e) =>
                     handleChangeKnowledgeBaseItem(kb.id, e.target.value)
                   }

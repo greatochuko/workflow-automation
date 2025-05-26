@@ -114,9 +114,7 @@ export default function CalendarView({
     );
   }, [projects, selectedStatusList, calendarDates]);
 
-  function handleDrop(e: React.DragEvent, date: Date) {
-    e.preventDefault();
-    const eventId = e.dataTransfer.getData("text/plain");
+  function handleDrop(eventId: string, date: Date) {
     onProjectDrop(eventId, date);
   }
 

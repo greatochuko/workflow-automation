@@ -103,10 +103,7 @@ export default function ProjectDetailsModal({
                 <div className="flex flex-1 flex-col gap-1">
                   <p className="text-sm font-medium"> {file.name}</p>
                   <p className="text-xs text-gray-500">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                    Incidunt sit et harum corporis ducimus enim exercitationem,
-                    optio eveniet. Soluta quibusdam voluptate repudiandae earum
-                    ex provident architecto, consequuntur quod modi nostrum?
+                    {file.description}
                     <button
                       type="button"
                       className="ml-2 rounded p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
@@ -121,9 +118,6 @@ export default function ProjectDetailsModal({
                       <CopyIcon className="h-3 w-3" />
                     </button>
                   </p>
-                  {file.description && (
-                    <p className="text-xs text-gray-500">{file.description}</p>
-                  )}
                 </div>
                 <Link
                   href={file.url}

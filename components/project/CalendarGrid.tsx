@@ -1,5 +1,5 @@
 import { ProjectType } from "@/types/project";
-import React from "react";
+import React, { useState } from "react";
 import { isSameMonth } from "date-fns";
 import CalendarDayCell from "./CalendarDayCell";
 
@@ -9,7 +9,7 @@ interface CalendarGridProps {
   weeks: number[];
   filteredProjects: ProjectType[];
   currentDate: Date;
-  onDrop: (e: React.DragEvent, date: Date) => void;
+  onDrop: (projectId: string, date: Date) => void;
   readOnly: boolean;
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
@@ -26,6 +26,8 @@ export default function CalendarGrid({
   setProjectDetailsModalOpen,
   setProjectToView,
 }: CalendarGridProps) {
+  const [draggingProjectId, setDraggingProjectId] = useState("");
+
   return (
     <div className="flex flex-col gap-2">
       <div className="grid max-w-full grid-cols-7 gap-2 overflow-hidden">
@@ -48,6 +50,8 @@ export default function CalendarGrid({
                     <CalendarDayCell
                       key={`${weekIndex}-${i}`}
                       day={day}
+                      draggingProjectId={draggingProjectId}
+                      setDraggingProjectId={setDraggingProjectId}
                       projects={filteredProjects}
                       isCurrentMonth={isSameMonth(day, currentDate)}
                       onDrop={onDrop}
@@ -63,6 +67,8 @@ export default function CalendarGrid({
               <CalendarDayCell
                 key={i}
                 day={day}
+                draggingProjectId={draggingProjectId}
+                setDraggingProjectId={setDraggingProjectId}
                 projects={filteredProjects}
                 isCurrentMonth={true}
                 onDrop={onDrop}

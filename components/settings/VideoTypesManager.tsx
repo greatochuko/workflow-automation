@@ -98,7 +98,7 @@ export default function VideoTypesManager({
           value={videoTypeInput}
           onChange={(e) => setVideoTypeInput(e.target.value)}
           disabled={creating}
-          className="bg-background flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm"
+          className="bg-background w-0 flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm"
         />
         <Button type="submit" disabled={creating} onClick={handleAddVideoType}>
           {creating ? (

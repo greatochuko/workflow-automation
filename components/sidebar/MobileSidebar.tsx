@@ -32,24 +32,30 @@ export default function MobileSidebar({
 }) {
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
+  const mobileSidebarOpen = !sidebarOpen;
+
   const pathname = usePathname();
+
+  function closeSidebar() {
+    setSidebarOpen(true);
+  }
 
   return (
     <ModalContainer
-      open={!sidebarOpen}
+      open={mobileSidebarOpen}
       closeModal={() => setSidebarOpen(true)}
       className="sm:hidden"
     >
       <aside
         onClick={(e) => e.stopPropagation()}
-        className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-50 flex-col overflow-hidden text-sm text-white duration-200 ${!sidebarOpen ? "" : "-translate-x-full"}`}
+        className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-50 flex-col overflow-hidden text-sm text-white duration-200 ${mobileSidebarOpen ? "" : "-translate-x-full"}`}
       >
         <div className="flex items-center gap-2 p-4 font-semibold">
           <FileVideoIcon className="h-6 w-6" />
           <span>VideoFlow</span>
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
-            className={`ml-auto duration-200 ${sidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}
+            className={`ml-auto duration-200 ${!mobileSidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}
           >
             <PanelLeftIcon className="h-5 w-5" />
           </button>
@@ -60,7 +66,7 @@ export default function MobileSidebar({
           <nav>
             <ul className="flex flex-col gap-2">
               {user.role !== "ADMIN" && (
-                <li>
+                <li onClick={closeSidebar}>
                   <Link
                     href={"/"}
                     className={`flex items-center gap-4 rounded-md p-2 ${
@@ -75,7 +81,11 @@ export default function MobileSidebar({
                 </li>
               )}
               {sidebarLinks.map((link) => (
-                <li key={link.title} hidden={user.role !== "ADMIN"}>
+                <li
+                  onClick={closeSidebar}
+                  key={link.title}
+                  hidden={user.role !== "ADMIN"}
+                >
                   <Link
                     href={link.url}
                     className={`flex items-center gap-4 rounded-md p-2 ${
@@ -114,7 +124,10 @@ export default function MobileSidebar({
             </Link>
 
             <button
-              onClick={() => setLogoutModalOpen(true)}
+              onClick={() => {
+                closeSidebar();
+                setLogoutModalOpen(true);
+              }}
               className="flex items-center justify-center gap-1 rounded-md bg-white/[.02] px-3 py-1.5 text-xs duration-200 hover:bg-white/10"
             >
               <LogOutIcon className="h-3 w-3" />

@@ -1,41 +1,11 @@
 "use server";
 
 import { hashPassword } from "@/lib/auth/hashPassword";
+import { defaultKnowledgeBaseItems } from "@/lib/data/knowledgeBase";
 import { prisma } from "@/lib/prisma";
 import { getVideoTypes } from "@/services/videoTypeServices";
 import { KnowledgeBaseItemType, type UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
-
-const DEFAULT_KNOWLEDGE_BASE_ITEMS = [
-  {
-    id: "basic",
-    title: "Basic Instructions",
-    content:
-      "Include any fundamental guidelines or instructions for content creation here.",
-  },
-  {
-    id: "objective",
-    title: "Objective",
-    content: "Define the primary goals and purpose of the content.",
-  },
-  {
-    id: "structure",
-    title: "Structure",
-    content: "Outline how the content should be organized and formatted.",
-  },
-  {
-    id: "additional",
-    title: "Additional Information",
-    content:
-      "Any supplementary details or context that would be helpful for content creation.",
-  },
-  {
-    id: "examples",
-    title: "Examples",
-    content:
-      "Provide sample content or references that demonstrate the desired output.",
-  },
-];
 
 export async function createUser(userData: {
   fullName: string;
@@ -56,7 +26,7 @@ export async function createUser(userData: {
         ...userData,
         password: hashedPassword,
         knowledgeBase:
-          userData.role === "CLIENT" ? DEFAULT_KNOWLEDGE_BASE_ITEMS : undefined,
+          userData.role === "CLIENT" ? defaultKnowledgeBaseItems : undefined,
         videoTypes: defaultVideoTypes,
       },
     });
