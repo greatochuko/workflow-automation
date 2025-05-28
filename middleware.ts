@@ -11,12 +11,14 @@ export async function middleware(request: NextRequest) {
 
   let isAuthenticated = false;
   let userRole;
+  let userHasChangedPassword;
 
   if (token) {
     const payload = await verifyToken(token);
     if (payload?.user.id) {
       isAuthenticated = true;
       userRole = payload.user.role;
+      userHasChangedPassword = payload.user.passwordChanged;
     }
   }
 
@@ -24,6 +26,22 @@ export async function middleware(request: NextRequest) {
 
   // If authenticated and trying to access login, redirect to /
   if (isAuthenticated && authRoutes.includes(pathname)) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  if (
+    isAuthenticated &&
+    !userHasChangedPassword &&
+    pathname !== "/change-password"
+  ) {
+    return NextResponse.redirect(new URL("/change-password", request.url));
+  }
+
+  if (
+    isAuthenticated &&
+    userHasChangedPassword &&
+    pathname === "/change-password"
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

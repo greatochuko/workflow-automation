@@ -30,7 +30,8 @@ export default function Sidebar({ user }: { user: UserType }) {
 
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
-  if (pathname.startsWith("/login")) return null;
+  if (pathname.startsWith("/login") || pathname.startsWith("/change-password"))
+    return null;
 
   return (
     <>

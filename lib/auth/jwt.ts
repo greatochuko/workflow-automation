@@ -5,7 +5,11 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "your-secret",
 ); // Ensure this is set in .env
 
-type AuthTokenPayload = { id: string; role: UserType["role"] };
+type AuthTokenPayload = {
+  id: string;
+  role: UserType["role"];
+  passwordChanged: boolean;
+};
 
 export async function signToken(payload: AuthTokenPayload) {
   return await new SignJWT({ user: payload })
