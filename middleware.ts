@@ -32,6 +32,7 @@ export async function middleware(request: NextRequest) {
   if (
     isAuthenticated &&
     !userHasChangedPassword &&
+    userRole !== "ADMIN" &&
     pathname !== "/change-password"
   ) {
     return NextResponse.redirect(new URL("/change-password", request.url));
@@ -39,7 +40,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     isAuthenticated &&
-    userHasChangedPassword &&
+    (userHasChangedPassword || userRole === "ADMIN") &&
     pathname === "/change-password"
   ) {
     return NextResponse.redirect(new URL("/", request.url));
