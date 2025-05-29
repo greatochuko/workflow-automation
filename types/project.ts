@@ -1,29 +1,31 @@
 import { ProjectStatus } from "@prisma/client";
 import { UserType } from "./user";
 
+export type ProjectFileType = {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  thumbnailUrl: string;
+  type: string;
+};
+
 export type ProjectType = {
   id: string;
   title: string;
   description: string;
   scheduledDate: Date;
   videoType: string;
+  captionData: {
+    hook: string;
+    cta1: string;
+    cta2: string;
+    captionContent: string;
+  };
   feedback: string;
   submissionDate: Date;
-  completedFile: {
-    id: string;
-    name: string;
-    url: string;
-    thumbnailUrl: string;
-    type: string;
-  }[];
-  files: {
-    id: string;
-    name: string;
-    description: string;
-    url: string;
-    thumbnailUrl: string;
-    type: string;
-  }[];
+  completedFile: Omit<ProjectFileType, "description">[];
+  files: ProjectFileType[];
   status: ProjectStatus;
   createdAt: Date;
   updatedAt: Date;

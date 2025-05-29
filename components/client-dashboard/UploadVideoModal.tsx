@@ -9,7 +9,7 @@ import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import { createProject } from "@/actions/projectActions";
-import { ProjectType } from "@/types/project";
+import { ProjectFileType, ProjectType } from "@/types/project";
 
 const MAX_NUMBER_OF_FILES = 5;
 
@@ -30,6 +30,7 @@ export default function UploadVideoModal({
   const [description, setDescription] = useState("");
   const [date, setDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(true);
   const [error, setError] = useState("");
 
   const handleFiles = (files: FileList) => {
@@ -76,6 +77,28 @@ export default function UploadVideoModal({
     setUploadedFiles((prev) => prev.filter((file) => file.metadata.id !== id));
   }
 
+  async function uploadFile(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Upload failed");
+      }
+
+      return result.data as string;
+    } catch {
+      return null;
+    }
+  }
+
   async function handleSubmit() {
     setError("");
     if (uploadedFiles.length === 0) {
@@ -96,23 +119,44 @@ export default function UploadVideoModal({
       return;
     }
     setLoading(true);
+    setUploading(true);
+
+    const projectFiles: ProjectFileType[] = [];
+
+    const uploadedResults = await Promise.all(
+      uploadedFiles.map(async (file) => {
+        const url = await uploadFile(file.file);
+        if (url) {
+          return {
+            id: file.metadata.id,
+            name: file.file.name,
+            description: file.metadata.description,
+            url,
+            thumbnailUrl: "",
+            type: file.file.type,
+          } as ProjectFileType;
+        }
+        return null;
+      }),
+    );
+
+    for (const result of uploadedResults) {
+      if (result) {
+        projectFiles.push(result);
+      }
+    }
+    setUploading(false);
 
     const projectData = {
       title: title,
       description: description,
       scheduledDate: date,
       videoType: videoType,
-      files: uploadedFiles.map((file) => ({
-        id: file.metadata.id,
-        name: file.file.name,
-        description: file.metadata.description,
-        url: "",
-        thumbnailUrl: "",
-        type: file.file.type,
-      })),
+      files: projectFiles,
     };
 
     const { data, error } = await createProject(projectData);
+
     if (data) {
       updateProjects(data as ProjectType);
       toast.success("Project created successfully!");
@@ -228,7 +272,7 @@ export default function UploadVideoModal({
                 {loading ? (
                   <>
                     <LoaderIcon className="h-4 w-4 animate-spin" />
-                    Submitting...
+                    {uploading ? "Uploading Files..." : "Submitting..."}
                   </>
                 ) : (
                   "Submit"

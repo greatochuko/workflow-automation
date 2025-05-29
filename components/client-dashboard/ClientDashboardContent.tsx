@@ -71,7 +71,7 @@ export default function ClientDashboardContent({
         closeModal={closeProjectDetailsModal}
         open={projectDetailsModalOpen}
         project={projectToView}
-        showAiResponse={projectToView?.status === "SUBMITTED"}
+        showAiResponse={projectToView?.status !== "IN_PROGRESS"}
       />
     </>
   );

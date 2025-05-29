@@ -2,16 +2,11 @@
 
 import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
-import { ProjectType } from "@/types/project";
-
-type ProjectFileType = {
-  id: string;
-  name: string;
-  description: string;
-  url: string;
-  thumbnailUrl: string;
-  type: string;
-};
+import { ProjectFileType, ProjectType } from "@/types/project";
+import { UserType } from "@/types/user";
+import OpenAI from "openai";
+import { zodTextFormat } from "openai/helpers/zod";
+import { z } from "zod";
 
 type ProjectDataType = {
   title: string;
@@ -21,6 +16,15 @@ type ProjectDataType = {
   files: ProjectFileType[];
 };
 
+const openai = new OpenAI();
+
+const ProjectCTAResponse = z.object({
+  hook: z.string(),
+  cta1: z.string(),
+  cta2: z.string(),
+  captionContent: z.string(),
+});
+
 export async function createProject(projectData: ProjectDataType) {
   try {
     const { payload } = await getTokenFromCookie();
@@ -29,11 +33,52 @@ export async function createProject(projectData: ProjectDataType) {
       return { data: null, error: "Invalid token" };
     }
 
+    const user = (await prisma.user.findFirst({
+      where: { id: payload.user.id },
+    })) as unknown as UserType | null;
+
+    if (!user) {
+      return { data: null, error: "Invalid user ID. User not found." };
+    }
+
+    const response = await openai.responses.parse({
+      model: "gpt-4o", // use accessible model
+      input: [
+        {
+          role: "system",
+          content:
+            "You are a creative social media assistant who writes engaging Instagram captions.",
+        },
+        {
+          role: "user",
+          content: `
+            Here is the Video Context below. Based on the video context, please help me create the Hook, CTA's and post Caption. Please make sure you follow the rules below and the previous examples from your knowledge base on how to create these in my tone of voice and following my framework. Thank you
+
+            Title: ${projectData.title}
+            Description: ${projectData.description}
+            Video Type: ${projectData.videoType}
+
+            Basic Instructions: ${user.knowledgeBase.find((kb) => kb.id === "basic")?.content}
+            Objective: ${user.knowledgeBase.find((kb) => kb.id === "objective")?.content}
+            Structure: ${user.knowledgeBase.find((kb) => kb.id === "structure")?.content}
+            Additional information: ${user.knowledgeBase.find((kb) => kb.id === "additional")?.content}
+            Examples: ${user.knowledgeBase.find((kb) => kb.id === "examples")?.content}      
+            `,
+        },
+      ],
+      text: {
+        format: zodTextFormat(ProjectCTAResponse, "instagram_caption"),
+      },
+    });
+
+    const captionData = response.output_parsed;
+
     const newProject = await prisma.project.create({
       data: {
         ...projectData,
         createdById: payload.user.id,
         status: "IN_PROGRESS",
+        captionData: captionData || undefined,
       },
     });
 

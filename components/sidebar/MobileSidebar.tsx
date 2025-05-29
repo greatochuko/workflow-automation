@@ -89,7 +89,7 @@ export default function MobileSidebar({
                   <Link
                     href={link.url}
                     className={`flex items-center gap-4 rounded-md p-2 ${
-                      pathname.startsWith(link.url)
+                      pathname?.startsWith(link.url)
                         ? "text-accent-black-200 bg-white font-semibold"
                         : "font-medium hover:bg-white/10"
                     }`}

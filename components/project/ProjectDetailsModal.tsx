@@ -14,13 +14,17 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 const AIGeneratedResponse = {
-  Hook: "Discover the magic of AI-generated content with our latest project!",
-  "CTA 1":
-    "Discover the magic of AI-generated content with our latest project!",
-  "CTA 2":
-    "Discover the magic of AI-generated content with our latest project!",
-  "Caption Content":
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  hook: "Unwinding tensions, one adjustment at a time! 🌀",
+  cta1: "Tag someone who could use a little relief. 🙌",
+  cta2: "Follow for more wellness tips! 🌿",
+  captionContent:
+    "Watch as we work our magic to bring back that feel-good vibe to your day. 👐💫\n" +
+    "\n" +
+    "Don’t ignore your body’s whispers; let’s keep your spine in line and your life in balance.\n" +
+    "\n" +
+    "📸: [@chiropractic_clinic_handle]\n" +
+    "\n" +
+    "#ChiropracticCare #BackPainRelief #WellnessJourney",
 };
 
 export default function ProjectDetailsModal({
@@ -118,22 +122,24 @@ export default function ProjectDetailsModal({
                 )}
                 <div className="flex flex-1 flex-col gap-1">
                   <p className="text-sm font-medium"> {file.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {file.description}
-                    <button
-                      type="button"
-                      className="ml-2 rounded p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
-                      title="Copy to clipboard"
-                      onClick={() => {
-                        navigator.clipboard.writeText(file.description);
-                        toast.success("Copied to clipboard!", {
-                          duration: 2000,
-                        });
-                      }}
-                    >
-                      <CopyIcon className="h-3 w-3" />
-                    </button>
-                  </p>
+                  {file.description && (
+                    <p className="text-xs text-gray-500">
+                      {file.description}
+                      <button
+                        type="button"
+                        className="ml-2 rounded p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
+                        title="Copy to clipboard"
+                        onClick={() => {
+                          navigator.clipboard.writeText(file.description);
+                          toast.success("Copied to clipboard!", {
+                            duration: 2000,
+                          });
+                        }}
+                      >
+                        <CopyIcon className="h-3 w-3" />
+                      </button>
+                    </p>
+                  )}
                 </div>
                 <Link
                   href={file.url}
