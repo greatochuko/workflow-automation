@@ -1,18 +1,20 @@
 import { useRef, useState } from "react";
 import Button from "@/components/ui/Button";
-import { Upload } from "lucide-react";
+import { LoaderIcon, Upload } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 interface FileUploadZoneProps {
   onFilesSelected: (files: FileList) => void;
   maxFiles: number;
   disabled?: boolean;
+  selectingFiles: boolean;
 }
 
 export function FileUploadZone({
   onFilesSelected,
   maxFiles,
   disabled = false,
+  selectingFiles,
 }: FileUploadZoneProps) {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,6 +36,9 @@ export function FileUploadZone({
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       onFilesSelected(e.dataTransfer.files);
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     }
   };
 
@@ -41,6 +46,9 @@ export function FileUploadZone({
     e.preventDefault();
     if (e.target.files && e.target.files.length > 0) {
       onFilesSelected(e.target.files);
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     }
   };
 
@@ -76,10 +84,17 @@ export function FileUploadZone({
           </p>
           <Button
             onClick={() => !disabled && inputRef.current?.click()}
-            className="hover:bg-accent text-accent-black mt-2 border border-gray-200 bg-white hover:text-white"
-            disabled={disabled}
+            // className="hover:bg-accent text-accent-black mt-2 border border-gray-200 bg-white hover:text-white"
+
+            disabled={disabled || selectingFiles}
           >
-            Select Files
+            {selectingFiles ? (
+              <>
+                <LoaderIcon className="h-4 w-4 animate-spin" /> Loading...
+              </>
+            ) : (
+              "Select Files"
+            )}
           </Button>
         </div>
       </div>

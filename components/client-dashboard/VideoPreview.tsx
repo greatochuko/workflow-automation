@@ -19,7 +19,8 @@ export function VideoPreview({
   onRemove,
   onMetadataChange,
 }: VideoPreviewProps) {
-  const isVideo = file.file.type.startsWith("video/");
+  const isVideo = false;
+  // const isVideo = file.file.type.startsWith("video/");
 
   return (
     <div className="bg-card w-72 flex-shrink-0 overflow-hidden rounded-md border border-gray-300">
@@ -27,13 +28,13 @@ export function VideoPreview({
         <div className="relative aspect-video">
           {isVideo ? (
             <video
-              src={file.metadata.preview}
+              src={file.metadata.previewUrl}
               className="h-full w-full object-cover"
               controls
             />
           ) : (
             <Image
-              src={file.metadata.preview}
+              src={file.metadata.previewUrl}
               alt="Preview"
               className="object-cover"
               fill

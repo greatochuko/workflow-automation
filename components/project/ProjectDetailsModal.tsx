@@ -13,19 +13,38 @@ import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
 
-const AIGeneratedResponse = {
-  hook: "Unwinding tensions, one adjustment at a time! 🌀",
-  cta1: "Tag someone who could use a little relief. 🙌",
-  cta2: "Follow for more wellness tips! 🌿",
-  captionContent:
-    "Watch as we work our magic to bring back that feel-good vibe to your day. 👐💫\n" +
-    "\n" +
-    "Don’t ignore your body’s whispers; let’s keep your spine in line and your life in balance.\n" +
-    "\n" +
-    "📸: [@chiropractic_clinic_handle]\n" +
-    "\n" +
-    "#ChiropracticCare #BackPainRelief #WellnessJourney",
-};
+// const AIGeneratedResponse = {
+//   hook: "Unwinding tensions, one adjustment at a time! 🌀",
+//   cta1: "Tag someone who could use a little relief. 🙌",
+//   cta2: "Follow for more wellness tips! 🌿",
+//   captionContent:
+//     "Watch as we work our magic to bring back that feel-good vibe to your day. 👐💫\n" +
+//     "\n" +
+//     "Don’t ignore your body’s whispers; let’s keep your spine in line and your life in balance.\n" +
+//     "\n" +
+//     "📸: [@chiropractic_clinic_handle]\n" +
+//     "\n" +
+//     "#ChiropracticCare #BackPainRelief #WellnessJourney",
+// };
+
+function getResponseLabel(key: string) {
+  switch (key) {
+    case "hook":
+      return "Hook";
+
+    case "cta1":
+      return "CTA #1";
+
+    case "cta2":
+      return "CTA #2";
+
+    case "captionContent":
+      return "Caption Content";
+
+    default:
+      break;
+  }
+}
 
 export default function ProjectDetailsModal({
   open,
@@ -101,18 +120,19 @@ export default function ProjectDetailsModal({
             {project?.files.map((file) => (
               <li
                 key={file.id}
-                className="flex items-start gap-2 rounded-md border border-gray-200 bg-white p-2"
+                className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
               >
-                {file.thumbnailUrl ? (
+                {file.thumbnailUrl?.startsWith("/") ||
+                file.thumbnailUrl?.startsWith("http") ? (
                   <Image
                     src={file.thumbnailUrl}
                     alt={file.name}
-                    width={48}
-                    height={48}
-                    className="h-12 w-12 rounded-md border border-gray-300 object-cover"
+                    width={96}
+                    height={96}
+                    className="aspect-video w-24 rounded-md border border-gray-300 object-cover"
                   />
                 ) : (
-                  <span className="flex h-12 w-12 items-center justify-center self-start rounded-md border border-gray-300">
+                  <span className="flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300">
                     {file.type.startsWith("image/") ? (
                       <ImageIcon className="h-5 w-5 text-gray-500" />
                     ) : (
@@ -142,7 +162,7 @@ export default function ProjectDetailsModal({
                   )}
                 </div>
                 <Link
-                  href={file.url}
+                  href={file.url || ""}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Download File"
@@ -155,11 +175,11 @@ export default function ProjectDetailsModal({
           </ul>
         </div>
 
-        {showAiResponse && (
+        {showAiResponse && project?.captionData && (
           <div className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-4">
-            {Object.entries(AIGeneratedResponse).map(([key, value]) => (
+            {Object.entries(project.captionData).map(([key, value]) => (
               <div key={key} className="flex flex-col gap-1">
-                <h5 className="font-medium">{key}</h5>
+                <h5 className="font-medium">{getResponseLabel(key)}</h5>
                 <p className="text-sm text-gray-500">
                   {value}{" "}
                   <button

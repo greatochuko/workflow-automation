@@ -10,12 +10,14 @@ import Button from "../ui/Button";
 import { toast } from "sonner";
 import { createProject } from "@/actions/projectActions";
 import { ProjectFileType, ProjectType } from "@/types/project";
+import { generateVideoThumbnail } from "@/lib/utils/videoThumbnailGenerator";
+import { resizeImage } from "@/lib/utils/imageResize";
 
 const MAX_NUMBER_OF_FILES = 5;
 
 export default function UploadVideoModal({
   open,
-  closeModal,
+  closeModal: closeVideoModal,
   videoTypes,
   updateProjects,
 }: {
@@ -32,8 +34,21 @@ export default function UploadVideoModal({
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(true);
   const [error, setError] = useState("");
+  const [selectingFiles, setSelectingFiles] = useState(false);
 
-  const handleFiles = (files: FileList) => {
+  function closeModal() {
+    setUploadedFiles([]);
+    setTitle("");
+    setDescription("");
+    setDate(null);
+    setError("");
+    setLoading(false);
+    setUploading(true);
+    setVideoType("");
+    closeVideoModal();
+  }
+
+  const handleFiles = async (files: FileList) => {
     if (uploadedFiles.length + files.length > MAX_NUMBER_OF_FILES) {
       toast.error(`You can only upload up to ${MAX_NUMBER_OF_FILES} files.`);
       return;
@@ -49,12 +64,36 @@ export default function UploadVideoModal({
       return;
     }
 
-    const newFiles = validFiles.map((file) => {
-      const id = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-      const preview = URL.createObjectURL(file);
+    setSelectingFiles(true);
+    const newFiles = await Promise.all(
+      validFiles.map(async (file) => {
+        const isVideoFile = file.type.startsWith("video/");
+        let previewFile;
+        let previewUrl;
+        if (isVideoFile) {
+          const { data } = await generateVideoThumbnail(file, 480);
+          previewFile = data?.file;
+          previewUrl = data?.url || "";
+        } else {
+          const { dataUrl, resizedFile } = await resizeImage(file, 320);
+          previewFile = resizedFile;
+          previewUrl = dataUrl || "";
+        }
 
-      return { file, metadata: { id, title: "", description: "", preview } };
-    });
+        const id = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+        return {
+          file,
+          metadata: {
+            id,
+            description: "",
+            previewUrl,
+            previewFile,
+          },
+        };
+      }),
+    );
+    setSelectingFiles(false);
 
     setUploadedFiles((prev) => [...prev, ...newFiles]);
   };
@@ -118,6 +157,7 @@ export default function UploadVideoModal({
       setError("Video type is required");
       return;
     }
+
     setLoading(true);
     setUploading(true);
 
@@ -126,13 +166,18 @@ export default function UploadVideoModal({
     const uploadedResults = await Promise.all(
       uploadedFiles.map(async (file) => {
         const url = await uploadFile(file.file);
+        const thumbnailUrl =
+          (file.metadata.previewFile
+            ? await uploadFile(file.metadata.previewFile)
+            : "") || "";
+
         if (url) {
           return {
             id: file.metadata.id,
             name: file.file.name,
             description: file.metadata.description,
             url,
-            thumbnailUrl: "",
+            thumbnailUrl,
             type: file.file.type,
           } as ProjectFileType;
         }
@@ -201,6 +246,7 @@ export default function UploadVideoModal({
           <FileUploadZone
             maxFiles={MAX_NUMBER_OF_FILES}
             onFilesSelected={handleFiles}
+            selectingFiles={selectingFiles}
           />
 
           {uploadedFiles.length > 0 && (

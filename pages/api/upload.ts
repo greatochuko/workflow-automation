@@ -2,21 +2,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { IncomingForm, type Files, type Fields } from "formidable";
 import fs from "fs";
 import crypto from "crypto";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3Client } from "@/lib/aws-s3";
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
 
 export default async function handler(
   req: NextApiRequest,

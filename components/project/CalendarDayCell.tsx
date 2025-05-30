@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { format, isBefore, isSameDay, isToday } from "date-fns";
+import { format, isBefore, isSameDay, isToday, startOfDay } from "date-fns";
 import { ProjectType } from "@/types/project";
 import { ProjectStatus } from "@prisma/client";
 import { twMerge } from "tailwind-merge";
@@ -49,7 +49,10 @@ export default function CalendarDayCell({
     return projects.filter((event) => isSameDay(event.scheduledDate, day));
   }, [projects, day]);
 
-  const isBeforeToday = isBefore(day, new Date());
+  const isBeforeToday = useMemo(
+    () => isBefore(day, startOfDay(new Date())),
+    [day],
+  );
 
   function handleDropProject(e: React.DragEvent) {
     e.preventDefault();
@@ -134,7 +137,7 @@ export default function CalendarDayCell({
           <li
             key={project.id}
             draggable={
-              project.status === "IN_PROGRESS" || !isBeforeToday || !readOnly
+              (project.status === "IN_PROGRESS" || !isBeforeToday) && !readOnly
             }
             onDragStart={() => {
               if (isBeforeToday || readOnly) return;

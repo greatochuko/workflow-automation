@@ -1,15 +1,76 @@
+import { s3Client } from "@/lib/aws-s3";
 import { prisma } from "@/lib/prisma";
 import { ProjectType } from "@/types/project";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+async function getFileUrl(fileKey: string) {
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileKey,
+  });
+
+  const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  return signedUrl;
+}
+
+export async function signProjectFiles(
+  projects: ProjectType[],
+): Promise<ProjectType[]> {
+  return Promise.all(
+    projects.map(async (project) => {
+      const fileResults = await Promise.allSettled(
+        project.files.map(async (file) => {
+          try {
+            const signedUrl = await getFileUrl(file.url);
+            const signedThumbnailUrl = await getFileUrl(file.thumbnailUrl);
+            return {
+              ...file,
+              url: signedUrl,
+              thumbnailUrl: signedThumbnailUrl,
+            };
+          } catch {
+            return {
+              ...file,
+              url: null,
+              thumbnailUrl: null,
+              error: true,
+            };
+          }
+        }),
+      );
+
+      const signedFiles = fileResults
+        .filter(
+          (
+            res,
+          ): res is PromiseFulfilledResult<{
+            url: string;
+            thumbnailUrl: string;
+            id: string;
+            name: string;
+            description: string;
+            type: string;
+          }> => res.status === "fulfilled",
+        )
+        .map((res) => res.value);
+
+      return { ...project, files: signedFiles };
+    }),
+  );
+}
 
 export async function getClientProjects(clientId: string) {
   try {
-    const projects = await prisma.project.findMany({
+    const projects = (await prisma.project.findMany({
       where: { createdById: clientId },
       orderBy: { createdAt: "desc" },
-    });
+    })) as ProjectType[];
+
+    const signedProjects = await signProjectFiles(projects);
 
     return {
-      data: projects as ProjectType[],
+      data: signedProjects as ProjectType[],
       error: null,
     };
   } catch (err) {
@@ -20,13 +81,15 @@ export async function getClientProjects(clientId: string) {
 
 export async function getFreelancerClientProjects(clientIds: string[]) {
   try {
-    const projects = await prisma.project.findMany({
+    const projects = (await prisma.project.findMany({
       where: { createdById: { in: clientIds } },
       orderBy: { createdAt: "desc" },
-    });
+    })) as ProjectType[];
+
+    const signedProjects = await signProjectFiles(projects);
 
     return {
-      data: projects as ProjectType[],
+      data: signedProjects as ProjectType[],
       error: null,
     };
   } catch (err) {

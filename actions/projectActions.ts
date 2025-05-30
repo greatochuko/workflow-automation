@@ -41,17 +41,7 @@ export async function createProject(projectData: ProjectDataType) {
       return { data: null, error: "Invalid user ID. User not found." };
     }
 
-    const response = await openai.responses.parse({
-      model: "gpt-4o", // use accessible model
-      input: [
-        {
-          role: "system",
-          content:
-            "You are a creative social media assistant who writes engaging Instagram captions.",
-        },
-        {
-          role: "user",
-          content: `
+    const userContent = `
             Here is the Video Context below. Based on the video context, please help me create the Hook, CTA's and post Caption. Please make sure you follow the rules below and the previous examples from your knowledge base on how to create these in my tone of voice and following my framework. Thank you
 
             Title: ${projectData.title}
@@ -63,7 +53,19 @@ export async function createProject(projectData: ProjectDataType) {
             Structure: ${user.knowledgeBase.find((kb) => kb.id === "structure")?.content}
             Additional information: ${user.knowledgeBase.find((kb) => kb.id === "additional")?.content}
             Examples: ${user.knowledgeBase.find((kb) => kb.id === "examples")?.content}      
-            `,
+            `;
+
+    const response = await openai.responses.parse({
+      model: "gpt-4o", // use accessible model
+      input: [
+        {
+          role: "system",
+          content:
+            "You are a creative social media assistant who writes engaging Instagram captions.",
+        },
+        {
+          role: "user",
+          content: userContent,
         },
       ],
       text: {
@@ -71,14 +73,14 @@ export async function createProject(projectData: ProjectDataType) {
       },
     });
 
-    const captionData = response.output_parsed;
+    const captionData = response.output_parsed || undefined;
 
     const newProject = await prisma.project.create({
       data: {
         ...projectData,
         createdById: payload.user.id,
         status: "IN_PROGRESS",
-        captionData: captionData || undefined,
+        captionData,
       },
     });
 
