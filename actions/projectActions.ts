@@ -134,25 +134,23 @@ export async function deleteProject(projectId: string) {
       where: { id: projectId },
     })) as ProjectType;
 
-    for (const file of deletedProject.files) {
-      try {
-        const command = new DeleteObjectCommand({
+    const deleteCommands = deletedProject.files.flatMap((file) => {
+      return [
+        new DeleteObjectCommand({
           Bucket: process.env.AWS_BUCKET_NAME!,
           Key: file.url,
-        });
-        await s3Client.send(command);
-
-        const deletePreviewCommand = new DeleteObjectCommand({
+        }),
+        new DeleteObjectCommand({
           Bucket: process.env.AWS_BUCKET_NAME!,
           Key: file.thumbnailUrl,
-        });
-        await s3Client.send(deletePreviewCommand);
-      } catch {
-        console.log(
-          "Unable to delete file or thumbnail with name: ",
-          file.name,
-        );
-      }
+        }),
+      ];
+    });
+
+    try {
+      await Promise.all(deleteCommands.map((cmd) => s3Client.send(cmd)));
+    } catch (err) {
+      console.error("Error deleting some files from S3:", err);
     }
 
     return { data: deletedProject, error: null };
