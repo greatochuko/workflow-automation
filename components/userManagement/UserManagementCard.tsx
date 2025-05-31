@@ -1,6 +1,6 @@
 "use client";
 
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import React, { useState } from "react";
 import Avatar from "../ui/Avatar";
 import { type UserType } from "@/types/user";
@@ -69,8 +69,11 @@ export default function UserManagementCard({
           >
             Assign to
           </button>
-          <button className="hover:bg-accent rounded-md p-2 duration-200 hover:text-white">
-            <PencilIcon className="h-4 w-4" />
+          <button
+            onClick={() => setDeleteUserModalOpen(true)}
+            className="hover:bg-accent-red text-accent-red rounded-md p-2 duration-200 hover:text-white"
+          >
+            <TrashIcon className="h-4 w-4" />
           </button>
         </div>
       ) : (
