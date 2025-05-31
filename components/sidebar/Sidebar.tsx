@@ -21,7 +21,7 @@ import MobileSidebar from "./MobileSidebar";
 const sidebarLinks = [
   // { title: "Main", url: "/", icon: HomeIcon },
   { title: "Users", url: "/users", icon: UsersIcon },
-  { title: "Settings", url: "/settings", icon: SettingsIcon },
+  { title: "User Settings", url: "/settings", icon: SettingsIcon },
 ];
 
 export default function Sidebar({ user }: { user: UserType }) {

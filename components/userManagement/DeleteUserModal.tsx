@@ -2,35 +2,31 @@ import React, { useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { LoaderIcon, TrashIcon } from "lucide-react";
 import Button from "../ui/Button";
-import { deleteProject } from "@/actions/projectActions";
 import { toast } from "sonner";
+import { deleteUser } from "@/actions/userActions";
 
-export default function DeleteProjectModal({
+export default function DeleteUserModal({
   open,
   closeModal,
-  closeParentModal,
-  projectId,
-  projectTitle,
-  removeFromProjectList,
+  userName,
+  userId,
+  removeFromUserList,
 }: {
   open: boolean;
-  closeParentModal: () => void;
   closeModal: () => void;
-  projectId?: string;
-  projectTitle?: string;
-  removeFromProjectList(deletedProjectId: string): void;
+  userName: string;
+  userId: string;
+  removeFromUserList(deletedUserId: string): void;
 }) {
   const [loading, setLoading] = useState(false);
 
-  async function handleDeleteProject() {
+  async function handleDeleteUser() {
     setLoading(true);
-    if (!projectId) return;
-    const { data } = await deleteProject(projectId);
-    if (data) {
-      toast.success("Project deleted successfully");
+    const { error } = await deleteUser(userId);
+    if (error === null) {
+      toast.success("User deleted successfully");
       closeModal();
-      closeParentModal();
-      removeFromProjectList(projectId);
+      removeFromUserList(userId);
     }
     setLoading(false);
   }
@@ -45,16 +41,16 @@ export default function DeleteProjectModal({
           <TrashIcon className="h-5 w-5" />
         </span>
 
-        <h2 className="mb-2 text-lg font-semibold">Delete Project</h2>
+        <h2 className="mb-2 text-lg font-semibold">Delete User</h2>
         <p className="mb-4 text-sm text-gray-700">
-          Are you sure you want to delete project{" "}
-          <span className="font-semibold">{projectTitle}</span>
+          Are you sure you want to delete the user{" "}
+          <span className="font-semibold">{userName}</span>
         </p>
         <div className="flex w-full flex-col gap-4">
           <Button
             disabled={loading}
             className="bg-accent-red hover:bg-accent-red/90 disabled:bg-accent-red/50 rounded-full py-4"
-            onClick={handleDeleteProject}
+            onClick={handleDeleteUser}
           >
             {loading ? (
               <>

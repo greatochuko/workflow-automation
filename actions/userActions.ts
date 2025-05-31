@@ -7,6 +7,7 @@ import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { getVideoTypes } from "@/services/videoTypeServices";
 import { KnowledgeBaseItemType, type UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
+import { deleteProject } from "./projectActions";
 
 export async function createUser(userData: {
   fullName: string;
@@ -197,5 +198,35 @@ export async function saveUserKnowledgeBase(
     return { error: null };
   } catch {
     return { error: "Server Error: Unable to update user knowledge base" };
+  }
+}
+
+export async function deleteUser(userId: string) {
+  try {
+    const userProjects = await prisma.project.findMany({
+      where: { createdById: userId },
+    });
+
+    await Promise.all(
+      userProjects.map(async (project) => {
+        const { data, error } = await deleteProject(project.id);
+        if (error) {
+          console.log(`Error deleting project ${project.title}`, error);
+        }
+        return data;
+      }),
+    );
+
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+
+    return { error: null };
+  } catch (err) {
+    console.log(
+      `Error deleting user with id ${userId}`,
+      (err as Error).message,
+    );
+    return { error: "Server Error: Unable to delete user" };
   }
 }

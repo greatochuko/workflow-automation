@@ -1,27 +1,30 @@
 "use client";
 
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, TrashIcon } from "lucide-react";
 import React, { useState } from "react";
 import Avatar from "../ui/Avatar";
 import { type UserType } from "@/types/user";
 import AssignClientsModal from "./AssignClientsModal";
 import { toggleAssignFreelancerToClient } from "@/actions/userActions";
 import Select from "../ui/Select";
+import DeleteUserModal from "./DeleteUserModal";
 
 export default function UserManagementCard({
   user,
   freelancers,
   clients,
+  removeFromUserList,
 }: {
   user: UserType;
   freelancers: UserType[];
   clients: UserType[];
+  removeFromUserList(deletedUserId: string): void;
 }) {
   const [assignedFreelancers, setAssignedFreelancers] = useState(
     user.assignedFreelancers.map((freelancer) => freelancer.id),
   );
   const [assignModalIsOpen, setAssignModalIsOpen] = useState(false);
-
+  const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
   const [assignedClients, setAssignedClients] = useState(
     user.assignedClients.map((client) => client.id),
   );
@@ -98,12 +101,16 @@ export default function UserManagementCard({
               }))}
             />
 
-            <button className="hover:bg-accent rounded-md p-2 duration-200 hover:text-white">
-              <PencilIcon className="h-4 w-4" />
+            <button
+              onClick={() => setDeleteUserModalOpen(true)}
+              className="hover:bg-accent-red text-accent-red rounded-md p-2 duration-200 hover:text-white"
+            >
+              <TrashIcon className="h-4 w-4" />
             </button>
           </div>
         </div>
       )}
+
       {user.role === "FREELANCER" && (
         <AssignClientsModal
           open={assignModalIsOpen}
@@ -114,6 +121,14 @@ export default function UserManagementCard({
           setAssignedClients={setAssignedClients}
         />
       )}
+
+      <DeleteUserModal
+        open={deleteUserModalOpen}
+        closeModal={() => setDeleteUserModalOpen(false)}
+        userId={user.id}
+        userName={user.fullName}
+        removeFromUserList={removeFromUserList}
+      />
     </li>
   );
 }

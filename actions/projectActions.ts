@@ -71,7 +71,7 @@ async function generateCaptionContent(
 
     return response.output_parsed || undefined;
   } catch (error) {
-    console.log((error as Error).message);
+    console.log("Error generating caption content:", (error as Error).message);
     return undefined;
   }
 }
@@ -216,7 +216,10 @@ export async function deleteProject(projectId: string) {
     try {
       await Promise.all(deleteCommands.map((cmd) => s3Client.send(cmd)));
     } catch (err) {
-      console.error("Error deleting some files from S3:", err);
+      console.error(
+        "Error deleting some files from S3:",
+        (err as Error).message,
+      );
     }
 
     return { data: deletedProject, error: null };

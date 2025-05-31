@@ -10,22 +10,23 @@ export default function UserManagementPageContent({
 }: {
   users: User[];
 }) {
+  const [userList, setUserList] = useState(users);
   const [tab, setTab] = useState<"client" | "freelancer">("client");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredUsers = useMemo(
-    () => users.filter((user) => user.role.toLowerCase() === tab),
-    [tab, users],
+    () => userList.filter((user) => user.role.toLowerCase() === tab),
+    [tab, userList],
   );
 
   const clientUsers = useMemo(
-    () => users.filter((user) => user.role === "CLIENT"),
-    [users],
+    () => userList.filter((user) => user.role === "CLIENT"),
+    [userList],
   );
 
   const freelanceUsers = useMemo(
-    () => users.filter((user) => user.role === "FREELANCER"),
-    [users],
+    () => userList.filter((user) => user.role === "FREELANCER"),
+    [userList],
   );
 
   const searchedUsers = useMemo(
@@ -41,6 +42,10 @@ export default function UserManagementPageContent({
       }),
     [filteredUsers, searchQuery],
   );
+
+  function removeFromUserList(deletedUserId: string) {
+    setUserList((prev) => prev.filter((user) => user.id !== deletedUserId));
+  }
 
   return (
     <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
@@ -80,6 +85,7 @@ export default function UserManagementPageContent({
                 key={user.id}
                 freelancers={freelanceUsers}
                 clients={clientUsers}
+                removeFromUserList={removeFromUserList}
               />
             ))}
           </ul>
