@@ -1,10 +1,13 @@
 import React, { useRef, useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { ProjectType } from "@/types/project";
-import { CopyIcon, XIcon } from "lucide-react";
+import { CopyIcon, LoaderIcon, XIcon } from "lucide-react";
 import Button from "../ui/Button";
 import { toast } from "sonner";
 import { submitProjectFiles } from "@/actions/projectActions";
+import { uploadFileWithProgress } from "@/lib/utils/fileUpload";
+import { generateVideoThumbnail } from "@/lib/utils/videoThumbnailGenerator";
+import { resizeImage } from "@/lib/utils/imageResize";
 
 const AIGeneratedResponse = {
   Hook: "Discover the magic of AI-generated content with our latest project!",
@@ -29,7 +32,21 @@ export default function ProjectSubmissionModal({
 }) {
   const [loading, setLoading] = useState(false);
   const [completedFile, setCompletedFile] = useState<File | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+    {},
+  );
+  const [uploading, setUploading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadPercentage =
+    Object.keys(uploadProgress).length > 0
+      ? Math.round(
+          (Object.values(uploadProgress).reduce((a, b) => a + b, 0) /
+            (Object.values(uploadProgress).length * 100)) *
+            100,
+        )
+      : 0;
 
   function closeModalHandler() {
     if (fileInputRef.current && fileInputRef.current.value) {
@@ -39,16 +56,43 @@ export default function ProjectSubmissionModal({
     closeModal();
   }
 
+  async function handleChangeFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+    setCompletedFile(file);
+    const isVideoFile = file.type.startsWith("video/");
+
+    if (isVideoFile) {
+      const { data } = await generateVideoThumbnail(file, 480);
+      setThumbnailFile(data?.file || null);
+    } else {
+      const { resizedFile } = await resizeImage(file, 320);
+      setThumbnailFile(resizedFile || null);
+    }
+  }
+
   async function handleSubmission() {
     if (!project || !completedFile) return;
     setLoading(true);
+    setUploading(true);
+
+    const url = await uploadFileWithProgress(completedFile, (progress, key) => {
+      setUploadProgress((prev) => ({ ...prev, [key]: progress }));
+    });
+    const thumbnailUrl = thumbnailFile
+      ? await uploadFileWithProgress(thumbnailFile, (progress, key) => {
+          setUploadProgress((prev) => ({ ...prev, [key]: progress }));
+        })
+      : "";
+
+    setUploading(false);
 
     const { data } = await submitProjectFiles(project.id, {
       id: `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       name: completedFile.name,
       type: completedFile.type,
-      url: "",
-      thumbnailUrl: "",
+      url: url || "",
+      thumbnailUrl: thumbnailUrl || "",
     });
     if (data) {
       updateProjectList(data);
@@ -116,7 +160,7 @@ export default function ProjectSubmissionModal({
           id="finished-project"
           accept="video/*,image/*"
           ref={fileInputRef}
-          onChange={(e) => setCompletedFile(e.target.files?.[0] ?? null)}
+          onChange={handleChangeFile}
           className="cursor-pointer rounded-md border border-gray-200 p-1 text-sm file:cursor-pointer file:rounded-md file:border file:border-gray-200 file:bg-gray-100 file:p-2 file:duration-200 placeholder:text-gray-500 hover:file:bg-gray-200"
         />
 
@@ -125,7 +169,16 @@ export default function ProjectSubmissionModal({
           onClick={handleSubmission}
           className="self-end"
         >
-          Submit
+          {loading ? (
+            <>
+              <LoaderIcon className="h-4 w-4 animate-spin" />
+              {uploading
+                ? `Uploading Files...(${uploadPercentage}%)`
+                : "Submitting..."}
+            </>
+          ) : (
+            "Submit"
+          )}
         </Button>
       </div>
     </ModalContainer>

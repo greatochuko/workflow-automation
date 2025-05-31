@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 import Button from "../ui/Button";
-import { UploadIcon } from "lucide-react";
+import { ImageIcon, UploadIcon, VideoIcon } from "lucide-react";
 import { ProjectType } from "@/types/project";
 import ProjectSubmissionModal from "../project/ProjectSubmissionModal";
+import Image from "next/image";
 
 export default function PendingProjectsSection({
   projects,
@@ -51,7 +52,26 @@ export default function PendingProjectsSection({
                   key={project.id}
                   className="w-48 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
                 >
-                  <div className="aspect-video bg-gray-200"></div>
+                  {project.files.length > 0 &&
+                  (project.files[0].thumbnailUrl?.startsWith("/") ||
+                    project.files[0].thumbnailUrl?.startsWith("http")) ? (
+                    <Image
+                      src={project.files[0].thumbnailUrl}
+                      alt={project.files[0].name}
+                      width={96}
+                      height={96}
+                      className="aspect-video w-full bg-gray-200 object-cover"
+                    />
+                  ) : (
+                    <span className="flex aspect-video w-full items-center justify-center self-start bg-gray-200">
+                      {project.completedFile.type?.startsWith("image/") ? (
+                        <ImageIcon className="h-5 w-5 text-gray-500" />
+                      ) : (
+                        <VideoIcon className="h-5 w-5 text-gray-500" />
+                      )}
+                    </span>
+                  )}
+
                   <div className="flex flex-col gap-2 p-2 text-xs">
                     <div className="">
                       <h4 className="line-clamp-1 font-medium">

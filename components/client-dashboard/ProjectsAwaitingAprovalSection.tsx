@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { ProjectType } from "@/types/project";
 import RejectProjectModal from "./ProjectActionModal";
+import Image from "next/image";
+import { ImageIcon, VideoIcon } from "lucide-react";
 
 export default function ProjectsAwaitingApprovalSection({
   projects,
@@ -38,7 +40,25 @@ export default function ProjectsAwaitingApprovalSection({
                   key={project.id}
                   className="w-48 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
                 >
-                  <div className="aspect-video bg-gray-200"></div>
+                  {project.completedFile.thumbnailUrl?.startsWith("/") ||
+                  project.completedFile.thumbnailUrl?.startsWith("http") ? (
+                    <Image
+                      src={project.completedFile.thumbnailUrl}
+                      alt={project.completedFile.name}
+                      width={96}
+                      height={96}
+                      className="aspect-video w-full bg-gray-200 object-cover"
+                    />
+                  ) : (
+                    <span className="flex aspect-video w-full items-center justify-center self-start bg-gray-200">
+                      {project.completedFile.type?.startsWith("image/") ? (
+                        <ImageIcon className="h-5 w-5 text-gray-500" />
+                      ) : (
+                        <VideoIcon className="h-5 w-5 text-gray-500" />
+                      )}
+                    </span>
+                  )}
+
                   <div className="flex flex-col gap-2 p-2 text-xs">
                     <div className="">
                       <h4 className="line-clamp-1 font-medium">

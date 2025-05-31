@@ -194,33 +194,34 @@ export async function updateProjectDescription(
   }
 }
 
+export async function deleteFilesFromS3(urls: string[]) {
+  const deleteCommands = urls.map(
+    (key) =>
+      new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME!,
+        Key: key,
+      }),
+  );
+
+  try {
+    await Promise.all(deleteCommands.map((cmd) => s3Client.send(cmd)));
+  } catch (err) {
+    console.error("Error deleting files from S3:", (err as Error).message);
+  }
+}
+
 export async function deleteProject(projectId: string) {
   try {
     const deletedProject = (await prisma.project.delete({
       where: { id: projectId },
     })) as ProjectType;
 
-    const deleteCommands = deletedProject.files.flatMap((file) => {
-      return [
-        new DeleteObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME!,
-          Key: file.url,
-        }),
-        new DeleteObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME!,
-          Key: file.thumbnailUrl,
-        }),
-      ];
-    });
+    const fileKeys = deletedProject.files.flatMap((file) => [
+      file.url,
+      file.thumbnailUrl,
+    ]);
 
-    try {
-      await Promise.all(deleteCommands.map((cmd) => s3Client.send(cmd)));
-    } catch (err) {
-      console.error(
-        "Error deleting some files from S3:",
-        (err as Error).message,
-      );
-    }
+    await deleteFilesFromS3(fileKeys);
 
     return { data: deletedProject, error: null };
   } catch {
@@ -246,10 +247,19 @@ export async function submitProjectFiles(
 
 export async function rejectProject(projectId: string, feedback: string) {
   try {
-    const updatedProject = await prisma.project.update({
+    const projectToUpdate = (await prisma.project.findFirst({
       where: { id: projectId },
-      data: { feedback, status: "REJECTED" },
-    });
+    })) as ProjectType;
+
+    const updatedProject = (await prisma.project.update({
+      where: { id: projectId },
+      data: { feedback, status: "REJECTED", completedFile: {} },
+    })) as ProjectType;
+
+    await deleteFilesFromS3([
+      projectToUpdate.completedFile.url,
+      projectToUpdate.completedFile.thumbnailUrl,
+    ]);
 
     return { data: updatedProject as unknown as ProjectType, error: null };
   } catch {

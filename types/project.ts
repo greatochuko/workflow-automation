@@ -24,7 +24,7 @@ export type ProjectType = {
   };
   feedback: string;
   submissionDate: Date;
-  completedFile: Omit<ProjectFileType, "description">[];
+  completedFile: Omit<ProjectFileType, "description">;
   files: ProjectFileType[];
   status: ProjectStatus;
   createdAt: Date;

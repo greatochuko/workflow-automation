@@ -242,6 +242,11 @@ export default function ProjectDetailsModal({
             )}
           </div>
 
+          <div className="flex flex-col gap-1">
+            <h4 className="font-medium">Video Type</h4>
+            <p className="text-sm text-gray-500">{project?.videoType}</p>
+          </div>
+
           {(project?.status === "APPROVED" ||
             project?.status === "REJECTED") && (
             <div className="flex flex-col gap-1">
@@ -253,7 +258,48 @@ export default function ProjectDetailsModal({
               </p>
             </div>
           )}
-
+          {project?.status === "SUBMITTED" ||
+            (project?.status === "APPROVED" && (
+              <div className="flex flex-col gap-2">
+                <h4 className="font-medium">Completed Project File</h4>
+                <li
+                  key={project.completedFile.id}
+                  className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
+                >
+                  {project.completedFile.thumbnailUrl?.startsWith("/") ||
+                  project.completedFile.thumbnailUrl?.startsWith("http") ? (
+                    <Image
+                      src={project.completedFile.thumbnailUrl}
+                      alt={project.completedFile.name}
+                      width={96}
+                      height={96}
+                      className="aspect-video w-24 rounded-md border border-gray-300 object-cover"
+                    />
+                  ) : (
+                    <span className="flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300">
+                      {project.completedFile.type.startsWith("image/") ? (
+                        <ImageIcon className="h-5 w-5 text-gray-500" />
+                      ) : (
+                        <VideoIcon className="h-5 w-5 text-gray-500" />
+                      )}
+                    </span>
+                  )}
+                  <p className="flex-1 text-sm font-medium">
+                    {project.completedFile.name}
+                  </p>
+                  <Link
+                    href={project.completedFile.url || ""}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Download File"
+                    className="hover:text-accent p-2 text-gray-500 duration-200"
+                    download={project.completedFile.name}
+                  >
+                    <CloudDownloadIcon className="h-5 w-5" />
+                  </Link>
+                </li>
+              </div>
+            ))}
           <div className="flex flex-col gap-2">
             <h4 className="font-medium">Project Files</h4>
             <ul className="flex flex-col gap-2">

@@ -41,6 +41,28 @@ export async function signProjectFiles(
         }),
       );
 
+      let signedCompletedFile = project.completedFile;
+      try {
+        const signedCompletedfileUrl = await getFileUrl(
+          project.completedFile.url,
+          project.completedFile.name,
+        );
+        const signedCompletedThumbnailUrl = await getFileUrl(
+          project.completedFile.thumbnailUrl,
+          project.completedFile.name,
+        );
+        signedCompletedFile = {
+          ...signedCompletedFile,
+          url: signedCompletedfileUrl,
+          thumbnailUrl: signedCompletedThumbnailUrl,
+        };
+      } catch (err) {
+        console.log(
+          "Error getting the signed url for completed file: ",
+          (err as Error).message,
+        );
+      }
+
       const signedFiles = fileResults
         .filter(
           (
@@ -56,7 +78,11 @@ export async function signProjectFiles(
         )
         .map((res) => res.value);
 
-      return { ...project, files: signedFiles };
+      return {
+        ...project,
+        files: signedFiles,
+        completedFile: signedCompletedFile,
+      };
     }),
   );
 }
