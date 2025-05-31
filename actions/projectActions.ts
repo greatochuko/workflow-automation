@@ -63,7 +63,7 @@ export async function createProject(projectData: ProjectDataType) {
             `;
 
     const response = await openai.responses.parse({
-      model: "gpt-4o", // use accessible model
+      model: "gpt-4o-mini",
       input: [
         {
           role: "system",
