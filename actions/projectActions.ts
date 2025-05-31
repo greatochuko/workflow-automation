@@ -57,7 +57,7 @@ export async function createProject(projectData: ProjectDataType) {
             Objective: ${user.knowledgeBase.find((kb) => kb.id === "objective")?.content}
             Structure: ${user.knowledgeBase.find((kb) => kb.id === "structure")?.content}
             Additional information: ${user.knowledgeBase.find((kb) => kb.id === "additional")?.content}
-            Examples: ${user.knowledgeBase.find((kb) => kb.id === "examples")?.content}      
+            Examples: ${user.knowledgeBase.find((kb) => kb.id === "examples")?.content}
             `;
 
     const response = await openai.responses.parse({

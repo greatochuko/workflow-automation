@@ -35,6 +35,18 @@ export default function ProjectCreationModal({
   const [uploading, setUploading] = useState(true);
   const [error, setError] = useState("");
   const [selectingFiles, setSelectingFiles] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+    {},
+  );
+
+  const uploadPercentage =
+    Object.keys(uploadProgress).length > 0
+      ? Math.round(
+          (Object.values(uploadProgress).reduce((a, b) => a + b, 0) /
+            (Object.values(uploadProgress).length * 100)) *
+            100,
+        )
+      : 0;
 
   function closeModal() {
     setUploadedFiles([]);
@@ -46,6 +58,7 @@ export default function ProjectCreationModal({
     setUploading(true);
     setVideoType("");
     closeVideoModal();
+    setUploadProgress({});
   }
 
   const handleFiles = async (files: FileList) => {
@@ -116,28 +129,69 @@ export default function ProjectCreationModal({
     setUploadedFiles((prev) => prev.filter((file) => file.metadata.id !== id));
   }
 
-  async function uploadFile(file: File) {
-    const { url, key } = await getPresignedUrl(file.type);
+  // async function uploadFile(file: File) {
+  //   const { url, key } = await getPresignedUrl(file.type);
 
-    if (!key) {
-      return key;
-    }
+  //   if (!key) {
+  //     return key;
+  //   }
 
+  //   try {
+  //     const res = await fetch(url, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": file.type,
+  //       },
+  //       body: file,
+  //     });
+
+  //     if (!res.ok) {
+  //       throw new Error("Upload failed");
+  //     }
+
+  //     return key;
+  //   } catch {
+  //     return null;
+  //   }
+  // }
+
+  async function uploadFileWithProgress(
+    file: File,
+    onProgress?: (percent: number, key: string) => void,
+  ): Promise<string | null> {
     try {
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
+      const { url, key } = await getPresignedUrl(file.type);
+
+      if (!url || !key) return null;
+
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("PUT", url, true);
+        xhr.setRequestHeader("Content-Type", file.type);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable && onProgress) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            onProgress(percent, key);
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve();
+          } else {
+            reject(new Error(`Upload failed with status ${xhr.status}`));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error("Network error during upload"));
+        xhr.send(file);
       });
 
-      if (!res.ok) {
-        throw new Error("Upload failed");
-      }
-
       return key;
-    } catch {
+    } catch (err) {
+      console.error("Error uploading file:", (err as Error).message);
       return null;
     }
   }
@@ -169,10 +223,17 @@ export default function ProjectCreationModal({
 
     const uploadedResults = await Promise.all(
       uploadedFiles.map(async (file) => {
-        const url = await uploadFile(file.file);
+        const url = await uploadFileWithProgress(file.file, (progress, key) => {
+          setUploadProgress((prev) => ({ ...prev, [key]: progress }));
+        });
         const thumbnailUrl =
           (file.metadata.previewFile
-            ? await uploadFile(file.metadata.previewFile)
+            ? await uploadFileWithProgress(
+                file.metadata.previewFile,
+                (progress, key) => {
+                  setUploadProgress((prev) => ({ ...prev, [key]: progress }));
+                },
+              )
             : "") || "";
 
         if (url) {
@@ -214,6 +275,8 @@ export default function ProjectCreationModal({
     } else {
       toast.error(error);
     }
+
+    setUploadProgress({});
     setLoading(false);
   }
 
@@ -322,7 +385,9 @@ export default function ProjectCreationModal({
                 {loading ? (
                   <>
                     <LoaderIcon className="h-4 w-4 animate-spin" />
-                    {uploading ? "Uploading Files..." : "Submitting..."}
+                    {uploading
+                      ? `Uploading Files...(${uploadPercentage}%)`
+                      : "Submitting..."}
                   </>
                 ) : (
                   "Submit"

@@ -20,7 +20,7 @@ import Image from "next/image";
 //   captionContent:
 //     "Watch as we work our magic to bring back that feel-good vibe to your day. 👐💫\n" +
 //     "\n" +
-//     "Don’t ignore your body’s whispers; let’s keep your spine in line and your life in balance.\n" +
+//     "Don't ignore your body's whispers; let's keep your spine in line and your life in balance.\n" +
 //     "\n" +
 //     "📸: [@chiropractic_clinic_handle]\n" +
 //     "\n" +
