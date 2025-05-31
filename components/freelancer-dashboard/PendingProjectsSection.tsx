@@ -42,13 +42,13 @@ export default function PendingProjectsSection({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-4">
           <h3 className="text-lg font-semibold sm:text-xl">
             Videos requiring your attention ({unCompletedProjects.length})
           </h3>
           <button
             onClick={() => setShowAll((prev) => !prev)}
-            className="text-accent text-sm font-medium hover:underline"
+            className="text-accent text-sm font-medium whitespace-nowrap hover:underline focus-visible:underline"
           >
             {showAll ? "Show less" : "Show all"}
           </button>
