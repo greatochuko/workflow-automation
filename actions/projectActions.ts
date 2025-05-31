@@ -58,6 +58,8 @@ export async function createProject(projectData: ProjectDataType) {
             Structure: ${user.knowledgeBase.find((kb) => kb.id === "structure")?.content}
             Additional information: ${user.knowledgeBase.find((kb) => kb.id === "additional")?.content}
             Examples: ${user.knowledgeBase.find((kb) => kb.id === "examples")?.content}
+
+            Keep the same format you see in the examples i.e. spaces, paragraphs, new lines, e.t.c
             `;
 
     const response = await openai.responses.parse({
