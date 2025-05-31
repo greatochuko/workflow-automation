@@ -32,6 +32,12 @@ export default function FreelancerDashboardContent({
     );
   }
 
+  function removeFromProjectList(deletedProjectId: string) {
+    setProjects((curr) =>
+      curr.filter((project) => project.id !== deletedProjectId),
+    );
+  }
+
   return (
     <>
       <div className="flex items-center justify-between border-b border-gray-200 px-[5%] py-4">
@@ -61,6 +67,7 @@ export default function FreelancerDashboardContent({
         open={projectDetailsModalOpen}
         project={projectToView}
         showAiResponse={true}
+        removeFromProjectList={removeFromProjectList}
       />
     </>
   );
