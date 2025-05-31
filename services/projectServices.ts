@@ -4,10 +4,11 @@ import { ProjectType } from "@/types/project";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-async function getFileUrl(fileKey: string) {
+async function getFileUrl(fileKey: string, fileName?: string) {
   const command = new GetObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileKey,
+    ResponseContentDisposition: `attachment; filename="${fileName || fileKey}"`,
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
@@ -22,7 +23,7 @@ export async function signProjectFiles(
       const fileResults = await Promise.allSettled(
         project.files.map(async (file) => {
           try {
-            const signedUrl = await getFileUrl(file.url);
+            const signedUrl = await getFileUrl(file.url, file.name);
             const signedThumbnailUrl = await getFileUrl(file.thumbnailUrl);
             return {
               ...file,

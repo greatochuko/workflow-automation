@@ -160,7 +160,7 @@ export default function ProjectCreationModal({
     onProgress?: (percent: number, key: string) => void,
   ): Promise<string | null> {
     try {
-      const { url, key } = await getPresignedUrl(file.type);
+      const { url, key } = await getPresignedUrl(file);
 
       if (!url || !key) return null;
 

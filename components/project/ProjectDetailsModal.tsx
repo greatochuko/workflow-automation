@@ -307,6 +307,7 @@ export default function ProjectDetailsModal({
                     rel="noopener noreferrer"
                     title="Download File"
                     className="hover:text-accent p-2 text-gray-500 duration-200"
+                    download={file.name}
                   >
                     <CloudDownloadIcon className="h-5 w-5" />
                   </Link>
