@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { ProjectFileType, ProjectType } from "@/types/project";
-import { UserType } from "@/types/user";
+import { KnowledgeBaseItemType, UserType } from "@/types/user";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
@@ -30,34 +30,23 @@ const ProjectCTAResponse = z.object({
   captionContent: z.string(),
 });
 
-export async function createProject(projectData: ProjectDataType) {
+async function generateCaptionContent(
+  projectData: { title: string; description: string; videoType: string },
+  userKnowledgeBase: KnowledgeBaseItemType[],
+) {
   try {
-    const { payload } = await getTokenFromCookie();
-
-    if (!payload?.user.id) {
-      return { data: null, error: "Invalid token" };
-    }
-
-    const user = (await prisma.user.findFirst({
-      where: { id: payload.user.id },
-    })) as unknown as UserType | null;
-
-    if (!user) {
-      return { data: null, error: "Invalid user ID. User not found." };
-    }
-
     const userContent = `
-            Here is the Video Context below. Based on the video context, please help me create the Hook, CTA's and post Caption. Please make sure you follow the rules below and the previous examples from your knowledge base on how to create these in my tone of voice and following my framework. Thank you
+    Here is the Video Context below. Based on the video context, please help me create the Hook, CTA's and post Caption. Please make sure you follow the rules below and the previous examples from your knowledge base on how to create these in my tone of voice and following my framework. Thank you
 
             Title: ${projectData.title}
             Description: ${projectData.description}
             Video Type: ${projectData.videoType}
 
-            Basic Instructions: ${user.knowledgeBase.find((kb) => kb.id === "basic")?.content}
-            Objective: ${user.knowledgeBase.find((kb) => kb.id === "objective")?.content}
-            Structure: ${user.knowledgeBase.find((kb) => kb.id === "structure")?.content}
-            Additional information: ${user.knowledgeBase.find((kb) => kb.id === "additional")?.content}
-            Examples: ${user.knowledgeBase.find((kb) => kb.id === "examples")?.content}
+            Basic Instructions: ${userKnowledgeBase.find((kb) => kb.id === "basic")?.content}
+            Objective: ${userKnowledgeBase.find((kb) => kb.id === "objective")?.content}
+            Structure: ${userKnowledgeBase.find((kb) => kb.id === "structure")?.content}
+            Additional information: ${userKnowledgeBase.find((kb) => kb.id === "additional")?.content}
+            Examples: ${userKnowledgeBase.find((kb) => kb.id === "examples")?.content}
 
             Keep the same format you see in the examples i.e. spaces, paragraphs, new lines, e.t.c
             `;
@@ -80,7 +69,33 @@ export async function createProject(projectData: ProjectDataType) {
       },
     });
 
-    const captionData = response.output_parsed || undefined;
+    return response.output_parsed || undefined;
+  } catch (error) {
+    console.log((error as Error).message);
+    return undefined;
+  }
+}
+
+export async function createProject(projectData: ProjectDataType) {
+  try {
+    const { payload } = await getTokenFromCookie();
+
+    if (!payload?.user.id) {
+      return { data: null, error: "Invalid token" };
+    }
+
+    const user = (await prisma.user.findFirst({
+      where: { id: payload.user.id },
+    })) as unknown as UserType | null;
+
+    if (!user) {
+      return { data: null, error: "Invalid user ID. User not found." };
+    }
+
+    const captionData = await generateCaptionContent(
+      projectData,
+      user.knowledgeBase,
+    );
 
     const newProject = (await prisma.project.create({
       data: {
@@ -125,6 +140,50 @@ export async function updateProjectDate(projectId: string, newDate: Date) {
     });
 
     return { data: updatedProject, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
+
+export async function updateProjectDescription(
+  projectId: string,
+  newDescription: string,
+) {
+  try {
+    const projectToUpdate = (await prisma.project.findFirst({
+      where: { id: projectId },
+    })) as ProjectType | null;
+
+    if (!projectToUpdate) {
+      return { data: null, error: "Invalid project ID. Project not found." };
+    }
+
+    const user = (await prisma.user.findFirst({
+      where: { id: projectToUpdate.createdById },
+    })) as UserType | null;
+
+    if (!user) {
+      return { data: null, error: "Invalid user ID. User not found." };
+    }
+
+    const captionData = await generateCaptionContent(
+      {
+        title: projectToUpdate.title,
+        description: newDescription,
+        videoType: projectToUpdate.videoType,
+      },
+      user.knowledgeBase,
+    );
+
+    const updatedProject = (await prisma.project.update({
+      where: { id: projectId },
+      data: captionData
+        ? { captionData, description: newDescription }
+        : { description: newDescription },
+    })) as ProjectType;
+
+    const signedProject = await signProjectFiles([updatedProject]);
+    return { data: signedProject[0], error: null };
   } catch {
     return { data: null, error: "Server Error" };
   }

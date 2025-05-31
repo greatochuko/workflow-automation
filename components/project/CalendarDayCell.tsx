@@ -56,7 +56,7 @@ export default function CalendarDayCell({
 
   function handleDropProject(e: React.DragEvent) {
     e.preventDefault();
-    if (readOnly || isBeforeToday) return;
+    if (readOnly) return;
     setIsDraggingOver(false);
     const draggedProject = projects.find((p) => p.id === draggingProjectId);
     if (!draggedProject || isSameDay(draggedProject.scheduledDate, day)) return;
@@ -68,13 +68,13 @@ export default function CalendarDayCell({
     projectId: string,
     e: React.TouchEvent<HTMLElement>,
   ) {
-    if (isBeforeToday || readOnly) return;
+    if (readOnly) return;
     setDraggingProjectId(projectId);
     touchItemRef.current = e.currentTarget;
   }
 
   function handleTouchMove(e: React.TouchEvent) {
-    if (isBeforeToday || readOnly) return;
+    if (readOnly) return;
     const touch = e.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
     const dropCell = target?.closest("[data-date]");
@@ -87,7 +87,7 @@ export default function CalendarDayCell({
   }
 
   function handleTouchEnd(e: React.TouchEvent) {
-    if (isBeforeToday || readOnly) return;
+    if (readOnly) return;
     const touch = e.changedTouches[0];
     const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
     if (!dropTarget) return;
@@ -124,11 +124,7 @@ export default function CalendarDayCell({
           isCurrentMonth
             ? "bg-white"
             : "border-gray-200 bg-gray-50 text-gray-500"
-        } ${
-          isDraggingOver && !isBeforeToday
-            ? "bg-accent/10 border-accent border-dashed"
-            : ""
-        }`,
+        } ${isDraggingOver ? "bg-accent/10 border-accent border-dashed" : ""}`,
       )}
     >
       <span className="block text-xs">{format(day, "d")}</span>
@@ -136,15 +132,13 @@ export default function CalendarDayCell({
         {dayProjects.map((project) => (
           <li
             key={project.id}
-            draggable={
-              (project.status === "IN_PROGRESS" || !isBeforeToday) && !readOnly
-            }
+            draggable={!readOnly}
             onDragStart={() => {
-              if (isBeforeToday || readOnly) return;
+              if (readOnly) return;
               setDraggingProjectId(project.id);
             }}
             onDragEnd={() => {
-              if (isBeforeToday || readOnly) return;
+              if (readOnly) return;
               setDraggingProjectId("");
             }}
             onTouchStart={(e) => handleTouchStart(project.id, e)}

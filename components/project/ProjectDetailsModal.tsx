@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { ProjectType } from "@/types/project";
 import {
@@ -6,6 +6,8 @@ import {
   CopyIcon,
   EditIcon,
   ImageIcon,
+  LoaderIcon,
+  SaveIcon,
   TrashIcon,
   VideoIcon,
   XIcon,
@@ -16,6 +18,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { isBefore, startOfDay } from "date-fns";
 import DeleteProjectModal from "./DeleteProjectModal";
+import { updateProjectDescription } from "@/actions/projectActions";
 
 // const AIGeneratedResponse = {
 //   hook: "Unwinding tensions, one adjustment at a time! 🌀",
@@ -52,8 +55,8 @@ function getResponseLabel(key: string) {
 
 export default function ProjectDetailsModal({
   open,
-  closeModal,
-  project,
+  closeModal: closeProjectDetailsModal,
+  project: initialProject,
   showAiResponse = false,
   isClientProject = false,
   removeFromProjectList,
@@ -65,8 +68,19 @@ export default function ProjectDetailsModal({
   isClientProject?: boolean;
   removeFromProjectList(deletedProjectId: string): void;
 }) {
+  const [project, setProject] = useState(initialProject);
+  const [loading, setLoading] = useState(false);
   const [canEditProject, setCanEditProject] = useState(false);
   const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useState(false);
+  const [descriptionInput, setDescriptionInput] = useState(
+    project?.description || "",
+  );
+
+  useEffect(() => {
+    if (initialProject) {
+      setProject(initialProject);
+    }
+  }, [initialProject]);
 
   const isBeforeToday = project?.scheduledDate
     ? isBefore(project.scheduledDate, startOfDay(new Date()))
@@ -82,6 +96,37 @@ export default function ProjectDetailsModal({
         : [],
     [project?.captionData],
   );
+
+  function cancelEditing() {
+    setCanEditProject(false);
+    setDescriptionInput(project?.description || "");
+  }
+
+  function startEditing() {
+    setDescriptionInput(project?.description || "");
+    setCanEditProject(true);
+  }
+
+  function closeModal() {
+    setDeleteProjectModalOpen(false);
+    setLoading(false);
+    setCanEditProject(false);
+    closeProjectDetailsModal();
+  }
+
+  async function handleSaveDescription() {
+    setLoading(true);
+    if (!project) return;
+    const { data } = await updateProjectDescription(
+      project.id,
+      descriptionInput,
+    );
+    if (data) {
+      setProject(data);
+      setCanEditProject(false);
+    }
+    setLoading(false);
+  }
 
   return (
     <>
@@ -101,22 +146,53 @@ export default function ProjectDetailsModal({
               <XIcon className="h-4 w-4" />
             </button>
           </div>
-          {isClientProject && !isBeforeToday && (
+          {!isBeforeToday && (
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => setCanEditProject(true)}
-                className="text-accent border-accent/20 hover:bg-accent/10 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium duration-200"
-              >
-                <EditIcon className="h-4 w-4" />
-                Edit
-              </button>
-              <button
-                onClick={() => setDeleteProjectModalOpen(true)}
-                className="text-accent-red border-accent-red/20 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium duration-200 hover:bg-red-100"
-              >
-                <TrashIcon className="h-4 w-4" />
-                Delete
-              </button>
+              {canEditProject ? (
+                <>
+                  <button
+                    onClick={cancelEditing}
+                    className="flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium duration-200 hover:bg-gray-200"
+                  >
+                    <XIcon className="h-4 w-4" />
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveDescription}
+                    disabled={loading}
+                    className="text-accent disabled:bg-accent/10 border-accent/20 hover:bg-accent/10 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium duration-200"
+                  >
+                    {loading ? (
+                      <>
+                        <LoaderIcon className="h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <SaveIcon className="h-4 w-4" />
+                        Save
+                      </>
+                    )}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={startEditing}
+                  className="text-accent border-accent/20 hover:bg-accent/10 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium duration-200"
+                >
+                  <EditIcon className="h-4 w-4" />
+                  Edit
+                </button>
+              )}
+              {isClientProject && (
+                <button
+                  onClick={() => setDeleteProjectModalOpen(true)}
+                  className="text-accent-red border-accent-red/20 ml-auto flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium duration-200 hover:bg-red-100"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                  Delete
+                </button>
+              )}
             </div>
           )}
           <div className="flex flex-wrap justify-between whitespace-nowrap">
@@ -144,8 +220,26 @@ export default function ProjectDetailsModal({
           </div>
 
           <div className="flex flex-col gap-1">
-            <h4 className="font-medium">Description</h4>
-            <p className="text-sm text-gray-500">{project?.description}</p>
+            {canEditProject ? (
+              <>
+                <label htmlFor="description" className="font-medium">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  id="description"
+                  rows={4}
+                  value={descriptionInput}
+                  onChange={(e) => setDescriptionInput(e.target.value)}
+                  className="bg-background resize-none rounded-md border border-gray-300 p-2 px-3 text-sm"
+                />
+              </>
+            ) : (
+              <>
+                <h4 className="font-medium">Description</h4>
+                <p className="text-sm text-gray-500">{project?.description}</p>
+              </>
+            )}
           </div>
 
           {(project?.status === "APPROVED" ||
