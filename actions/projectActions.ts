@@ -8,7 +8,7 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import crypto from "crypto";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/aws-s3";
 import { signProjectFiles } from "@/services/projectServices";
@@ -123,6 +123,39 @@ export async function updateProjectDate(projectId: string, newDate: Date) {
     });
 
     return { data: updatedProject, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
+
+export async function deleteProject(projectId: string) {
+  try {
+    const deletedProject = (await prisma.project.delete({
+      where: { id: projectId },
+    })) as ProjectType;
+
+    for (const file of deletedProject.files) {
+      try {
+        const command = new DeleteObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME!,
+          Key: file.url,
+        });
+        await s3Client.send(command);
+
+        const deletePreviewCommand = new DeleteObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME!,
+          Key: file.thumbnailUrl,
+        });
+        await s3Client.send(deletePreviewCommand);
+      } catch {
+        console.log(
+          "Unable to delete file or thumbnail with name: ",
+          file.name,
+        );
+      }
+    }
+
+    return { data: deletedProject, error: null };
   } catch {
     return { data: null, error: "Server Error" };
   }

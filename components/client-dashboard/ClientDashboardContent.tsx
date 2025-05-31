@@ -31,10 +31,16 @@ export default function ClientDashboardContent({
   }
 
   function updateProjectList(updatedProject: ProjectType) {
-    setProjects((prevProjects) =>
-      prevProjects.map((project) =>
+    setProjects((curr) =>
+      curr.map((project) =>
         project.id === updatedProject.id ? updatedProject : project,
       ),
+    );
+  }
+
+  function removeFromProjectList(deletedProjectId: string) {
+    setProjects((curr) =>
+      curr.filter((project) => project.id !== deletedProjectId),
     );
   }
 
@@ -72,6 +78,8 @@ export default function ClientDashboardContent({
         open={projectDetailsModalOpen}
         project={projectToView}
         showAiResponse={projectToView?.status !== "IN_PROGRESS"}
+        isClientProject
+        removeFromProjectList={removeFromProjectList}
       />
     </>
   );
