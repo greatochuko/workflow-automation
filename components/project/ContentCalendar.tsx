@@ -8,7 +8,6 @@ import { updateProjectDate } from "@/actions/projectActions";
 
 interface CalendarContainerProps {
   projects: ProjectType[];
-  readOnly?: boolean;
   setProjects: React.Dispatch<React.SetStateAction<ProjectType[]>>;
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
@@ -16,7 +15,6 @@ interface CalendarContainerProps {
 
 export default function ContentCalendar({
   projects,
-  readOnly = false,
   setProjects,
   setProjectDetailsModalOpen,
 
@@ -25,7 +23,6 @@ export default function ContentCalendar({
   const [viewMode, setViewMode] = useState<"twoWeeks" | "month">("twoWeeks");
 
   async function handleProjectDrop(projectId: string, newDate: Date) {
-    if (readOnly) return;
     setProjects((prev) =>
       prev.map((proj) =>
         proj.id === projectId ? { ...proj, scheduledDate: newDate } : proj,
@@ -59,7 +56,6 @@ export default function ContentCalendar({
       <CalendarView
         projects={projects}
         onProjectDrop={handleProjectDrop}
-        readOnly={readOnly}
         viewMode={viewMode}
         setProjectToView={setProjectToView}
         setProjectDetailsModalOpen={setProjectDetailsModalOpen}

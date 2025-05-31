@@ -24,7 +24,6 @@ interface CalendarDayCellProps {
   projects: ProjectType[];
   isCurrentMonth: boolean;
   onDrop: (projectId: string, date: Date) => void;
-  readOnly: boolean;
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
   draggingProjectId: string;
@@ -35,7 +34,6 @@ export default function CalendarDayCell({
   day,
   projects,
   isCurrentMonth,
-  readOnly,
   onDrop,
   setProjectDetailsModalOpen,
   setProjectToView,
@@ -56,7 +54,7 @@ export default function CalendarDayCell({
 
   function handleDropProject(e: React.DragEvent) {
     e.preventDefault();
-    if (readOnly) return;
+
     setIsDraggingOver(false);
     const draggedProject = projects.find((p) => p.id === draggingProjectId);
     if (!draggedProject || isSameDay(draggedProject.scheduledDate, day)) return;
@@ -68,13 +66,11 @@ export default function CalendarDayCell({
     projectId: string,
     e: React.TouchEvent<HTMLElement>,
   ) {
-    if (readOnly) return;
     setDraggingProjectId(projectId);
     touchItemRef.current = e.currentTarget;
   }
 
   function handleTouchMove(e: React.TouchEvent) {
-    if (readOnly) return;
     const touch = e.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
     const dropCell = target?.closest("[data-date]");
@@ -87,7 +83,6 @@ export default function CalendarDayCell({
   }
 
   function handleTouchEnd(e: React.TouchEvent) {
-    if (readOnly) return;
     const touch = e.changedTouches[0];
     const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
     if (!dropTarget) return;
@@ -132,13 +127,11 @@ export default function CalendarDayCell({
         {dayProjects.map((project) => (
           <li
             key={project.id}
-            draggable={!readOnly}
+            draggable
             onDragStart={() => {
-              if (readOnly) return;
               setDraggingProjectId(project.id);
             }}
             onDragEnd={() => {
-              if (readOnly) return;
               setDraggingProjectId("");
             }}
             onTouchStart={(e) => handleTouchStart(project.id, e)}

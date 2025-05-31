@@ -10,7 +10,6 @@ interface CalendarGridProps {
   filteredProjects: ProjectType[];
   currentDate: Date;
   onDrop: (projectId: string, date: Date) => void;
-  readOnly: boolean;
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
 }
@@ -22,7 +21,6 @@ export default function CalendarGrid({
   filteredProjects,
   currentDate,
   onDrop,
-  readOnly,
   setProjectDetailsModalOpen,
   setProjectToView,
 }: CalendarGridProps) {
@@ -55,7 +53,6 @@ export default function CalendarGrid({
                       projects={filteredProjects}
                       isCurrentMonth={isSameMonth(day, currentDate)}
                       onDrop={onDrop}
-                      readOnly={readOnly}
                       setProjectToView={setProjectToView}
                       setProjectDetailsModalOpen={setProjectDetailsModalOpen}
                     />
@@ -72,7 +69,6 @@ export default function CalendarGrid({
                 projects={filteredProjects}
                 isCurrentMonth={true}
                 onDrop={onDrop}
-                readOnly={readOnly}
                 setProjectToView={setProjectToView}
                 setProjectDetailsModalOpen={setProjectDetailsModalOpen}
               />

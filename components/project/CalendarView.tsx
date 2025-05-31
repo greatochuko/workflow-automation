@@ -20,7 +20,6 @@ import {
 interface CalendarViewProps {
   projects: ProjectType[];
   onProjectDrop: (eventId: string, newDate: Date) => void;
-  readOnly?: boolean;
   viewMode: "twoWeeks" | "month";
   setProjectDetailsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setProjectToView: React.Dispatch<React.SetStateAction<ProjectType | null>>;
@@ -47,7 +46,6 @@ const statusList: { name: string; id: ProjectStatus; color: string }[] = [
 
 export default function CalendarView({
   viewMode,
-  readOnly = false,
   onProjectDrop,
   projects,
   setProjectDetailsModalOpen,
@@ -180,7 +178,6 @@ export default function CalendarView({
         filteredProjects={filteredProjects}
         currentDate={currentDate}
         onDrop={handleDrop}
-        readOnly={readOnly}
         setProjectToView={setProjectToView}
         setProjectDetailsModalOpen={setProjectDetailsModalOpen}
       />

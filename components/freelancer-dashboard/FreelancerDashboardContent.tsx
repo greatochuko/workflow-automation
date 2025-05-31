@@ -56,7 +56,6 @@ export default function FreelancerDashboardContent({
         <ContentCalendar
           projects={projects as ProjectType[]}
           setProjects={setProjects}
-          readOnly
           setProjectToView={setProjectToView}
           setProjectDetailsModalOpen={setProjectDetailsModalOpen}
         />
