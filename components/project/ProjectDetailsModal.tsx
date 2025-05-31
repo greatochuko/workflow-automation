@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { ProjectType } from "@/types/project";
 import {
   CloudDownloadIcon,
   CopyIcon,
-  DeleteIcon,
   EditIcon,
   ImageIcon,
   TrashIcon,
@@ -15,7 +14,6 @@ import { getEventColorClass } from "./CalendarDayCell";
 import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
-import Button from "../ui/Button";
 import { isBefore, startOfDay } from "date-fns";
 import DeleteProjectModal from "./DeleteProjectModal";
 
@@ -73,6 +71,17 @@ export default function ProjectDetailsModal({
   const isBeforeToday = project?.scheduledDate
     ? isBefore(project.scheduledDate, startOfDay(new Date()))
     : true;
+
+  const sortedEntries = useMemo(
+    () =>
+      project?.captionData
+        ? Object.entries(project.captionData).sort(([a], [b]) => {
+            const order = ["hook", "cta1", "cta2", "captionContent"];
+            return order.indexOf(a) - order.indexOf(b);
+          })
+        : [],
+    [project?.captionData],
+  );
 
   return (
     <>
@@ -214,7 +223,7 @@ export default function ProjectDetailsModal({
 
           {showAiResponse && project?.captionData && (
             <div className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-4">
-              {Object.entries(project.captionData).map(([key, value]) => (
+              {sortedEntries.map(([key, value]) => (
                 <div key={key} className="flex flex-col gap-1">
                   <h5 className="font-medium">{getResponseLabel(key)}</h5>
                   <p className="text-sm text-gray-500">
