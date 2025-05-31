@@ -5,20 +5,18 @@ import {
   CloudDownloadIcon,
   CopyIcon,
   EditIcon,
-  ImageIcon,
   LoaderIcon,
   SaveIcon,
   TrashIcon,
-  VideoIcon,
   XIcon,
 } from "lucide-react";
 import { getEventColorClass } from "./CalendarDayCell";
 import Link from "next/link";
 import { toast } from "sonner";
-import Image from "next/image";
 import { isBefore, startOfDay } from "date-fns";
 import DeleteProjectModal from "./DeleteProjectModal";
 import { updateProjectDescription } from "@/actions/projectActions";
+import ProjectThumbnail from "./ProjectThumbnail";
 
 // const AIGeneratedResponse = {
 //   hook: "Unwinding tensions, one adjustment at a time! 🌀",
@@ -266,24 +264,8 @@ export default function ProjectDetailsModal({
                   key={project.completedFile.id}
                   className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
                 >
-                  {project.completedFile.thumbnailUrl?.startsWith("/") ||
-                  project.completedFile.thumbnailUrl?.startsWith("http") ? (
-                    <Image
-                      src={project.completedFile.thumbnailUrl}
-                      alt={project.completedFile.name}
-                      width={96}
-                      height={96}
-                      className="aspect-video w-24 rounded-md border border-gray-300 object-cover"
-                    />
-                  ) : (
-                    <span className="flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300">
-                      {project.completedFile.type.startsWith("image/") ? (
-                        <ImageIcon className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <VideoIcon className="h-5 w-5 text-gray-500" />
-                      )}
-                    </span>
-                  )}
+                  <ProjectThumbnail type="small" file={project.files?.at(0)} />
+
                   <p className="flex-1 text-sm font-medium">
                     {project.completedFile.name}
                   </p>
@@ -308,24 +290,7 @@ export default function ProjectDetailsModal({
                   key={file.id}
                   className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
                 >
-                  {file.thumbnailUrl?.startsWith("/") ||
-                  file.thumbnailUrl?.startsWith("http") ? (
-                    <Image
-                      src={file.thumbnailUrl}
-                      alt={file.name}
-                      width={96}
-                      height={96}
-                      className="aspect-video w-24 rounded-md border border-gray-300 object-cover"
-                    />
-                  ) : (
-                    <span className="flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300">
-                      {file.type.startsWith("image/") ? (
-                        <ImageIcon className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <VideoIcon className="h-5 w-5 text-gray-500" />
-                      )}
-                    </span>
-                  )}
+                  <ProjectThumbnail type="small" file={file} />
                   <div className="flex flex-1 flex-col gap-1">
                     <p className="text-sm font-medium"> {file.name}</p>
                     {file.description && (

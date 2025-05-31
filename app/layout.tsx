@@ -5,6 +5,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import { getSession } from "@/services/authServices";
 import SidebarProvider from "@/context/SidebarContext";
 import { Toaster } from "sonner";
+import InvalidSessionModal from "@/components/auth/InvalidSessionModal";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default async function RootLayout({
       <body
         className={`${inter.className} text-foreground flex min-h-dvh antialiased`}
       >
+        {!user && <InvalidSessionModal open />}
         <Toaster duration={4000} richColors={true} />
         <SidebarProvider>
           {user && <Sidebar user={user} />}

@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
 import Button from "../ui/Button";
-import { ImageIcon, UploadIcon, VideoIcon } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { ProjectType } from "@/types/project";
 import ProjectSubmissionModal from "../project/ProjectSubmissionModal";
-import Image from "next/image";
+import ProjectThumbnail from "../project/ProjectThumbnail";
 
 export default function PendingProjectsSection({
   projects,
@@ -21,6 +21,7 @@ export default function PendingProjectsSection({
   const [projectToSubmit, setProjectToSubmit] = useState<ProjectType | null>(
     null,
   );
+  const [showAll, setShowAll] = useState(false);
 
   const unCompletedProjects = useMemo(
     () =>
@@ -41,74 +42,67 @@ export default function PendingProjectsSection({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold sm:text-xl">
-          Videos requiring your attention ({unCompletedProjects.length})
-        </h3>
-        <div className="w-full overflow-x-auto">
-          <div className="flex gap-3">
-            {unCompletedProjects.length > 0 ? (
-              unCompletedProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="w-48 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
-                >
-                  {project.files.length > 0 &&
-                  (project.files[0].thumbnailUrl?.startsWith("/") ||
-                    project.files[0].thumbnailUrl?.startsWith("http")) ? (
-                    <Image
-                      src={project.files[0].thumbnailUrl}
-                      alt={project.files[0].name}
-                      width={96}
-                      height={96}
-                      className="aspect-video w-full bg-gray-200 object-cover"
-                    />
-                  ) : (
-                    <span className="flex aspect-video w-full items-center justify-center self-start bg-gray-200">
-                      {project.completedFile.type?.startsWith("image/") ? (
-                        <ImageIcon className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <VideoIcon className="h-5 w-5 text-gray-500" />
-                      )}
-                    </span>
-                  )}
-
-                  <div className="flex flex-col gap-2 p-2 text-xs">
-                    <div className="">
-                      <h4 className="line-clamp-1 font-medium">
-                        {project.title}
-                      </h4>
-                      <p className="text-gray-500">{project.videoType}</p>
-                    </div>
-                    <Button
-                      onClick={() => {
-                        setProjectToSubmit(project);
-                        setProjectSubmissionModalOpen(true);
-                      }}
-                      className="px-3 py-1.5 text-xs"
-                    >
-                      <UploadIcon className="h-4 w-4" />
-                      Submit Edited Video
-                    </Button>
-                    <button
-                      onClick={() => {
-                        setProjectToView(project);
-                        setProjectDetailsModalOpen(true);
-                      }}
-                      className="hover:bg-accent hover:border-accent rounded-md border border-gray-200 px-3 py-1.5 font-medium duration-200 hover:text-white"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-500">
-                All your assigned projects are either completed or do not
-                require action.
-              </div>
-            )}
-          </div>
+        <div className="flex justify-between">
+          <h3 className="text-lg font-semibold sm:text-xl">
+            Videos requiring your attention ({unCompletedProjects.length})
+          </h3>
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            className="text-accent text-sm font-medium hover:underline"
+          >
+            {showAll ? "Show less" : "Show all"}
+          </button>
         </div>
+        {unCompletedProjects.length > 0 ? (
+          <div
+            className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-3 overflow-hidden transition-all duration-300"
+            style={{ maxHeight: showAll ? "none" : 240 }}
+          >
+            {unCompletedProjects.map((project) => (
+              <div
+                key={project.id}
+                className="flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
+              >
+                <ProjectThumbnail file={project.files?.at(0)} />
+
+                <div className="flex flex-col gap-2 p-2 text-xs">
+                  <div className="">
+                    <h4 className="line-clamp-1 font-medium">
+                      {project.title}
+                    </h4>
+                    <p className="line-clamp-1 text-gray-500">
+                      {project.videoType}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setProjectToSubmit(project);
+                      setProjectSubmissionModalOpen(true);
+                    }}
+                    className="px-3 py-1.5 text-xs"
+                  >
+                    <UploadIcon className="h-4 w-4" />
+                    Submit Edited Video
+                  </Button>
+                  <button
+                    onClick={() => {
+                      setProjectToView(project);
+                      setProjectDetailsModalOpen(true);
+                    }}
+                    className="hover:bg-accent hover:border-accent rounded-md border border-gray-200 px-3 py-1.5 font-medium duration-200 hover:text-white"
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-gray-500">
+            All your assigned projects are either completed or do not require
+            action.
+          </div>
+        )}
       </div>
 
       <ProjectSubmissionModal

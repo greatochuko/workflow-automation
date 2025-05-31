@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { ProjectType } from "@/types/project";
 import RejectProjectModal from "./ProjectActionModal";
-import Image from "next/image";
-import { ImageIcon, VideoIcon } from "lucide-react";
+import ProjectThumbnail from "../project/ProjectThumbnail";
 
 export default function ProjectsAwaitingApprovalSection({
   projects,
@@ -20,6 +19,7 @@ export default function ProjectsAwaitingApprovalSection({
     type: "approve" | "reject" | "";
     projectId: string;
   }>({ open: false, type: "", projectId: "" });
+  const [showAll, setShowAll] = useState(false);
 
   const submittedProjects = useMemo(
     () => projects.filter((project) => project.status === "SUBMITTED"),
@@ -29,35 +29,29 @@ export default function ProjectsAwaitingApprovalSection({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold sm:text-xl">
-          Videos requiring your attention ({submittedProjects.length})
-        </h3>
+        <div className="flex justify-between">
+          <h3 className="text-lg font-semibold sm:text-xl">
+            Videos requiring your attention ({submittedProjects.length})
+          </h3>
+          <button
+            onClick={() => setShowAll((prev) => !prev)}
+            className="text-accent text-sm font-medium hover:underline"
+          >
+            {showAll ? "Show less" : "Show all"}
+          </button>
+        </div>
         <div className="w-full overflow-x-auto">
-          <div className="flex gap-3">
-            {submittedProjects.length > 0 ? (
-              submittedProjects.map((project) => (
+          {submittedProjects.length > 0 ? (
+            <div
+              className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-3 overflow-hidden transition-all duration-300"
+              style={{ maxHeight: showAll ? "none" : 240 }}
+            >
+              {submittedProjects.map((project) => (
                 <div
                   key={project.id}
                   className="w-48 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
                 >
-                  {project.completedFile.thumbnailUrl?.startsWith("/") ||
-                  project.completedFile.thumbnailUrl?.startsWith("http") ? (
-                    <Image
-                      src={project.completedFile.thumbnailUrl}
-                      alt={project.completedFile.name}
-                      width={96}
-                      height={96}
-                      className="aspect-video w-full bg-gray-200 object-cover"
-                    />
-                  ) : (
-                    <span className="flex aspect-video w-full items-center justify-center self-start bg-gray-200">
-                      {project.completedFile.type?.startsWith("image/") ? (
-                        <ImageIcon className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <VideoIcon className="h-5 w-5 text-gray-500" />
-                      )}
-                    </span>
-                  )}
+                  <ProjectThumbnail file={project.completedFile} />
 
                   <div className="flex flex-col gap-2 p-2 text-xs">
                     <div className="">
@@ -105,14 +99,13 @@ export default function ProjectsAwaitingApprovalSection({
                     </button>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="text-gray-500">
-                All your assigned projects are either completed or do not
-                require action.
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-gray-500">
+              There are no projects awaiting your approval at the moment.
+            </div>
+          )}
         </div>
       </div>
 
