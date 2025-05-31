@@ -8,14 +8,14 @@ import { LoaderIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
 import { toast } from "sonner";
-import { createProject } from "@/actions/projectActions";
+import { createProject, getPresignedUrl } from "@/actions/projectActions";
 import { ProjectFileType, ProjectType } from "@/types/project";
 import { generateVideoThumbnail } from "@/lib/utils/videoThumbnailGenerator";
 import { resizeImage } from "@/lib/utils/imageResize";
 
 const MAX_NUMBER_OF_FILES = 5;
 
-export default function UploadVideoModal({
+export default function ProjectCreationModal({
   open,
   closeModal: closeVideoModal,
   videoTypes,
@@ -117,22 +117,26 @@ export default function UploadVideoModal({
   }
 
   async function uploadFile(file: File) {
-    const formData = new FormData();
-    formData.append("file", file);
+    const { url, key } = await getPresignedUrl(file.type);
+
+    if (!key) {
+      return key;
+    }
 
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: file,
       });
 
-      const result = await res.json();
-
       if (!res.ok) {
-        throw new Error(result.error || "Upload failed");
+        throw new Error("Upload failed");
       }
 
-      return result.data as string;
+      return key;
     } catch {
       return null;
     }

@@ -7,6 +7,10 @@ import { UserType } from "@/types/user";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import crypto from "crypto";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { s3Client } from "@/lib/aws-s3";
 
 type ProjectDataType = {
   title: string;
@@ -87,6 +91,24 @@ export async function createProject(projectData: ProjectDataType) {
     return { data: newProject, error: null };
   } catch {
     return { data: null, error: "Server Error" };
+  }
+}
+
+export async function getPresignedUrl(fileType: string) {
+  try {
+    const fileName = crypto.randomBytes(32).toString("hex");
+
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: fileName,
+      ContentType: fileType,
+    });
+
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 }); // 1 min
+
+    return { url: signedUrl, key: fileName };
+  } catch {
+    return { url: null, key: null };
   }
 }
 

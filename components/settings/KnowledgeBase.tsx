@@ -66,7 +66,7 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 rounded-md border border-gray-300 bg-white p-4 sm:gap-6 sm:p-6"
     >
-      <div className="flex items-end justify-between">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold sm:text-xl lg:text-2xl">
             Knowledge Base for {client.fullName}

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Button from "@/components/ui/Button";
 import { UploadIcon } from "lucide-react";
-import UploadVideoModal from "./UploadVideoModal";
+import UploadVideoModal from "./ProjectCreationModal";
 import { ProjectType } from "@/types/project";
 
 export default function UploadVideoButton({
