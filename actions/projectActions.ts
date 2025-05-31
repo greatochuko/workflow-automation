@@ -11,6 +11,7 @@ import crypto from "crypto";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/aws-s3";
+import { signProjectFiles } from "@/services/projectServices";
 
 type ProjectDataType = {
   title: string;
@@ -79,16 +80,18 @@ export async function createProject(projectData: ProjectDataType) {
 
     const captionData = response.output_parsed || undefined;
 
-    const newProject = await prisma.project.create({
+    const newProject = (await prisma.project.create({
       data: {
         ...projectData,
         createdById: payload.user.id,
         status: "IN_PROGRESS",
         captionData,
       },
-    });
+    })) as ProjectType;
 
-    return { data: newProject, error: null };
+    const signedProject = await signProjectFiles([newProject]);
+
+    return { data: signedProject[0], error: null };
   } catch {
     return { data: null, error: "Server Error" };
   }
