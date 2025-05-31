@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Button from "../ui/Button";
-import { InfoIcon, LoaderIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, InfoIcon, LoaderIcon } from "lucide-react";
 import { loginUser } from "@/actions/authActions";
 
 export default function LoginForm() {
@@ -10,6 +10,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,6 +23,10 @@ export default function LoginForm() {
     }
 
     setIsLoading(false);
+  }
+
+  function toggleShowPassword() {
+    setShowPassword((prev) => !prev);
   }
 
   return (
@@ -42,16 +47,29 @@ export default function LoginForm() {
 
       <div className="flex flex-col gap-2">
         <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="h-10 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 disabled:bg-gray-100 disabled:text-gray-500"
-          required
-          disabled={isLoading}
-        />
+        <div className="relative flex">
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="h-10 w-0 flex-1 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 disabled:bg-gray-100 disabled:text-gray-500"
+            required
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            onClick={toggleShowPassword}
+            className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1 duration-200 hover:bg-gray-200 focus-visible:bg-gray-200"
+          >
+            {showPassword ? (
+              <EyeOffIcon className="h-4 w-4" />
+            ) : (
+              <EyeIcon className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
 
       <Button
