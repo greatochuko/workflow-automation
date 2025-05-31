@@ -1,5 +1,5 @@
 import { UserType } from "@/types/user";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ChevronDownIcon, LoaderIcon } from "lucide-react";
 import Button from "../ui/Button";
 import { saveUserKnowledgeBase } from "@/actions/userActions";
@@ -13,53 +13,55 @@ function getKnowledgeBasePlaceholder(kbId: string) {
 export default function KnowledgeBase({ client }: { client: UserType }) {
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [clientKnowledgeBase, setClientKnowledgeBase] = useState(
+    client.knowledgeBase,
+  );
   const [knowledgeBaseItems, setKnowledgeBaseItems] = useState(
     client.knowledgeBase,
   );
 
-  function toggleKnoledgeBaseItem(id: string) {
-    if (openItems.includes(id)) {
-      setOpenItems((prev) => prev.filter((item) => item !== id));
-    } else {
-      setOpenItems((prev) => [...prev, id]);
-    }
-  }
-
-  const allItemsOpen = knowledgeBaseItems.every((item) =>
-    openItems.includes(item.id),
-  );
-
-  function toggleExpandAll() {
-    if (allItemsOpen) {
-      setOpenItems([]);
-    } else {
-      setOpenItems(knowledgeBaseItems.map((item) => item.id));
-    }
-  }
-
-  function handleChangeKnowledgeBaseItem(key: string, value: string) {
-    setKnowledgeBaseItems((prev) =>
-      prev.map((kb) => (kb.id === key ? { ...kb, content: value } : kb)),
+  const toggleKnowledgeBaseItem = (id: string) =>
+    setOpenItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
-  }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const allItemsOpen = knowledgeBaseItems.every(({ id }) =>
+    openItems.includes(id),
+  );
+  const toggleExpandAll = () =>
+    setOpenItems(allItemsOpen ? [] : knowledgeBaseItems.map(({ id }) => id));
+
+  const handleChangeKnowledgeBaseItem = (id: string, value: string) =>
+    setKnowledgeBaseItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, content: value } : item)),
+    );
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setLoading(true);
+
     const { error } = await saveUserKnowledgeBase(
       client.id,
       knowledgeBaseItems,
     );
+
     if (error === null) {
-      toast.success(`Knowledge base updated for ${client.fullName}`, {
-        // style: { color: "#4739ea" },
-      });
+      setClientKnowledgeBase(knowledgeBaseItems);
+      toast.success(`Knowledge base updated for ${client.fullName}`);
     } else {
       toast.error(error);
     }
+
     setLoading(false);
-  }
+  };
+
+  const knowledgeBaseDataChanged = useMemo(() => {
+    const normalize = (arr: typeof knowledgeBaseItems) =>
+      JSON.stringify(
+        arr.map(({ id, content }) => ({ id, content: content.trim() })),
+      );
+    return normalize(knowledgeBaseItems) !== normalize(clientKnowledgeBase);
+  }, [knowledgeBaseItems, clientKnowledgeBase]);
 
   return (
     <form
@@ -97,7 +99,7 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
               className="overflow-hidden border-b border-b-gray-300"
             >
               <h4
-                onClick={() => toggleKnoledgeBaseItem(kb.id)}
+                onClick={() => toggleKnowledgeBaseItem(kb.id)}
                 className="flex w-full cursor-pointer items-center justify-between rounded-md py-4 text-left font-medium transition-all hover:underline"
               >
                 <span>{kb.title}</span>
@@ -130,7 +132,11 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
           );
         })}
       </div>
-      <Button type="submit" disabled={loading} className="ml-auto w-fit">
+      <Button
+        type="submit"
+        disabled={loading || !knowledgeBaseDataChanged}
+        className="ml-auto w-fit"
+      >
         {loading ? (
           <>
             <LoaderIcon className="h-4 w-4 animate-spin" /> Saving...
