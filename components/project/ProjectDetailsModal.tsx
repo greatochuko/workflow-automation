@@ -86,7 +86,7 @@ export default function ProjectDetailsModal({
     ? isBefore(project.scheduledDate, startOfDay(new Date()))
     : true;
 
-  const sortedEntries = useMemo(
+  const sortedCaptionData = useMemo(
     () =>
       project?.captionData
         ? Object.entries(project.captionData).sort(([a], [b]) => {
@@ -317,14 +317,19 @@ export default function ProjectDetailsModal({
 
           {showAiResponse && project?.captionData && (
             <div className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-4">
-              {sortedEntries.map(([key, value]) => (
+              {sortedCaptionData.map(([key, value]) => (
                 <div key={key} className="flex flex-col gap-1">
                   <h5 className="font-medium">{getResponseLabel(key)}</h5>
                   <p className="text-sm text-gray-500">
-                    {value}{" "}
+                    {value.split("\n").map((line, idx, arr) => (
+                      <React.Fragment key={idx}>
+                        {line}
+                        {idx < arr.length - 1 ? <br /> : null}
+                      </React.Fragment>
+                    ))}
                     <button
                       type="button"
-                      className="ml-2 rounded-md p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
+                      className="ml-2 inline-flex items-center gap-2 rounded-full border border-gray-300 p-1 px-2 py-1 text-xs text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
                       title="Copy to clipboard"
                       onClick={() => {
                         navigator.clipboard.writeText(value);
@@ -334,6 +339,7 @@ export default function ProjectDetailsModal({
                       }}
                     >
                       <CopyIcon className="h-3.5 w-3.5" />
+                      Copy
                     </button>
                   </p>
                 </div>
