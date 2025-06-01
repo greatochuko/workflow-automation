@@ -43,7 +43,7 @@ export default function ProjectsAwaitingApprovalSection({
         <div className="w-full overflow-x-auto">
           {submittedProjects.length > 0 ? (
             <div
-              className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-3 overflow-hidden duration-300"
+              className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-3 overflow-hidden"
               style={{ maxHeight: showAll ? "none" : 240 }}
             >
               {submittedProjects.map((project) => (
