@@ -44,7 +44,7 @@ export default function MobileSidebar({
     <ModalContainer
       open={mobileSidebarOpen}
       closeModal={() => setSidebarOpen(true)}
-      className="sm:hidden"
+      className="md:hidden"
     >
       <aside
         onClick={(e) => e.stopPropagation()}

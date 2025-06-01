@@ -10,7 +10,7 @@ export default function ToggleSidebarButton() {
   return (
     <button
       onClick={() => setSidebarOpen((prev) => !prev)}
-      className={`mr-2 ${sidebarOpen ? "sm:hidden" : "block"}`}
+      className={`mr-2 ${sidebarOpen ? "md:hidden" : "block"}`}
     >
       <PanelLeftIcon className="h-5 w-5" />
     </button>
