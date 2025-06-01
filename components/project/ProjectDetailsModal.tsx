@@ -264,7 +264,7 @@ export default function ProjectDetailsModal({
                 key={project.completedFile.id}
                 className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
               >
-                <ProjectThumbnail type="small" file={project.files?.at(0)} />
+                <ProjectThumbnail type="small" file={project.completedFile} />
 
                 <p className="flex-1 text-sm font-medium">
                   {project.completedFile.name}
