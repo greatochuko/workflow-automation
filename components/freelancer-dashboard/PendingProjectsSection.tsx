@@ -55,8 +55,7 @@ export default function PendingProjectsSection({
         </div>
         {unCompletedProjects.length > 0 ? (
           <div
-            className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-3 overflow-hidden transition-all duration-300"
-            style={{ maxHeight: showAll ? "none" : 240 }}
+            className={`grid grid-cols-2 gap-3 overflow-hidden transition-all duration-300 sm:grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] ${showAll ? "" : "max-h-[min(58.5vw,_240px)] min-[390px]:max-h-[min(56vw,_240px)]"}`}
           >
             {unCompletedProjects.map((project) => (
               <div
@@ -82,7 +81,7 @@ export default function PendingProjectsSection({
                     className="px-3 py-1.5 text-xs"
                   >
                     <UploadIcon className="h-4 w-4" />
-                    Submit Edited Video
+                    Submit <span className="hidden sm:block">Edited</span> Video
                   </Button>
                   <button
                     onClick={() => {
