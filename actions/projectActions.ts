@@ -114,24 +114,24 @@ export async function createProject(projectData: ProjectDataType) {
   }
 }
 
-export async function getPresignedUrl(file: File) {
+export async function getPresignedUrl(fileName: string, fileType: string) {
   try {
-    const ext = file.name.split(".").pop();
-    const baseName = file.name
+    const ext = fileName.split(".").pop();
+    const baseName = fileName
       .replace(/\.[^/.]+$/, "")
       .replace(/[^a-zA-Z0-9_-]/g, "_"); // sanitize base name
     const randomSuffix = crypto.randomBytes(6).toString("hex"); // shorter, readable
-    const fileName = `${baseName}_${randomSuffix}${ext ? `.${ext}` : ""}`;
+    const uniqueFileName = `${baseName}_${randomSuffix}${ext ? `.${ext}` : ""}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: fileName,
-      ContentType: file.type,
+      Key: uniqueFileName,
+      ContentType: fileType,
     });
 
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 }); // 1 min
 
-    return { url: signedUrl, key: fileName };
+    return { url: signedUrl, key: uniqueFileName };
   } catch {
     return { url: null, key: null };
   }

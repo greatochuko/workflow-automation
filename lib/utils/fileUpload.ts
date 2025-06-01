@@ -5,7 +5,7 @@ export async function uploadFileWithProgress(
   onProgress?: (percent: number, key: string) => void,
 ): Promise<string | null> {
   try {
-    const { url, key } = await getPresignedUrl(file);
+    const { url, key } = await getPresignedUrl(file.name, file.type);
 
     if (!url || !key) return null;
 
