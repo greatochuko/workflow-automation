@@ -13,7 +13,7 @@ button:disabled {
 }
 
 :is(input, textarea) {
-  @apply ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2;
+  @apply ring-accent-black/70 ring-offset-1 focus-visible:ring-2;
 }
 
 @theme {
