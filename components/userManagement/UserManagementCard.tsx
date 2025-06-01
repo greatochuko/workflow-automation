@@ -8,6 +8,7 @@ import AssignClientsModal from "./AssignClientsModal";
 import { toggleAssignFreelancerToClient } from "@/actions/userActions";
 import Select from "../ui/Select";
 import DeleteUserModal from "./DeleteUserModal";
+import Link from "next/link";
 
 export default function UserManagementCard({
   user,
@@ -45,10 +46,13 @@ export default function UserManagementCard({
       className="flex flex-col flex-wrap justify-between gap-4 border-b border-gray-200 py-4 last:border-b-0 sm:flex-row sm:items-center"
       key={user.id}
     >
-      <div className="flex items-center gap-3">
+      <Link
+        href={`/profile/${user.id}`}
+        className="group flex items-center gap-3"
+      >
         <Avatar user={user} className="h-10 w-10" />
         <div className="">
-          <h3 className="font-medium">{user.fullName}</h3>
+          <h3 className="font-medium group-hover:underline">{user.fullName}</h3>
           <p className="text-sm text-gray-500">
             {user.role === "FREELANCER"
               ? user.specialties.join(", ")
@@ -56,7 +60,7 @@ export default function UserManagementCard({
           </p>
           <p className="text-xs text-gray-500">{user.email}</p>
         </div>
-      </div>
+      </Link>
       {user.role === "FREELANCER" ? (
         <div className="flex items-center gap-4">
           <p className="text-sm sm:ml-auto">

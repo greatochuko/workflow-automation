@@ -1,6 +1,23 @@
 import { prisma } from "@/lib/prisma";
 import { UserType } from "@/types/user";
 
+export async function getUserById(id: string) {
+  try {
+    const user = await prisma.user.findFirst({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return { data: user as unknown as UserType, error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { data: null, error: error.message };
+  }
+}
+
 export async function getNonAdminUsers(): Promise<{
   data: UserType[];
   error: string | null;
