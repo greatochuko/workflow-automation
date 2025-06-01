@@ -256,32 +256,32 @@ export default function ProjectDetailsModal({
               </p>
             </div>
           )}
-          {project?.status === "SUBMITTED" ||
-            (project?.status === "APPROVED" && (
-              <div className="flex flex-col gap-2">
-                <h4 className="font-medium">Completed Project File</h4>
-                <li
-                  key={project.completedFile.id}
-                  className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
-                >
-                  <ProjectThumbnail type="small" file={project.files?.at(0)} />
+          {(project?.status === "SUBMITTED" ||
+            project?.status === "APPROVED") && (
+            <div className="flex flex-col gap-2">
+              <h4 className="font-medium">Completed Project File</h4>
+              <li
+                key={project.completedFile.id}
+                className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
+              >
+                <ProjectThumbnail type="small" file={project.files?.at(0)} />
 
-                  <p className="flex-1 text-sm font-medium">
-                    {project.completedFile.name}
-                  </p>
-                  <Link
-                    href={project.completedFile.url || ""}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Download File"
-                    className="hover:text-accent p-2 text-gray-500 duration-200"
-                    download={project.completedFile.name}
-                  >
-                    <CloudDownloadIcon className="h-5 w-5" />
-                  </Link>
-                </li>
-              </div>
-            ))}
+                <p className="flex-1 text-sm font-medium">
+                  {project.completedFile.name}
+                </p>
+                <Link
+                  href={project.completedFile.url || ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Download File"
+                  className="hover:text-accent p-2 text-gray-500 duration-200"
+                  download={project.completedFile.name}
+                >
+                  <CloudDownloadIcon className="h-5 w-5" />
+                </Link>
+              </li>
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <h4 className="font-medium">Project Files</h4>
             <ul className="flex flex-col gap-2">

@@ -81,7 +81,10 @@ export default function PendingProjectsSection({
                     className="px-3 py-1.5 text-xs"
                   >
                     <UploadIcon className="h-4 w-4" />
-                    Submit <span className="hidden sm:block">Edited</span> Video
+                    <span className="flex items-center gap-1">
+                      Submit <span className="hidden sm:block">Edited</span>
+                      Video
+                    </span>
                   </Button>
                   <button
                     onClick={() => {
