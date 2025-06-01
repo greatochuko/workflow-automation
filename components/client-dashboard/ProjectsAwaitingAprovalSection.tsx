@@ -31,7 +31,7 @@ export default function ProjectsAwaitingApprovalSection({
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-4">
           <h3 className="text-lg font-semibold sm:text-xl">
-            Videos requiring your attention ({submittedProjects.length})
+            Projects requiring your attention ({submittedProjects.length})
           </h3>
           <button
             onClick={() => setShowAll((prev) => !prev)}
@@ -43,13 +43,12 @@ export default function ProjectsAwaitingApprovalSection({
         <div className="w-full overflow-x-auto">
           {submittedProjects.length > 0 ? (
             <div
-              className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-3 overflow-hidden"
-              style={{ maxHeight: showAll ? "none" : 240 }}
+              className={`grid grid-cols-2 gap-3 overflow-hidden sm:grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] ${showAll ? "" : "max-h-[min(58.5vw,_240px)] min-[390px]:max-h-[min(56vw,_240px)]"}`}
             >
               {submittedProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="w-48 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
+                  className="flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
                 >
                   <ProjectThumbnail file={project.completedFile} />
 
@@ -58,7 +57,9 @@ export default function ProjectsAwaitingApprovalSection({
                       <h4 className="line-clamp-1 font-medium">
                         {project.title}
                       </h4>
-                      <p className="text-gray-500">{project.videoType}</p>
+                      <p className="line-clamp-1 text-gray-500">
+                        {project.videoType}
+                      </p>
                     </div>
 
                     <div className="flex gap-2">

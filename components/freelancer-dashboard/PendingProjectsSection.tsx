@@ -44,7 +44,7 @@ export default function PendingProjectsSection({
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-4">
           <h3 className="text-lg font-semibold sm:text-xl">
-            Videos requiring your attention ({unCompletedProjects.length})
+            Projects requiring your attention ({unCompletedProjects.length})
           </h3>
           <button
             onClick={() => setShowAll((prev) => !prev)}
