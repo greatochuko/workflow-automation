@@ -6,6 +6,7 @@ import { getSession } from "@/services/authServices";
 import SidebarProvider from "@/context/SidebarContext";
 import { Toaster } from "sonner";
 import InvalidSessionModal from "@/components/auth/InvalidSessionModal";
+import MobileSidebar from "@/components/sidebar/MobileSidebar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width" />
         <link rel="icon" href="/favicon-2.svg" type="image/png" sizes="32x32" />
       </head>
       <body
@@ -34,7 +36,12 @@ export default async function RootLayout({
         {!user && <InvalidSessionModal open />}
         <Toaster duration={4000} richColors={true} />
         <SidebarProvider>
-          {user && <Sidebar user={user} />}
+          {user && (
+            <>
+              <MobileSidebar user={user} />
+              <Sidebar user={user} />
+            </>
+          )}
           <div className="bg-background flex w-full flex-1">{children}</div>
         </SidebarProvider>
       </body>

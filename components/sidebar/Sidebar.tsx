@@ -16,7 +16,6 @@ import React, { useState } from "react";
 import Avatar from "../ui/Avatar";
 import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
-import MobileSidebar from "./MobileSidebar";
 
 const sidebarLinks = [
   // { title: "Main", url: "/", icon: HomeIcon },
@@ -35,7 +34,6 @@ export default function Sidebar({ user }: { user: UserType }) {
 
   return (
     <>
-      <MobileSidebar setLogoutModalOpen={setLogoutModalOpen} user={user} />
       <aside
         className={`bg-accent-black-200 sticky top-0 hidden h-dvh flex-col overflow-hidden text-sm text-white duration-200 md:flex ${sidebarOpen ? "w-50" : "w-0"}`}
       >
