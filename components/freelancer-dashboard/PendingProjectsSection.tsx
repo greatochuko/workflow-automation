@@ -55,7 +55,7 @@ export default function PendingProjectsSection({
         </div>
         {unCompletedProjects.length > 0 ? (
           <div
-            className={`grid grid-cols-2 gap-3 overflow-hidden transition-all duration-300 sm:grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] ${showAll ? "" : "max-h-[min(58.5vw,_240px)] min-[390px]:max-h-[min(56vw,_240px)]"}`}
+            className={`grid grid-cols-2 gap-3 overflow-hidden duration-300 sm:grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] ${showAll ? "" : "max-h-[min(58.5vw,_240px)] min-[390px]:max-h-[min(56vw,_240px)]"}`}
           >
             {unCompletedProjects.map((project) => (
               <div

@@ -100,7 +100,7 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
             >
               <h4
                 onClick={() => toggleKnowledgeBaseItem(kb.id)}
-                className="flex w-full cursor-pointer items-center justify-between rounded-md py-4 text-left font-medium transition-all hover:underline"
+                className="flex w-full cursor-pointer items-center justify-between rounded-md py-4 text-left font-medium hover:underline"
               >
                 <span>{kb.title}</span>
                 <ChevronDownIcon
@@ -108,7 +108,7 @@ export default function KnowledgeBase({ client }: { client: UserType }) {
                 />
               </h4>
               <div
-                className={`flex flex-col gap-2 transition-all duration-300 ease-in-out ${
+                className={`flex flex-col gap-2 duration-300 ease-in-out ${
                   isOpen ? "max-h-40 py-2 pb-4" : "max-h-0 overflow-hidden"
                 }`}
               >
