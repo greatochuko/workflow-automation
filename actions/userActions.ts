@@ -201,6 +201,26 @@ export async function saveUserKnowledgeBase(
   }
 }
 
+export async function saveUserNewsletterSettings(
+  clientId: string,
+  newsletterSettings: {
+    newsletterExamples: string[];
+    newsLetterBasicInstructions: string;
+    monthlyCredits: number;
+  },
+) {
+  try {
+    await prisma.user.update({
+      where: { id: clientId },
+      data: newsletterSettings,
+    });
+    revalidatePath("/settings");
+    return { error: null };
+  } catch {
+    return { error: "Server Error: Unable to update user knowledge base" };
+  }
+}
+
 export async function deleteUser(userId: string) {
   try {
     const userProjects = await prisma.project.findMany({

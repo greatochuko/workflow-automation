@@ -8,6 +8,7 @@ import {
   addVideoTypeToClient,
   updateClientVideoTypes,
 } from "@/actions/videoTypeActions";
+import { NewsletterTemplateSettings } from "./NewsletterTemplateSettings";
 
 export default function ClientSettingsPage({
   clients,
@@ -95,7 +96,7 @@ export default function ClientSettingsPage({
       </div>
 
       {selectedClient && (
-        <>
+        <React.Fragment key={selectedClient.id}>
           <VideoTypesManager
             onAddVideoType={handleAddVideoTypeToClient}
             onDeleteVideoType={handleDeleteVideoType}
@@ -103,8 +104,9 @@ export default function ClientSettingsPage({
             videoTypes={selectedClient.videoTypes}
             user={selectedClient}
           />
-          <KnowledgeBase client={selectedClient} key={selectedClient.id} />
-        </>
+          <KnowledgeBase client={selectedClient} />
+          <NewsletterTemplateSettings client={selectedClient} />
+        </React.Fragment>
       )}
     </>
   );
