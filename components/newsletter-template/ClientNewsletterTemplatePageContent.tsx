@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import ProjectThumbnail from "../project/ProjectThumbnail";
 import { format } from "date-fns";
 import Button from "../ui/Button";
-import { CopyIcon, FileText, RefreshCwIcon } from "lucide-react";
+import { CopyIcon, FileTextIcon, InfoIcon, RefreshCwIcon } from "lucide-react";
 import NewsletterTemplateModal from "./NewsletterTemplateModal";
 import { toast } from "sonner";
 import ToggleSidebarButton from "../sidebar/ToggleSidebarButton";
@@ -148,15 +148,24 @@ export default function ClientNewsletterTemplatePageContent({
                 </div>
               ))}
             </div>
-            <Button
-              onClick={() => setModalIsOpen(true)}
-              disabled={
-                !selectedProject ||
-                selectedProject.newsletterTemplates.length > 0
-              }
-            >
-              <FileText className="h-4 w-4" /> Generate Newsletter Template
-            </Button>
+            {creditsUsed < totalCredits ? (
+              <Button
+                onClick={() => setModalIsOpen(true)}
+                disabled={
+                  !selectedProject ||
+                  selectedProject.newsletterTemplates.length > 0 ||
+                  creditsUsed >= totalCredits
+                }
+              >
+                <FileTextIcon className="h-4 w-4" /> Generate Newsletter
+                Template
+              </Button>
+            ) : (
+              <span className="bg-accent-red/10 border-accent-red/20 text-accent-red flex items-center justify-center gap-2 rounded-md border p-2 text-center text-sm">
+                <InfoIcon className="h-4 w-4" />
+                You have used up all your credits
+              </span>
+            )}
           </div>
 
           <div className="flex flex-1 flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:p-6">

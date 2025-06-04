@@ -8,8 +8,6 @@ export default async function Page() {
 
   const { data: projects } = await getClientApprovedProjects(user?.id);
 
-  console.log(user?.creditsUsedThisMonth);
-
   return (
     <ClientNewsletterTemplatePageContent
       projects={projects}
