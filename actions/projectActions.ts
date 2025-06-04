@@ -71,7 +71,10 @@ async function generateCaptionContent(
 
     return response.output_parsed || undefined;
   } catch (error) {
-    console.log("Error generating caption content:", (error as Error).message);
+    console.error(
+      "Error generating caption content:",
+      (error as Error).message,
+    );
     return undefined;
   }
 }

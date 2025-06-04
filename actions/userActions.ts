@@ -231,7 +231,7 @@ export async function deleteUser(userId: string) {
       userProjects.map(async (project) => {
         const { data, error } = await deleteProject(project.id);
         if (error) {
-          console.log(`Error deleting project ${project.title}`, error);
+          console.error(`Error deleting project ${project.title}`, error);
         }
         return data;
       }),
@@ -243,7 +243,7 @@ export async function deleteUser(userId: string) {
 
     return { error: null };
   } catch (err) {
-    console.log(
+    console.error(
       `Error deleting user with id ${userId}`,
       (err as Error).message,
     );

@@ -58,7 +58,7 @@ export async function signProjectFiles(
             thumbnailUrl: signedCompletedThumbnailUrl,
           };
         } catch (err) {
-          console.log(
+          console.error(
             "Error getting the signed url for completed file: ",
             (err as Error).message,
           );

@@ -81,7 +81,10 @@ async function generateNewsletterTemplate(
 
     return aiOutput || undefined;
   } catch (error) {
-    console.log("Error generating caption content:", (error as Error).message);
+    console.error(
+      "Error generating caption content:",
+      (error as Error).message,
+    );
     return undefined;
   }
 }
@@ -135,7 +138,7 @@ export async function createNewsletterTemplate(
     };
   } catch (err) {
     const error = err as Error;
-    console.log("Error creating newsletter template: ", error.message);
+    console.error("Error creating newsletter template: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
