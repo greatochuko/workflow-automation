@@ -13,6 +13,7 @@ export default function NewsletterTemplateModal({
   project,
   addNewTemplateToProject,
   creditsUsed,
+  totalCredits,
 }: {
   open: boolean;
   closeModal: () => void;
@@ -22,6 +23,7 @@ export default function NewsletterTemplateModal({
     newNewsletterTemplate: NewsletterTemplateType,
   ): void;
   creditsUsed: number;
+  totalCredits: number;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -63,7 +65,7 @@ export default function NewsletterTemplateModal({
           You will have 2 free revisions available after the initial generation.
           <br />
           <br />
-          Current usage: {creditsUsed}/2 credits
+          Current usage: {creditsUsed}/{totalCredits} credits
         </p>
         <div className="flex items-center justify-end gap-4">
           <Button variant="outline">Cancel</Button>

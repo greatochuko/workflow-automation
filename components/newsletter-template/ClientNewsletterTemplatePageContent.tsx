@@ -15,9 +15,11 @@ import { createNewsletterTemplate } from "@/actions/newsletterActions";
 export default function ClientNewsletterTemplatePageContent({
   projects,
   creditsUsedThisMonth,
+  totalCredits,
 }: {
   projects: ProjectType[];
   creditsUsedThisMonth: number;
+  totalCredits: number;
 }) {
   const [projectList, setProjectList] = useState(projects);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -107,7 +109,7 @@ export default function ClientNewsletterTemplatePageContent({
 
   return (
     <>
-      <main className="flex h-screen w-full flex-col">
+      <main className="flex w-full flex-col">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-[5%] py-4">
           <div className="flex flex-col">
             <h1 className="flex items-center text-lg font-bold capitalize sm:text-xl md:text-2xl xl:text-[28px]">
@@ -119,12 +121,12 @@ export default function ClientNewsletterTemplatePageContent({
             </p>
           </div>
           <span className="bg-accent-black rounded-full px-2 py-1 text-xs font-semibold text-white">
-            {creditsUsed}/2 Credits Used
+            {creditsUsed}/{totalCredits} Credits Used
           </span>
         </div>
 
         <div className="mx-auto flex w-[90%] max-w-7xl flex-1 flex-col gap-6 overflow-hidden py-4 lg:flex-row">
-          <div className="flex flex-1 flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:p-6">
+          <div className="flex h-[calc(100%-10rem)] flex-1 flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:h-auto sm:p-6">
             <h2 className="font-semibold sm:text-lg md:text-xl xl:text-2xl">
               Select Approved Video
             </h2>
@@ -235,6 +237,7 @@ export default function ClientNewsletterTemplatePageContent({
         addNewTemplateToProject={addNewTemplateToProject}
         creditsUsed={creditsUsed}
         project={selectedProject}
+        totalCredits={totalCredits}
       />
     </>
   );

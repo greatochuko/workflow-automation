@@ -14,6 +14,7 @@ export default async function Page() {
     <ClientNewsletterTemplatePageContent
       projects={projects}
       creditsUsedThisMonth={user?.creditsUsedThisMonth || 0}
+      totalCredits={user?.monthlyCredits || 2}
     />
   );
 }
