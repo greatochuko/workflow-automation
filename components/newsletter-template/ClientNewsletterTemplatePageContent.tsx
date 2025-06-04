@@ -56,8 +56,10 @@ export default function ClientNewsletterTemplatePageContent({
   async function handleReviseNewsletter() {
     setRevising(true);
 
-    const { data: newTemplate, error } =
-      await createNewsletterTemplate(selectedProjectId);
+    const { data: newTemplate, error } = await createNewsletterTemplate(
+      selectedProjectId,
+      projectNewsLetters.at(-1)?.content,
+    );
 
     if (newTemplate) {
       addNewTemplateToProject(selectedProjectId, {

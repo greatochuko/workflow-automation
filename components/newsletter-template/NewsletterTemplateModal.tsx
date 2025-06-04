@@ -41,6 +41,7 @@ export default function NewsletterTemplateModal({
       toast.success(
         "Newsletter template generated successfully! 1 credit has been used.",
       );
+      closeModal();
     } else {
       toast.error(error);
     }

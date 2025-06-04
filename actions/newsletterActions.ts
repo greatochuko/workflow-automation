@@ -12,6 +12,7 @@ async function generateNewsletterTemplate(
   basicInstructions: string,
   examples: string[],
   projectCaptionData: ProjectType["captionData"],
+  existingTemplate?: string,
 ) {
   try {
     const formattedExamples =
@@ -20,6 +21,15 @@ async function generateNewsletterTemplate(
         : "None";
 
     const userContent = `
+    ${
+      existingTemplate
+        ? `
+      ${existingTemplate}
+      
+      Generate a variation of the template above with the instructions below
+      `
+        : ""
+    }
   ${basicInstructions}
 
   ${examples.length ? `Here are some examples of successful emails:\n${formattedExamples}\n` : ""}
@@ -76,7 +86,10 @@ async function generateNewsletterTemplate(
   }
 }
 
-export async function createNewsletterTemplate(projectId: string) {
+export async function createNewsletterTemplate(
+  projectId: string,
+  existingTemplate?: string,
+) {
   try {
     const { payload } = await getTokenFromCookie();
 
@@ -105,6 +118,7 @@ export async function createNewsletterTemplate(projectId: string) {
       user.newsLetterBasicInstructions,
       user.newsletterExamples,
       project.captionData,
+      existingTemplate,
     );
 
     const newNewsletterTemplate = await prisma.newsletterTemplate.create({
