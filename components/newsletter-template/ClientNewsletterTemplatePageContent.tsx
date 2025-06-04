@@ -62,10 +62,7 @@ export default function ClientNewsletterTemplatePageContent({
     );
 
     if (newTemplate) {
-      addNewTemplateToProject(selectedProjectId, {
-        ...projectNewsLetters[0],
-        id: new Date().toString(),
-      });
+      addNewTemplateToProject(selectedProjectId, newTemplate);
       if (projectNewsLetters.length < 3) {
         toast.success("New revision generated");
       } else {
@@ -127,8 +124,8 @@ export default function ClientNewsletterTemplatePageContent({
           </span>
         </div>
 
-        <div className="mx-auto flex w-[90%] max-w-7xl flex-1 flex-col gap-6 overflow-hidden py-4 lg:flex-row">
-          <div className="flex h-[calc(100%-10rem)] flex-1 flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:h-auto sm:p-6">
+        <div className="mx-auto flex w-[90%] max-w-7xl flex-1 flex-col gap-6 py-4 lg:max-h-[calc(100vh-6rem)] lg:flex-row lg:overflow-y-auto">
+          <div className="flex max-h-[calc(100vh-10rem)] flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:p-6 lg:h-auto lg:flex-1">
             <h2 className="font-semibold sm:text-lg md:text-xl xl:text-2xl">
               Select Approved Video
             </h2>

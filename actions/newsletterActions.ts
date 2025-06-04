@@ -66,7 +66,7 @@ async function generateNewsletterTemplate(
   - Writing strong calls to action
 
   The output should be plain text.
-  Do NOT include any commentary, footnotes, or formatting explanations. Return only the final email content.
+  Do NOT include any commentary, footnotes, markdown e.g. **, or formatting explanations. Return only the final email content.
       `.trim(),
         },
         {
