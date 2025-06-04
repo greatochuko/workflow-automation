@@ -10,17 +10,20 @@ import NewsletterTemplateModal from "./NewsletterTemplateModal";
 import { toast } from "sonner";
 import ToggleSidebarButton from "../sidebar/ToggleSidebarButton";
 import { NewsletterTemplateType } from "@/types/newsletter";
+import { createNewsletterTemplate } from "@/actions/newsletterActions";
 
 export default function ClientNewsletterTemplatePageContent({
   projects,
+  creditsUsedThisMonth,
 }: {
   projects: ProjectType[];
+  creditsUsedThisMonth: number;
 }) {
   const [projectList, setProjectList] = useState(projects);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [revising, setRevising] = useState(false);
-  const [creditsUsed, setCreditsUsed] = useState(0);
+  const [creditsUsed, setCreditsUsed] = useState(creditsUsedThisMonth);
 
   const selectedProject = useMemo(
     () => projectList.find((prj) => prj.id === selectedProjectId),
@@ -41,15 +44,34 @@ export default function ClientNewsletterTemplatePageContent({
     [projectNewsLetters, selectedRevisionId],
   );
 
-  function handleReviseNewsletter() {
+  function selectProject(projectId: string) {
+    setSelectedProjectId(projectId);
+    const project = projectList.find((prj) => prj.id === projectId);
+    const projectNewsLetters = project?.newsletterTemplates || [];
+    setSelectedRevisionId(projectNewsLetters[0]?.id);
+  }
+
+  async function handleReviseNewsletter() {
     setRevising(true);
-    if (!projectNewsLetters.length) {
-      setCreditsUsed((prev) => prev - 1);
+
+    const { data: newTemplate, error } =
+      await createNewsletterTemplate(selectedProjectId);
+
+    if (newTemplate) {
+      addNewTemplateToProject(selectedProjectId, {
+        ...projectNewsLetters[0],
+        id: new Date().toString(),
+      });
+      if (projectNewsLetters.length < 3) {
+        toast.success("New revision generated");
+      } else {
+        toast.success(
+          "Final revision generated! No additional credits used for revisions.",
+        );
+      }
+    } else {
+      toast.error(error);
     }
-    addNewTemplateToProject(selectedProjectId, {
-      ...projectNewsLetters[0],
-      id: new Date().toString(),
-    });
     setRevising(false);
   }
 
@@ -64,6 +86,9 @@ export default function ClientNewsletterTemplatePageContent({
     projectId: string,
     newNewsletterTemplate: NewsletterTemplateType,
   ) {
+    if (projectNewsLetters.length < 1) {
+      setCreditsUsed((prev) => prev + 1);
+    }
     setProjectList((prev) =>
       prev.map((prj) =>
         prj.id === projectId
@@ -107,7 +132,7 @@ export default function ClientNewsletterTemplatePageContent({
               {projectList.map((project) => (
                 <div
                   key={project.id}
-                  onClick={() => setSelectedProjectId(project.id)}
+                  onClick={() => selectProject(project.id)}
                   className={`flex cursor-pointer items-start gap-2 rounded-lg border border-gray-200 p-2 duration-200 hover:border-gray-500 ${selectedProject?.id === project.id ? "bg-background border-gray-700" : ""}`}
                 >
                   <ProjectThumbnail file={project.files[0]} type="newsletter" />

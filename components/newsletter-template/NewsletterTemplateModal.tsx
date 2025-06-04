@@ -5,27 +5,7 @@ import { toast } from "sonner";
 import { LoaderIcon } from "lucide-react";
 import { ProjectType } from "@/types/project";
 import { NewsletterTemplateType } from "@/types/newsletter";
-
-const dummyTemplate = `Subject: Product Demo - New Feature - Weekly Update
-
-Hi [First Name],
-
-Hope you're having a great week! I wanted to share something exciting with you.
-
-What if you could save 5 hours every week with just one click?
-
-🎥 Product Demo - New Feature
-
-Walkthrough of our latest product feature.
-
-See how our new feature transforms your workflow in just 60 seconds!
-
-Try our new feature now - free for 14 days!
-
-Best regards,
-[Your Name]
-
-P.S. Hi [Name],`;
+import { createNewsletterTemplate } from "@/actions/newsletterActions";
 
 export default function NewsletterTemplateModal({
   open,
@@ -45,28 +25,32 @@ export default function NewsletterTemplateModal({
 }) {
   const [loading, setLoading] = useState(false);
 
-  function handleGenerateTemplate() {
+  async function handleGenerateTemplate() {
     if (!project) return;
     setLoading(true);
-    const newNewsletterTemplate = {
-      id: new Date().toString(),
-      clientId: "",
-      content: dummyTemplate,
-      createdAt: new Date().toString(),
-      updatedAt: new Date().toString(),
-      projectId: project.id,
-    } as NewsletterTemplateType;
 
-    addNewTemplateToProject(project.id, newNewsletterTemplate);
-
-    toast.success(
-      "Newsletter template generated successfully! 1 credit has been used.",
+    const { data: newTemplate, error } = await createNewsletterTemplate(
+      project.id,
     );
+
+    if (newTemplate) {
+      addNewTemplateToProject(project.id, newTemplate);
+
+      toast.success(
+        "Newsletter template generated successfully! 1 credit has been used.",
+      );
+    } else {
+      toast.error(error);
+    }
     setLoading(false);
   }
+
   return (
     <ModalContainer open={open} closeModal={closeModal}>
-      <div className="flex w-[90%] max-w-lg flex-col gap-4 rounded-lg bg-white p-4 sm:p-6">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="flex w-[90%] max-w-lg flex-col gap-4 rounded-lg bg-white p-4 sm:p-6"
+      >
         <h4 className="text-lg font-semibold">
           Confirm Newsletter Template Generation
         </h4>

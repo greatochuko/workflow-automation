@@ -58,6 +58,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/users", request.url));
   }
 
+  if (
+    isAuthenticated &&
+    userRole !== "CLIENT" &&
+    pathname === "/newsletter-template"
+  ) {
+    if (userRole === "ADMIN") {
+      return NextResponse.redirect(new URL("/users", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   // If not authenticated and trying to access protected routes, redirect to /login
   if (!isAuthenticated && !authRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/login", request.url));
