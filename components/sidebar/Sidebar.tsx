@@ -5,6 +5,7 @@ import {
   FileVideoIcon,
   HomeIcon,
   LogOutIcon,
+  MailIcon,
   PanelLeftIcon,
   SettingsIcon,
   UserCogIcon,
@@ -35,7 +36,7 @@ export default function Sidebar({ user }: { user: UserType }) {
   return (
     <>
       <aside
-        className={`bg-accent-black-200 sticky top-0 hidden h-dvh flex-col overflow-hidden text-sm text-white duration-200 md:flex ${sidebarOpen ? "w-50" : "w-0"}`}
+        className={`bg-accent-black-200 sticky top-0 hidden h-dvh flex-col overflow-hidden text-sm text-white duration-200 md:flex ${sidebarOpen ? "w-52" : "w-0"}`}
       >
         <div className="flex items-center gap-2 p-4 font-semibold">
           <FileVideoIcon className="h-6 w-6" />
@@ -64,6 +65,21 @@ export default function Sidebar({ user }: { user: UserType }) {
                   >
                     <HomeIcon className="h-4 w-4" />
                     Main
+                  </Link>
+                </li>
+              )}
+              {user.role === "CLIENT" && (
+                <li>
+                  <Link
+                    href={"/newsletter-template"}
+                    className={`flex items-center gap-4 rounded-md p-2 ${
+                      pathname === "/newsletter-template"
+                        ? "text-accent-black-200 bg-white font-semibold"
+                        : "font-medium hover:bg-white/10"
+                    }`}
+                  >
+                    <MailIcon className="h-4 w-4" />
+                    Newsletter Template
                   </Link>
                 </li>
               )}

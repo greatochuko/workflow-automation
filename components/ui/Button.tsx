@@ -5,13 +5,21 @@ export default function Button({
   children,
   className = "",
   type = "button",
+  variant = "default",
   ...props
-}: PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>) {
+}: PropsWithChildren<
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: "outline" | "default";
+  }
+>) {
   return (
     <button
       type={type}
       className={twMerge(
-        "bg-accent-black hover:bg-accent-black/85 disabled:bg-accent-black/50 flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white duration-200 disabled:cursor-not-allowed",
+        "flex cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium duration-200 disabled:cursor-not-allowed",
+        variant === "outline"
+          ? "border border-gray-200 hover:bg-gray-100"
+          : "bg-accent-black hover:bg-accent-black/85 disabled:bg-accent-black/50 text-white",
         className,
       )}
       {...props}

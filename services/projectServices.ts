@@ -108,6 +108,27 @@ export async function getClientProjects(clientId: string) {
   }
 }
 
+export async function getClientApprovedProjects(clientId?: string) {
+  try {
+    if (!clientId) throw new Error("Invalid client ID");
+    const projects = (await prisma.project.findMany({
+      where: { createdById: clientId, status: "APPROVED" },
+      orderBy: { createdAt: "desc" },
+      include: { newsletterTemplates: true },
+    })) as unknown as ProjectType[];
+
+    const signedProjects = await signProjectFiles(projects);
+
+    return {
+      data: signedProjects as ProjectType[],
+      error: null,
+    };
+  } catch (err) {
+    const error = err as Error;
+    return { data: [], error: error.message };
+  }
+}
+
 export async function getFreelancerClientProjects(clientIds: string[]) {
   try {
     const projects = (await prisma.project.findMany({

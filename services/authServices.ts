@@ -22,6 +22,7 @@ export async function getSession(): Promise<{
             fullName: true,
           },
         },
+        newsletterTemplates: true,
       },
     });
 

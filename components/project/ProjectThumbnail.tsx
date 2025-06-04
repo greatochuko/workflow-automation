@@ -9,7 +9,7 @@ export default function ProjectThumbnail({
   type = "primary",
 }: {
   file?: { type: string; thumbnailUrl: string; name: string } | null;
-  type?: "primary" | "small";
+  type?: "primary" | "small" | "newsletter";
 }) {
   const [loaded, setLoaded] = useState(false);
   const isValidImageUrl =
@@ -24,12 +24,19 @@ export default function ProjectThumbnail({
           fallback:
             "flex aspect-video max-h-[112px] w-full items-center justify-center self-start bg-gray-200",
         }
-      : {
-          wrapper: "aspect-video rounded-md border border-gray-300 w-24",
-          image: "object-cover",
-          fallback:
-            "flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300",
-        };
+      : type === "newsletter"
+        ? {
+            wrapper: "aspect-[1.6] rounded-md border border-gray-300 w-20",
+            image: "object-cover",
+            fallback:
+              "flex aspect-[1.6] w-20 items-center justify-center self-start rounded-md border border-gray-300",
+          }
+        : {
+            wrapper: "aspect-video rounded-md border border-gray-300 w-24",
+            image: "object-cover",
+            fallback:
+              "flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300",
+          };
 
   if (isValidImageUrl) {
     return (

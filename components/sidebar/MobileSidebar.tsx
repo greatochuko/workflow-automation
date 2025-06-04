@@ -5,6 +5,7 @@ import {
   FileVideoIcon,
   HomeIcon,
   LogOutIcon,
+  MailIcon,
   PanelLeftIcon,
   SettingsIcon,
   UserCogIcon,
@@ -46,7 +47,7 @@ export default function MobileSidebar({ user }: { user: UserType }) {
       >
         <aside
           onClick={(e) => e.stopPropagation()}
-          className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-50 flex-col overflow-hidden text-sm text-white duration-200 ${mobileSidebarOpen ? "" : "-translate-x-full"}`}
+          className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-52 flex-col overflow-hidden text-sm text-white duration-200 ${mobileSidebarOpen ? "" : "-translate-x-full"}`}
         >
           <div className="flex items-center gap-2 p-4 font-semibold">
             <FileVideoIcon className="h-6 w-6" />
@@ -78,6 +79,23 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                     </Link>
                   </li>
                 )}
+
+                {user.role === "CLIENT" && (
+                  <li>
+                    <Link
+                      href={"/newsletter-template"}
+                      className={`flex items-center gap-4 rounded-md p-2 ${
+                        pathname === "/newsletter-template"
+                          ? "text-accent-black-200 bg-white font-semibold"
+                          : "font-medium hover:bg-white/10"
+                      }`}
+                    >
+                      <MailIcon className="h-4 w-4" />
+                      Newsletter Template
+                    </Link>
+                  </li>
+                )}
+
                 {sidebarLinks.map((link) => (
                   <li
                     onClick={closeSidebar}

@@ -1,5 +1,6 @@
 import { ProjectStatus } from "@prisma/client";
 import { UserType } from "./user";
+import { NewsletterTemplateType } from "./newsletter";
 
 export type ProjectFileType = {
   id: string;
@@ -27,6 +28,7 @@ export type ProjectType = {
   completedFile: Omit<ProjectFileType, "description">;
   files: ProjectFileType[];
   status: ProjectStatus;
+  newsletterTemplates: NewsletterTemplateType[];
   createdAt: Date;
   updatedAt: Date;
   createdById: string;

@@ -1,3 +1,5 @@
+import { NewsletterTemplateType } from "./newsletter";
+
 export type KnowledgeBaseItemType = {
   id: string;
   title: string;
@@ -21,6 +23,7 @@ export type UserType = {
   assignedFreelancers: UserType[];
   assignedClients: UserType[];
   knowledgeBase: KnowledgeBaseItemType[];
+  newsletterTemplates: NewsletterTemplateType[];
   phoneNumber: string;
   website: string;
   threads: string;

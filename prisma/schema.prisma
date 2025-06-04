@@ -54,7 +54,8 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
 
-  projects Project[]
+  projects            Project[]
+  newsletterTemplates NewsletterTemplate[]
 }
 
 model AppSettings {
@@ -86,4 +87,19 @@ model Project {
 
   createdBy   User   @relation(fields: [createdById], references: [id])
   createdById String
+
+  newsletterTemplates NewsletterTemplate[]
+}
+
+model NewsletterTemplate {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  client   User   @relation(fields: [clientId], references: [id])
+  clientId String
 }
