@@ -79,7 +79,7 @@ export default function Sidebar({ user }: { user: UserType }) {
                     }`}
                   >
                     <MailIcon className="h-4 w-4" />
-                    Newsletter Template
+                    Newsletter Content
                   </Link>
                 </li>
               )}

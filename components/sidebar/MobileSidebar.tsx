@@ -91,7 +91,7 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                       }`}
                     >
                       <MailIcon className="h-4 w-4" />
-                      Newsletter Template
+                      Newsletter Content
                     </Link>
                   </li>
                 )}

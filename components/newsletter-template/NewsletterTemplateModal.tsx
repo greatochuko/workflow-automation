@@ -55,7 +55,7 @@ export default function NewsletterTemplateModal({
         className="flex w-[90%] max-w-lg flex-col gap-4 rounded-lg bg-white p-4 sm:p-6"
       >
         <h4 className="text-lg font-semibold">
-          Confirm Newsletter Template Generation
+          Confirm Newsletter Content Generation
         </h4>
         <p className="text-sm text-gray-500">
           This action will generate a newsletter template for &quot;

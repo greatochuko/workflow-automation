@@ -113,10 +113,10 @@ export default function ClientNewsletterTemplatePageContent({
           <div className="flex flex-col">
             <h1 className="flex items-center text-lg font-bold capitalize sm:text-xl md:text-2xl xl:text-[28px]">
               <ToggleSidebarButton />
-              Newsletter Template Generator
+              Newsletter Content Generator
             </h1>
             <p className="text-sm text-gray-500">
-              Generate email newsletter templates from your approved videos
+              Generate email newsletters from your approved videos
             </p>
           </div>
           <span className="bg-accent-black rounded-full px-2 py-1 text-xs font-semibold text-white">
@@ -172,7 +172,7 @@ export default function ClientNewsletterTemplatePageContent({
               <div className="flex flex-col gap-4 overflow-hidden">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <h2 className="font-semibold whitespace-nowrap sm:text-lg md:text-xl xl:text-2xl">
-                    Newsletter Template
+                    Newsletter Content
                   </h2>
                   <div className="flex gap-4">
                     <Button
@@ -226,7 +226,7 @@ export default function ClientNewsletterTemplatePageContent({
             ) : (
               <>
                 <h2 className="font-semibold sm:text-lg md:text-xl xl:text-2xl">
-                  Newsletter Template
+                  Newsletter Content
                 </h2>
                 <p className="py-8 text-center text-gray-500">
                   {selectedProject

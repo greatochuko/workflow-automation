@@ -83,9 +83,9 @@ export function NewsletterTemplateSettings({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold">Newsletter Template Settings</h3>
+        <h3 className="text-lg font-semibold">Newsletter Content Settings</h3>
         <p className="text-sm text-gray-500">
-          Configure newsletter template generation for {client.fullName}
+          Configure newsletter content generation for {client.fullName}
         </p>
       </div>
 
@@ -94,7 +94,7 @@ export function NewsletterTemplateSettings({
         <h4 className="font-semibold">Monthly Credits</h4>
         <div className="flex flex-col gap-1">
           <label htmlFor="credits" className="text-sm font-medium">
-            Monthly Newsletter Template Credits
+            Monthly Newsletter Content Credits
           </label>
           <input
             id="credits"
