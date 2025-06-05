@@ -106,6 +106,14 @@ export default function ClientNewsletterPageContent({
     setSelectedRevisionId(newNewsletterTemplate.id);
   }
 
+  function toggleSelectProject(id: string) {
+    if (id === selectedProjectId) {
+      selectProject("");
+    } else {
+      selectProject(id);
+    }
+  }
+
   return (
     <>
       <main className="flex w-full flex-col">
@@ -133,7 +141,7 @@ export default function ClientNewsletterPageContent({
               {projectList.map((project) => (
                 <div
                   key={project.id}
-                  onClick={() => selectProject(project.id)}
+                  onClick={() => toggleSelectProject(project.id)}
                   className={`flex cursor-pointer flex-col gap-2 rounded-lg border border-gray-200 p-2 duration-200 hover:border-gray-500 ${selectedProject?.id === project.id ? "bg-background border-gray-700" : ""}`}
                 >
                   <div className="flex items-start gap-2">
