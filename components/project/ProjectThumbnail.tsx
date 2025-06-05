@@ -29,13 +29,13 @@ export default function ProjectThumbnail({
             wrapper: "aspect-[1.6] rounded-md border border-gray-300 w-20",
             image: "object-cover",
             fallback:
-              "flex aspect-[1.6] w-20 items-center justify-center self-start rounded-md border border-gray-300",
+              "flex aspect-[1.6] w-20 items-center justify-center self-start rounded-md",
           }
         : {
             wrapper: "aspect-video rounded-md border border-gray-300 w-24",
             image: "object-cover",
             fallback:
-              "flex aspect-video w-24 items-center justify-center self-start rounded-md border border-gray-300",
+              "flex aspect-video w-24 items-center justify-center self-start rounded-md",
           };
 
   if (isValidImageUrl) {

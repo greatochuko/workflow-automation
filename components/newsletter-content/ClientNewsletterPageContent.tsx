@@ -12,7 +12,7 @@ import ToggleSidebarButton from "../sidebar/ToggleSidebarButton";
 import { NewsletterTemplateType } from "@/types/newsletter";
 import { createNewsletterTemplate } from "@/actions/newsletterActions";
 
-export default function ClientNewsletterTemplatePageContent({
+export default function ClientNewsletterPageContent({
   projects,
   creditsUsedThisMonth,
   totalCredits,
@@ -134,16 +134,51 @@ export default function ClientNewsletterTemplatePageContent({
                 <div
                   key={project.id}
                   onClick={() => selectProject(project.id)}
-                  className={`flex cursor-pointer items-start gap-2 rounded-lg border border-gray-200 p-2 duration-200 hover:border-gray-500 ${selectedProject?.id === project.id ? "bg-background border-gray-700" : ""}`}
+                  className={`flex cursor-pointer flex-col gap-2 rounded-lg border border-gray-200 p-2 duration-200 hover:border-gray-500 ${selectedProject?.id === project.id ? "bg-background border-gray-700" : ""}`}
                 >
-                  <ProjectThumbnail file={project.files[0]} type="newsletter" />
-                  <div className="flex flex-col">
-                    <h4 className="text-sm font-medium">{project.title}</h4>
-                    <p className="text-xs text-gray-500">{project.videoType}</p>
-                    <p className="text-xs text-gray-500">
-                      {format(new Date(project.scheduledDate), "MMM d, yyyy")}
-                    </p>
+                  <div className="flex items-start gap-2">
+                    <ProjectThumbnail
+                      file={project.files[0]}
+                      type="newsletter"
+                    />
+                    <div className="flex flex-col">
+                      <h4 className="text-sm font-medium">{project.title}</h4>
+                      <p className="text-xs text-gray-500">
+                        {project.videoType}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {format(new Date(project.scheduledDate), "MMM d, yyyy")}
+                      </p>
+                    </div>
                   </div>
+                  {selectedProject?.id === project.id && (
+                    <div className="flex flex-col gap-2 text-[.8rem] font-medium">
+                      <p>
+                        Hook:{" "}
+                        <span className="font-normal text-gray-500">
+                          {project.captionData.hook}
+                        </span>
+                      </p>
+                      <p>
+                        CTA #2:{" "}
+                        <span className="font-normal text-gray-500">
+                          {project.captionData.cta1}
+                        </span>
+                      </p>
+                      <p>
+                        CTA #1:{" "}
+                        <span className="font-normal text-gray-500">
+                          {project.captionData.cta2}
+                        </span>
+                      </p>
+                      <p>
+                        Caption Content:{" "}
+                        <span className="font-normal text-gray-500">
+                          {project.captionData.captionContent}
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

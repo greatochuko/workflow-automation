@@ -61,7 +61,7 @@ export async function middleware(request: NextRequest) {
   if (
     isAuthenticated &&
     userRole !== "CLIENT" &&
-    pathname === "/newsletter-template"
+    pathname === "/newsletter-content"
   ) {
     if (userRole === "ADMIN") {
       return NextResponse.redirect(new URL("/users", request.url));

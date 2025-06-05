@@ -83,9 +83,9 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                 {user.role === "CLIENT" && (
                   <li>
                     <Link
-                      href={"/newsletter-template"}
+                      href={"/newsletter-content"}
                       className={`flex items-center gap-4 rounded-md p-2 ${
-                        pathname === "/newsletter-template"
+                        pathname === "/newsletter-content"
                           ? "text-accent-black-200 bg-white font-semibold"
                           : "font-medium hover:bg-white/10"
                       }`}

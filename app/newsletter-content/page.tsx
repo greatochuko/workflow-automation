@@ -1,4 +1,4 @@
-import ClientNewsletterTemplatePageContent from "@/components/newsletter-template/ClientNewsletterTemplatePageContent";
+import ClientNewsletterPageContent from "@/components/newsletter-content/ClientNewsletterPageContent";
 import { getSession } from "@/services/authServices";
 import { getClientApprovedProjects } from "@/services/projectServices";
 import React from "react";
@@ -9,7 +9,7 @@ export default async function Page() {
   const { data: projects } = await getClientApprovedProjects(user?.id);
 
   return (
-    <ClientNewsletterTemplatePageContent
+    <ClientNewsletterPageContent
       projects={projects}
       creditsUsedThisMonth={user?.creditsUsedThisMonth || 0}
       totalCredits={user?.monthlyCredits || 2}
