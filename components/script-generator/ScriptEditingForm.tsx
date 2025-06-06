@@ -23,7 +23,7 @@ export default function ScriptEditingForm({
   const [hookLine, setHookLine] = useState(videoScript.content.hookLine);
   const [cta, setCta] = useState(videoScript.content.cta);
   const [body, setBody] = useState(videoScript.content.body);
-  const [showFinalScript, setShowFinalScript] = useState(videoScript.isSaved);
+  const [showFinalScript, setShowFinalScript] = useState(false);
 
   const scriptContentHasChanged = useMemo(() => {
     return (
@@ -94,27 +94,23 @@ export default function ScriptEditingForm({
         <>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-lg font-semibold sm:text-xl">
-              {videoScript.isSaved ? "View" : "Edit"} Your Script
+              Edit Your Script
             </h2>
             <div className="flex items-center gap-4">
-              {!videoScript.isSaved && (
-                <Button
-                  type="submit"
-                  disabled={
-                    videoScript.isSaved || !scriptContentHasChanged || loading
-                  }
-                >
-                  {loading ? (
-                    <>
-                      <LoaderIcon className="h-4 w-4 animate-spin" /> Saving...
-                    </>
-                  ) : (
-                    <>
-                      <SaveIcon className="h-4 w-4" /> Save Changes
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button
+                type="submit"
+                disabled={!scriptContentHasChanged || loading}
+              >
+                {loading ? (
+                  <>
+                    <LoaderIcon className="h-4 w-4 animate-spin" /> Saving...
+                  </>
+                ) : (
+                  <>
+                    <SaveIcon className="h-4 w-4" /> Save Changes
+                  </>
+                )}
+              </Button>
               <Button onClick={() => setShowFinalScript(true)}>
                 <EyeIcon className="h-4 w-4" /> View Final Script
               </Button>
@@ -129,7 +125,7 @@ export default function ScriptEditingForm({
               name={"hook-line"}
               id={"hook-line"}
               rows={4}
-              disabled={videoScript.isSaved || loading}
+              disabled={loading}
               value={hookLine}
               onChange={(e) => setHookLine(e.target.value)}
               placeholder={"Enter your hook line..."}
@@ -145,7 +141,7 @@ export default function ScriptEditingForm({
               name={"body"}
               id={"body"}
               rows={10}
-              disabled={videoScript.isSaved || loading}
+              disabled={loading}
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder={"Enter your main content..."}
@@ -161,7 +157,7 @@ export default function ScriptEditingForm({
               name={"call-to-action"}
               id={"call-to-action"}
               rows={4}
-              disabled={videoScript.isSaved || loading}
+              disabled={loading}
               value={cta}
               onChange={(e) => setCta(e.target.value)}
               placeholder={"Enter your call to action..."}
