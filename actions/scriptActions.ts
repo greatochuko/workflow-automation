@@ -17,15 +17,20 @@ const scriptResponse = z.object({
 });
 
 async function generateScript(
-  topic: string,
-  videoDescription: string,
-  durationInSeconds: number,
+  userDetails: { industry: string; location: string },
+  videoDetails: {
+    topic: string;
+    videoDescription: string;
+    durationInSeconds: number;
+  },
 ) {
   try {
     const userContent = `
-      Video Topic: "${topic}"
-      Video Description: "${videoDescription}"
-      Duration: ${durationInSeconds}
+      User Industry: ${userDetails.industry || "N/A"} 
+      User Location: ${userDetails.location || "N/A"}
+      Video Topic: "${videoDetails.topic}"
+      Video Description: "${videoDetails.videoDescription}"
+      Duration: ${videoDetails.durationInSeconds}
       `.trim();
 
     const systemContent = `
@@ -71,10 +76,21 @@ export async function createVideoScript(
       return { data: null, error: "Invalid token" };
     }
 
+    const user = await prisma.user.findFirst({
+      where: { id: payload.user.id },
+    });
+
+    if (!user) {
+      return { data: null, error: "Invalid user ID" };
+    }
+
     const generatedScript = await generateScript(
-      topic,
-      description,
-      durationInSeconds,
+      { industry: user.industry, location: user.location },
+      {
+        topic,
+        videoDescription: description,
+        durationInSeconds,
+      },
     );
 
     if (!generatedScript) {
