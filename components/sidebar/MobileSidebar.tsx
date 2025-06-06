@@ -2,6 +2,7 @@
 
 import { type UserType } from "@/types/user";
 import {
+  EditIcon,
   FileVideoIcon,
   HomeIcon,
   LogOutIcon,
@@ -81,19 +82,34 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                 )}
 
                 {user.role === "CLIENT" && (
-                  <li>
-                    <Link
-                      href={"/newsletter-content"}
-                      className={`flex items-center gap-4 rounded-md p-2 ${
-                        pathname === "/newsletter-content"
-                          ? "text-accent-black-200 bg-white font-semibold"
-                          : "font-medium hover:bg-white/10"
-                      }`}
-                    >
-                      <MailIcon className="h-4 w-4" />
-                      Newsletter Content
-                    </Link>
-                  </li>
+                  <>
+                    <li>
+                      <Link
+                        href={"/newsletter-content"}
+                        className={`flex items-center gap-4 rounded-md p-2 ${
+                          pathname === "/newsletter-content"
+                            ? "text-accent-black-200 bg-white font-semibold"
+                            : "font-medium hover:bg-white/10"
+                        }`}
+                      >
+                        <MailIcon className="h-4 w-4" />
+                        Newsletter Content
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={"/script-generator"}
+                        className={`flex items-center gap-4 rounded-md p-2 ${
+                          pathname === "/script-generator"
+                            ? "text-accent-black-200 bg-white font-semibold"
+                            : "font-medium hover:bg-white/10"
+                        }`}
+                      >
+                        <EditIcon className="h-4 w-4" />
+                        Script Generator
+                      </Link>
+                    </li>
+                  </>
                 )}
 
                 {sidebarLinks.map((link) => (

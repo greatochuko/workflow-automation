@@ -56,6 +56,7 @@ model User {
 
   projects            Project[]
   newsletterTemplates NewsletterTemplate[]
+  VideoScript         VideoScript[]
 }
 
 model AppSettings {
@@ -89,6 +90,7 @@ model Project {
   createdById String
 
   newsletterTemplates NewsletterTemplate[]
+  VideoScript         VideoScript[]
 }
 
 model NewsletterTemplate {
@@ -102,4 +104,19 @@ model NewsletterTemplate {
 
   client   User   @relation(fields: [clientId], references: [id])
   clientId String
+}
+
+model VideoScript {
+  id                String   @id @default(cuid())
+  content           Json
+  topic             String
+  description       String
+  durationInSeconds Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  client    User     @relation(fields: [clientId], references: [id])
+  clientId  String
+  Project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
 }

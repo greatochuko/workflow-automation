@@ -43,6 +43,7 @@ export default function Select({
     <div
       className={twMerge("relative text-sm", containerClassName)}
       ref={selectRef}
+      tabIndex={-1}
     >
       <div
         tabIndex={0}
@@ -54,6 +55,32 @@ export default function Select({
           }
           if (e.code === "Escape") {
             setOpen(false);
+          }
+          if (e.code === "ArrowUp") {
+            const currOptionIndex = options.findIndex(
+              (opt) => opt.value === selectedOption?.value,
+            );
+            let prevOptionIndex;
+            if (currOptionIndex <= 0) {
+              prevOptionIndex = options.length - 1;
+            } else {
+              prevOptionIndex = currOptionIndex - 1;
+            }
+            const prevOption = options[prevOptionIndex].value;
+            onChange(prevOption);
+          }
+          if (e.code === "ArrowDown") {
+            const currOptionIndex = options.findIndex(
+              (opt) => opt.value === selectedOption?.value,
+            );
+            let nextOptionIndex;
+            if (currOptionIndex >= options.length - 1) {
+              nextOptionIndex = 0;
+            } else {
+              nextOptionIndex = currOptionIndex + 1;
+            }
+            const nextOption = options[nextOptionIndex].value;
+            onChange(nextOption);
           }
         }}
         className={twMerge(
@@ -91,7 +118,7 @@ export default function Select({
               aria-selected={opt.value === value}
               onClick={() => handleSelect(opt.value)}
               className={twMerge(
-                "group aria-selected:bg-accent flex cursor-pointer items-center gap-2 rounded-sm p-2 whitespace-nowrap duration-200 hover:bg-gray-100 aria-selected:text-white",
+                "group aria-selected:bg-accent flex cursor-pointer items-center gap-2 rounded-sm p-2 whitespace-nowrap duration-100 hover:bg-gray-100 aria-selected:text-white",
                 value === opt.value && "bg-gray-100",
               )}
             >

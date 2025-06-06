@@ -160,7 +160,7 @@ export default function ClientNewsletterPageContent({
                     </div>
                   </div>
                   {selectedProject?.id === project.id && (
-                    <div className="flex flex-col gap-2 text-[.8rem] font-medium">
+                    <div className="flex flex-col gap-1.5 text-[.8rem] font-medium">
                       <p>
                         Hook:{" "}
                         <span className="font-normal text-gray-500">
