@@ -16,6 +16,8 @@ export async function createUser(userData: {
   email: string;
   password: string;
   companyName: string;
+  location: string;
+  industry: string;
   specialties: string[];
 }) {
   try {
@@ -56,6 +58,8 @@ export async function updateUserProfile(userData: UserType) {
         email: userData.email,
         profilePicture: userData.profilePicture,
         companyName: userData.companyName,
+        location: userData.location,
+        industry: userData.industry,
         specialties: userData.specialties,
         certifications: userData.certifications,
         phoneNumber: userData.phoneNumber,

@@ -14,6 +14,8 @@ type UserDataType = {
   profilePicture: string;
   password: string;
   companyName: string;
+  industry: string;
+  location: string;
   specialties: string;
 };
 
@@ -24,6 +26,8 @@ const initialUserData: UserDataType = {
   profilePicture: "",
   password: "",
   companyName: "",
+  industry: "",
+  location: "",
   specialties: "",
 };
 
@@ -102,14 +106,14 @@ export default function CreateUserModal({
       <form
         onSubmit={handleCreateUser}
         onClick={(e) => e.stopPropagation()}
-        className={`flex max-h-[85%] w-[90%] max-w-xl flex-col overflow-y-auto rounded-md bg-white text-sm shadow ${open ? "" : "scale-105"}`}
+        className={`flex max-h-[85%] w-[90%] max-w-xl flex-col rounded-md bg-white text-sm shadow ${open ? "" : "scale-105"}`}
       >
-        <h3 className="sticky top-0 z-[1] flex items-center justify-center gap-3 bg-white p-4 pb-2 text-lg font-semibold sm:p-6 sm:pb-3 sm:text-xl">
+        <h3 className="flex items-center justify-center gap-3 bg-white p-4 pb-2 text-lg font-semibold sm:p-6 sm:pb-3 sm:text-xl">
           <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
           Create New User
         </h3>
 
-        <div className="flex flex-col gap-4 p-4 sm:p-6">
+        <div className="flex flex-col gap-4 overflow-y-auto p-4 sm:p-6">
           <label
             htmlFor="profile-picture"
             className="group flex cursor-pointer flex-col items-center gap-2"
@@ -214,21 +218,55 @@ export default function CreateUserModal({
           </div>
 
           {userData.role === "CLIENT" ? (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="company-name" className="font-medium">
-                Company
-              </label>
-              <input
-                type="text"
-                name="company-name"
-                id="company-name"
-                placeholder="Acme Inc."
-                value={userData.companyName}
-                disabled={loading}
-                onChange={(e) => updateUserData("companyName", e.target.value)}
-                className="bg-background rounded-md border border-gray-300 p-2"
-              />
-            </div>
+            <>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="company-name" className="font-medium">
+                  Company
+                </label>
+                <input
+                  type="text"
+                  name="company-name"
+                  id="company-name"
+                  placeholder="Acme Inc."
+                  value={userData.companyName}
+                  disabled={loading}
+                  onChange={(e) =>
+                    updateUserData("companyName", e.target.value)
+                  }
+                  className="bg-background rounded-md border border-gray-300 p-2"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="industry" className="font-medium">
+                  Industry
+                </label>
+                <input
+                  type="text"
+                  name="industry"
+                  id="industry"
+                  placeholder="e.g. Marketing, Technology, Finance"
+                  value={userData.industry}
+                  disabled={loading}
+                  onChange={(e) => updateUserData("industry", e.target.value)}
+                  className="bg-background rounded-md border border-gray-300 p-2"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="location" className="font-medium">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  id="location"
+                  placeholder="e.g. New York, London"
+                  value={userData.location}
+                  disabled={loading}
+                  onChange={(e) => updateUserData("location", e.target.value)}
+                  className="bg-background rounded-md border border-gray-300 p-2"
+                />
+              </div>
+            </>
           ) : (
             <div className="flex flex-col gap-2">
               <label htmlFor="specialties" className="font-medium">
@@ -252,7 +290,7 @@ export default function CreateUserModal({
         </div>
 
         <div
-          className={`sticky bottom-0 flex flex-wrap justify-between bg-white p-4 sm:p-6 ${error ? "pt-2 sm:pt-3" : ""}`}
+          className={`flex flex-wrap justify-between bg-white p-4 sm:p-6 ${error ? "pt-2 sm:pt-3" : ""}`}
         >
           {error && <p className="mb-4 w-full text-red-500">{error}</p>}
           <button

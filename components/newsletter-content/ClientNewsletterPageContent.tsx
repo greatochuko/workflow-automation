@@ -168,13 +168,13 @@ export default function ClientNewsletterPageContent({
                         </span>
                       </p>
                       <p>
-                        CTA #2:{" "}
+                        CTA #1:{" "}
                         <span className="font-normal text-gray-500">
                           {project.captionData.cta1}
                         </span>
                       </p>
                       <p>
-                        CTA #1:{" "}
+                        CTA #2:{" "}
                         <span className="font-normal text-gray-500">
                           {project.captionData.cta2}
                         </span>

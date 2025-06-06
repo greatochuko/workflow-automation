@@ -48,6 +48,16 @@ const personalInfoFields: PersonalInfoFieldType[] = [
     placeholder: "Your phone number",
   },
   {
+    name: "industry",
+    label: "Industry",
+    placeholder: "Industry",
+  },
+  {
+    name: "location",
+    label: "Location",
+    placeholder: "Where are you located?",
+  },
+  {
     name: "website",
     label: "Website",
     placeholder: "www.example.com",

@@ -27,6 +27,8 @@ model User {
   role                        UserRole
   profilePicture              String   @default("")
   companyName                 String   @default("")
+  industry                    String   @default("")
+  location                    String   @default("")
   specialties                 String[]
   certifications              String[]
   knowledgeBase               Json[]
@@ -114,6 +116,7 @@ model VideoScript {
   durationInSeconds Int
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  isSaved           Boolean  @default(false)
 
   client    User     @relation(fields: [clientId], references: [id])
   clientId  String

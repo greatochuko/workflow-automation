@@ -14,6 +14,8 @@ export type UserType = {
   role: "CLIENT" | "FREELANCER" | "ADMIN";
   profilePicture: string;
   companyName: string;
+  industry: string;
+  location: string;
   monthlyCredits: number;
   newsLetterBasicInstructions: string;
   newsletterExamples: string[];

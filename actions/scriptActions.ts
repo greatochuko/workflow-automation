@@ -2,8 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
-import { VideoScriptType } from "@/types/videoScript";
-import { revalidatePath } from "next/cache";
+import { VideoScriptContentType, VideoScriptType } from "@/types/videoScript";
 import { redirect } from "next/navigation";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod.mjs";
@@ -102,9 +101,9 @@ export async function createVideoScript(
   }
 }
 
-export async function updateVideoScript(
+export async function saveVideoScript(
   scriptId: string,
-  content: VideoScriptType["content"],
+  content: VideoScriptContentType,
 ) {
   let newScriptId;
   try {
@@ -112,6 +111,7 @@ export async function updateVideoScript(
       where: { id: scriptId },
       data: {
         content,
+        isSaved: true,
       },
     });
 

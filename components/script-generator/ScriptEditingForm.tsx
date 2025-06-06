@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 import Button from "../ui/Button";
 import { LoaderIcon, SaveIcon } from "lucide-react";
 import { VideoScriptType } from "@/types/videoScript";
-import { updateVideoScript } from "@/actions/scriptActions";
+import { saveVideoScript } from "@/actions/scriptActions";
 import { toast } from "sonner";
 
 export default function ScriptEditingForm({
@@ -36,7 +36,7 @@ export default function ScriptEditingForm({
     }
 
     setLoading(true);
-    const { data, error } = await updateVideoScript(videoScript.id, {
+    const { data, error } = await saveVideoScript(videoScript.id, {
       body,
       cta,
       hookLine,
@@ -56,18 +56,27 @@ export default function ScriptEditingForm({
       className="flex h-fit w-full flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 sm:gap-6 sm:p-6"
     >
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold sm:text-xl">Edit Your Script</h2>
-        <Button type="submit" disabled={!scriptContentHasChanged || loading}>
-          {loading ? (
-            <>
-              <LoaderIcon className="h-4 w-4 animate-spin" /> Saving...
-            </>
-          ) : (
-            <>
-              <SaveIcon className="h-4 w-4" /> Save Changes
-            </>
-          )}
-        </Button>
+        <h2 className="text-lg font-semibold sm:text-xl">
+          {videoScript.isSaved ? "View" : "Edit"} Your Script
+        </h2>
+        {!videoScript.isSaved && (
+          <Button
+            type="submit"
+            disabled={
+              videoScript.isSaved || !scriptContentHasChanged || loading
+            }
+          >
+            {loading ? (
+              <>
+                <LoaderIcon className="h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              <>
+                <SaveIcon className="h-4 w-4" /> Save Changes
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -78,7 +87,7 @@ export default function ScriptEditingForm({
           name={"hook-line"}
           id={"hook-line"}
           rows={4}
-          disabled={loading}
+          disabled={videoScript.isSaved || loading}
           value={hookLine}
           onChange={(e) => setHookLine(e.target.value)}
           placeholder={"Enter your hook line..."}
@@ -94,7 +103,7 @@ export default function ScriptEditingForm({
           name={"body"}
           id={"body"}
           rows={10}
-          disabled={loading}
+          disabled={videoScript.isSaved || loading}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder={"Enter your main content..."}
@@ -110,7 +119,7 @@ export default function ScriptEditingForm({
           name={"call-to-action"}
           id={"call-to-action"}
           rows={4}
-          disabled={loading}
+          disabled={videoScript.isSaved || loading}
           value={cta}
           onChange={(e) => setCta(e.target.value)}
           placeholder={"Enter your call to action..."}
