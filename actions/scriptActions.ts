@@ -115,10 +115,6 @@ export async function updateVideoScript(
       },
     });
 
-    if (updatedScript) {
-      revalidatePath(`/script-generator/${scriptId}`);
-    }
-
     return { data: updatedScript as VideoScriptType, error: null };
   } catch (err) {
     const error = err as Error;

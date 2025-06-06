@@ -1,8 +1,12 @@
 import React from "react";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import ScriptGenerationForm from "@/components/script-generator/ScriptGenerationForm";
+import GeneratedScriptList from "@/components/script-generator/GeneratedScriptList";
+import { getVideoScripts } from "@/services/scriptServices";
 
 export default async function Page() {
+  const { data: videoScripts } = await getVideoScripts();
+
   return (
     <main className="flex w-full flex-col">
       <div className="flex flex-col border-b border-gray-200 px-[5%] py-4">
@@ -14,8 +18,9 @@ export default async function Page() {
           Generate video scripts for your content
         </p>
       </div>
-      <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
+      <div className="mx-auto flex w-[90%] max-w-7xl flex-1 flex-wrap gap-6 py-4">
         <ScriptGenerationForm />
+        <GeneratedScriptList videoScripts={videoScripts} />
       </div>
     </main>
   );

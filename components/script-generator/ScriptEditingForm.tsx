@@ -8,10 +8,11 @@ import { updateVideoScript } from "@/actions/scriptActions";
 import { toast } from "sonner";
 
 export default function ScriptEditingForm({
-  videoScript,
+  videoScript: originalVideoScript,
 }: {
   videoScript: VideoScriptType;
 }) {
+  const [videoScript, setVideoScript] = useState(originalVideoScript);
   const [loading, setLoading] = useState(false);
   const [hookLine, setHookLine] = useState(videoScript.content.hookLine);
   const [cta, setCta] = useState(videoScript.content.cta);
@@ -41,6 +42,7 @@ export default function ScriptEditingForm({
       hookLine,
     });
     if (data) {
+      setVideoScript(data);
       toast.success("Script updated successfully");
     } else {
       toast.error(error);

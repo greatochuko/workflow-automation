@@ -38,7 +38,7 @@ export default function ScriptGenerationForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex h-fit w-full max-w-2xl flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 sm:gap-6 sm:p-6"
+      className="flex h-fit min-w-[340px] flex-1 flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 sm:gap-6 sm:p-6"
     >
       <h2 className="text-lg font-semibold sm:text-xl">
         Generate Video Script
