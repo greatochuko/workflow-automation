@@ -88,7 +88,7 @@ export default function Sidebar({ user }: { user: UserType }) {
                     <Link
                       href={"/script-generator"}
                       className={`flex items-center gap-4 rounded-md p-2 ${
-                        pathname === "/script-generator"
+                        pathname.startsWith("/script-generator")
                           ? "text-accent-black-200 bg-white font-semibold"
                           : "font-medium hover:bg-white/10"
                       }`}
