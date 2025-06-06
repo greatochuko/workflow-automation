@@ -83,7 +83,7 @@ export default function MobileSidebar({ user }: { user: UserType }) {
 
                 {user.role === "CLIENT" && (
                   <>
-                    <li>
+                    <li onClick={closeSidebar}>
                       <Link
                         href={"/newsletter-content"}
                         className={`flex items-center gap-4 rounded-md p-2 ${
@@ -96,7 +96,7 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                         Newsletter Content
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={closeSidebar}>
                       <Link
                         href={"/script-generator"}
                         className={`flex items-center gap-4 rounded-md p-2 ${
