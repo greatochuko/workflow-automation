@@ -17,7 +17,7 @@ const scriptResponse = z.object({
 });
 
 async function generateScript(
-  userDetails: { industry: string; location: string },
+  userDetails: { examples: string[]; industry: string; location: string },
   videoDetails: {
     topic: string;
     videoDescription: string;
@@ -25,17 +25,26 @@ async function generateScript(
   },
 ) {
   try {
+    const formattedExamples =
+      userDetails.examples.length > 0
+        ? `\nRelevant Examples:\n${userDetails.examples
+            .map((ex, i) => `${i + 1}. ${ex}`)
+            .join("\n")}`
+        : "";
+
     const userContent = `
+
       User Industry: ${userDetails.industry || "N/A"} 
       User Location: ${userDetails.location || "N/A"}
       Video Topic: "${videoDetails.topic}"
       Video Description: "${videoDetails.videoDescription}"
       Duration: ${videoDetails.durationInSeconds}
+      ${formattedExamples}
       `.trim();
 
     const systemContent = `
       You are a world-class video scriptwriter assistant.
-      Your task is to generate engaging and high-converting video scripts optimized for viewer retention, clarity, and emotional resonanc based on the video title, description and duration.
+      Your task is to generate engaging and high-converting video scripts optimized for viewer retention, clarity, and emotional resonance based on the video topic, description, and duration.
       Ensure the tone and pacing match the type of content and target audience.
       Keep the script concise, emotionally engaging, and structured for video storytelling.
       `.trim();
@@ -85,7 +94,11 @@ export async function createVideoScript(
     }
 
     const generatedScript = await generateScript(
-      { industry: user.industry, location: user.location },
+      {
+        examples: user.videoScriptExamples,
+        industry: user.industry,
+        location: user.location,
+      },
       {
         topic,
         videoDescription: description,
