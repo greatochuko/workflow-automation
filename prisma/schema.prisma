@@ -33,6 +33,7 @@ model User {
   certifications              String[]
   knowledgeBase               Json[]
   videoTypes                  String[]
+  videoScriptExamples         String[]
   newsLetterBasicInstructions String   @default("")
   newsletterExamples          String[]
   monthlyCredits              Int      @default(0)

@@ -205,6 +205,24 @@ export async function saveUserKnowledgeBase(
   }
 }
 
+export async function saveUserVideoScriptSettings(
+  clientId: string,
+  videoScriptExamples: string[],
+) {
+  try {
+    await prisma.user.update({
+      where: { id: clientId },
+      data: {
+        videoScriptExamples,
+      },
+    });
+    revalidatePath("/settings");
+    return { error: null };
+  } catch {
+    return { error: "Server Error: Unable to update user knowledge base" };
+  }
+}
+
 export async function saveUserNewsletterSettings(
   clientId: string,
   newsletterSettings: {

@@ -9,6 +9,7 @@ import {
   updateClientVideoTypes,
 } from "@/actions/videoTypeActions";
 import { NewsletterTemplateSettings } from "./NewsletterTemplateSettings";
+import ScriptSettings from "./ScriptSettings";
 
 export default function ClientSettingsPage({
   clients,
@@ -105,6 +106,7 @@ export default function ClientSettingsPage({
             user={selectedClient}
           />
           <KnowledgeBase client={selectedClient} />
+          <ScriptSettings client={selectedClient} />
           <NewsletterTemplateSettings client={selectedClient} />
         </React.Fragment>
       )}

@@ -20,6 +20,7 @@ export type UserType = {
   newsLetterBasicInstructions: string;
   newsletterExamples: string[];
   specialties: string[];
+  videoScriptExamples: string[];
   certifications: string[];
   videoTypes: string[];
   assignedFreelancers: UserType[];

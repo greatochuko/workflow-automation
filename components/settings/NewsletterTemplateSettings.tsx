@@ -65,9 +65,11 @@ export function NewsletterTemplateSettings({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-4 rounded-md border border-gray-300 bg-white p-4 sm:p-6">
       <div>
-        <h3 className="text-lg font-semibold">Newsletter Content Settings</h3>
+        <h2 className="text-lg font-semibold sm:text-xl lg:text-2xl">
+          Newsletter Content Settings
+        </h2>
         <p className="text-sm text-gray-500">
           Configure newsletter content generation for {client.fullName}
         </p>
