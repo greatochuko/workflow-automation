@@ -24,6 +24,7 @@ export async function getSession(): Promise<{
           },
         },
         newsletterTemplates: true,
+        videoScripts: true,
       },
     })) as UserType | null;
 

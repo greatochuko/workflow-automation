@@ -13,6 +13,7 @@ import { ProjectFileType, ProjectType } from "@/types/project";
 import { generateVideoThumbnail } from "@/lib/utils/videoThumbnailGenerator";
 import { resizeImage } from "@/lib/utils/imageResize";
 import { uploadFileWithProgress } from "@/lib/utils/fileUpload";
+import { VideoScriptType } from "@/types/videoScript";
 
 const MAX_NUMBER_OF_FILES = 5;
 
@@ -20,14 +21,17 @@ export default function ProjectCreationModal({
   open,
   closeModal: closeVideoModal,
   videoTypes,
+  videoScripts,
   updateProjects,
 }: {
   open: boolean;
   closeModal: () => void;
   videoTypes: string[];
+  videoScripts: VideoScriptType[];
   updateProjects: (project: ProjectType) => void;
 }) {
   const [videoType, setVideoType] = useState("");
+  const [videoScriptId, setVideoScriptId] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -62,7 +66,7 @@ export default function ProjectCreationModal({
     setUploadProgress({});
   }
 
-  const handleFiles = async (files: FileList) => {
+  async function handleFiles(files: FileList) {
     if (uploadedFiles.length + files.length > MAX_NUMBER_OF_FILES) {
       toast.error(`You can only upload up to ${MAX_NUMBER_OF_FILES} files.`);
       return;
@@ -110,7 +114,7 @@ export default function ProjectCreationModal({
     setSelectingFiles(false);
 
     setUploadedFiles((prev) => [...prev, ...newFiles]);
-  };
+  }
 
   function updateMetadata(
     id: string,
@@ -225,7 +229,10 @@ export default function ProjectCreationModal({
       files: projectFiles,
     };
 
-    const { data, error } = await createProject(projectData);
+    const { data, error } = await createProject(
+      projectData,
+      videoScripts.find((script) => script.id === videoScriptId),
+    );
 
     if (data) {
       updateProjects(data as ProjectType);
@@ -270,6 +277,7 @@ export default function ProjectCreationModal({
             }
             showCheckmark
           />
+
           <FileUploadZone
             maxFiles={MAX_NUMBER_OF_FILES}
             onFilesSelected={handleFiles}
@@ -287,6 +295,22 @@ export default function ProjectCreationModal({
                   files={uploadedFiles}
                   onRemove={removeFile}
                   onMetadataChange={updateMetadata}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2 text-sm">
+                <label htmlFor="video-script" className="font-medium">
+                  Script
+                </label>
+                <Select
+                  onChange={(value) => setVideoScriptId(value)}
+                  value={videoScriptId}
+                  options={videoScripts.map((vt) => ({
+                    label: <span>{vt.topic}</span>,
+                    value: vt.id,
+                  }))}
+                  placeholder={<span>Select Video Script (optional)</span>}
+                  showCheckmark
                 />
               </div>
 

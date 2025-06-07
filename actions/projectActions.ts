@@ -12,6 +12,7 @@ import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/aws-s3";
 import { signProjectFiles } from "@/services/projectServices";
+import { VideoScriptContentType, VideoScriptType } from "@/types/videoScript";
 
 type ProjectDataType = {
   title: string;
@@ -33,6 +34,7 @@ const ProjectCTAResponse = z.object({
 async function generateCaptionContent(
   projectData: { title: string; description: string; videoType: string },
   userKnowledgeBase: KnowledgeBaseItemType[],
+  videoScript?: VideoScriptContentType,
 ) {
   try {
     const userContent = `
@@ -41,6 +43,16 @@ async function generateCaptionContent(
             Title: ${projectData.title}
             Description: ${projectData.description}
             Video Type: ${projectData.videoType}
+            ${
+              videoScript
+                ? `
+              Video Script: 
+              Hook Link: ${videoScript.hookLine}
+              Body: ${videoScript.body}
+              CTA: ${videoScript.cta}
+              `
+                : ""
+            }
 
             Basic Instructions: ${userKnowledgeBase.find((kb) => kb.id === "basic")?.content}
             Objective: ${userKnowledgeBase.find((kb) => kb.id === "objective")?.content}
@@ -79,7 +91,10 @@ async function generateCaptionContent(
   }
 }
 
-export async function createProject(projectData: ProjectDataType) {
+export async function createProject(
+  projectData: ProjectDataType,
+  videoScript?: VideoScriptType,
+) {
   try {
     const { payload } = await getTokenFromCookie();
 
@@ -98,6 +113,7 @@ export async function createProject(projectData: ProjectDataType) {
     const captionData = await generateCaptionContent(
       projectData,
       user.knowledgeBase,
+      videoScript?.content,
     );
 
     const newProject = (await prisma.project.create({
@@ -106,6 +122,7 @@ export async function createProject(projectData: ProjectDataType) {
         createdById: payload.user.id,
         status: "IN_PROGRESS",
         captionData,
+        videoScriptId: videoScript?.id,
       },
     })) as ProjectType;
 

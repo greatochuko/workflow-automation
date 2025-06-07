@@ -20,6 +20,7 @@ export default async function Home() {
       {user?.role === "CLIENT" ? (
         <ClientDashboardContent
           clientVideoTypes={user?.videoTypes || []}
+          clientVideoScripts={user?.videoScripts || []}
           projects={projects}
         />
       ) : (

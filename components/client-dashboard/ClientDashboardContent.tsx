@@ -7,12 +7,15 @@ import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
 import { ProjectType } from "@/types/project";
 import ProjectDetailsModal from "../project/ProjectDetailsModal";
 import ProjectsAwaitingApprovalSection from "./ProjectsAwaitingAprovalSection";
+import { VideoScriptType } from "@/types/videoScript";
 
 export default function ClientDashboardContent({
   clientVideoTypes,
+  clientVideoScripts,
   projects: fetchedProjects,
 }: {
   clientVideoTypes: string[];
+  clientVideoScripts: VideoScriptType[];
   projects: ProjectType[];
 }) {
   const [projects, setProjects] = useState(fetchedProjects);
@@ -54,6 +57,7 @@ export default function ClientDashboardContent({
         <UploadVideoButton
           updateProjects={updateProjects}
           videoTypes={clientVideoTypes}
+          videoScripts={clientVideoScripts}
         />
       </div>
 

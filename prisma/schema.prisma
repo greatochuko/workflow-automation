@@ -59,7 +59,7 @@ model User {
 
   projects            Project[]
   newsletterTemplates NewsletterTemplate[]
-  VideoScript         VideoScript[]
+  videoScripts        VideoScript[]
 }
 
 model AppSettings {
@@ -93,7 +93,8 @@ model Project {
   createdById String
 
   newsletterTemplates NewsletterTemplate[]
-  VideoScript         VideoScript[]
+  videoScript         VideoScript?         @relation(fields: [videoScriptId], references: [id])
+  videoScriptId       String?
 }
 
 model NewsletterTemplate {
@@ -119,8 +120,7 @@ model VideoScript {
   updatedAt         DateTime @updatedAt
   isSaved           Boolean  @default(false)
 
-  client    User     @relation(fields: [clientId], references: [id])
-  clientId  String
-  Project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?
+  client   User      @relation(fields: [clientId], references: [id])
+  clientId String
+  projects Project[]
 }

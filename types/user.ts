@@ -1,4 +1,5 @@
 import { NewsletterTemplateType } from "./newsletter";
+import { VideoScriptType } from "./videoScript";
 
 export type KnowledgeBaseItemType = {
   id: string;
@@ -21,6 +22,7 @@ export type UserType = {
   newsletterExamples: string[];
   specialties: string[];
   videoScriptExamples: string[];
+  videoScripts: VideoScriptType[];
   certifications: string[];
   videoTypes: string[];
   assignedFreelancers: UserType[];
