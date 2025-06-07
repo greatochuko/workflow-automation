@@ -153,3 +153,17 @@ export async function saveVideoScript(
     if (newScriptId) redirect(`/script-generator/${newScriptId}`);
   }
 }
+
+export async function deleteVideoScript(id: string) {
+  try {
+    const deletedScript = await prisma.videoScript.delete({
+      where: { id },
+    });
+
+    return { data: deletedScript, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.error("Error deleting video script: ", error.message);
+    return { data: null, error: "Server Error" };
+  }
+}

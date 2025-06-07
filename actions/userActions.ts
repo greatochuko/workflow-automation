@@ -8,6 +8,8 @@ import { getVideoTypes } from "@/services/videoTypeServices";
 import { KnowledgeBaseItemType, type UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
 import { deleteProject } from "./projectActions";
+import { deleteNewsletterTemplate } from "./newsletterActions";
+import { deleteVideoScript } from "./scriptActions";
 
 export async function createUser(userData: {
   fullName: string;
@@ -245,19 +247,47 @@ export async function saveUserNewsletterSettings(
 
 export async function deleteUser(userId: string) {
   try {
-    const userProjects = await prisma.project.findMany({
-      where: { createdById: userId },
+    const user = await prisma.user.findFirst({
+      where: { id: userId },
+      include: {
+        projects: true,
+        newsletterTemplates: true,
+        videoScripts: true,
+      },
     });
 
-    await Promise.all(
-      userProjects.map(async (project) => {
+    if (!user) {
+      return { data: null, error: "Unable to delete user: Invalid user ID" };
+    }
+
+    const deletionPromises = [
+      ...user.newsletterTemplates.map(async (template) => {
+        const { data, error } = await deleteNewsletterTemplate(template.id);
+        if (error) {
+          console.error(
+            `Error deleting newsletter template with ID ${template.id}`,
+            error,
+          );
+        }
+        return data;
+      }),
+      ...user.projects.map(async (project) => {
         const { data, error } = await deleteProject(project.id);
         if (error) {
           console.error(`Error deleting project ${project.title}`, error);
         }
         return data;
       }),
-    );
+      ...user.videoScripts.map(async (script) => {
+        const { data, error } = await deleteVideoScript(script.id);
+        if (error) {
+          console.error(`Error deleting video script: ${script.topic}`, error);
+        }
+        return data;
+      }),
+    ];
+
+    await Promise.all(deletionPromises);
 
     await prisma.user.delete({
       where: { id: userId },

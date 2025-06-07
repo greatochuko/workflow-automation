@@ -142,3 +142,15 @@ export async function createNewsletterTemplate(
     return { data: null, error: "Server Error" };
   }
 }
+
+export async function deleteNewsletterTemplate(id: string) {
+  try {
+    const deletedNewsletterTemplate = await prisma.newsletterTemplate.delete({
+      where: { id },
+    });
+
+    return { data: deletedNewsletterTemplate, error: null };
+  } catch {
+    return { data: null, error: "Server Error" };
+  }
+}
