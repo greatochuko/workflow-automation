@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Plus,
-  Trash2,
-  Save,
-  ChevronDown,
-  ChevronUp,
-  LoaderIcon,
-} from "lucide-react";
+import { Plus, Trash2, Save, LoaderIcon, ChevronDownIcon } from "lucide-react";
 import { toast } from "sonner";
 import Button from "../ui/Button";
 import { UserType } from "@/types/user";
@@ -25,19 +18,9 @@ export function NewsletterTemplateSettings({
   const [examples, setExamples] = useState<string[]>(client.newsletterExamples);
   const [monthlyCredits, setMonthlyCredits] = useState(client.monthlyCredits);
   const [loading, setLoading] = useState(false);
+  const [expandBasicInstructions, setExpandBasicInstructions] = useState(false);
   const [newExample, setNewExample] = useState("");
-  const [expandedExamples, setExpandedExamples] = useState<{
-    [key: number]: boolean;
-  }>({});
-  //   const [settings, setSettings] = useState({
-  //     basicInstructions:
-  //       "Create engaging email newsletter templates based on approved video content. Focus on compelling subject lines, clear value propositions, and strong calls-to-action.",
-  //     examples: [
-  //       "Subject: 🚀 This Changed Everything for Our Clients\n\nHey [First Name],\n\nI wanted to share something that's been getting incredible results...\n\n[Video content summary]\n\nThe response has been amazing - people are saying this is exactly what they needed to hear.\n\nCheck it out here: [Link]\n\nLet me know what you think!\n\nBest,\n[Your Name]",
-  //       "Subject: Personal Note About [Video Title]\n\n[First Name],\n\nI've been working on something that I think you'll really appreciate.\n\n[Video hook/teaser]\n\nWhat you'll discover:\n• Key insight #1\n• Practical strategy #2\n• Game-changing perspective #3\n\nThis represents hours of research and real-world application.\n\nTake a look: [Link]\n\nTalk soon,\n[Your Name]",
-  //     ],
-  //     monthlyCredits: 2,
-  //   });
+  const [expandedExamples, setExpandedExamples] = useState<number[]>([]);
 
   const handleCreditsChange = (value: string) => {
     const credits = parseInt(value) || 0;
@@ -56,10 +39,11 @@ export function NewsletterTemplateSettings({
   };
 
   const toggleExample = (index: number) => {
-    setExpandedExamples((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+    if (expandedExamples.includes(index)) {
+      setExpandedExamples((prev) => prev.filter((n) => n !== index));
+    } else {
+      setExpandedExamples((prev) => [...prev, index]);
+    }
   };
 
   const saveSettings = async () => {
@@ -112,24 +96,40 @@ export function NewsletterTemplateSettings({
       </div>
 
       {/* Basic Instructions */}
-      <div className="flex flex-col gap-4 rounded-md border border-gray-300 bg-white p-4 sm:p-6">
-        <h4 className="font-semibold">Basic Instructions</h4>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="instructions" className="text-sm font-medium">
-            Newsletter Generation Instructions
-          </label>
-          <textarea
-            id="instructions"
-            value={basicInstructions}
-            onChange={(e) => setBasicInstructions(e.target.value)}
-            placeholder="Enter instructions for newsletter template generation..."
-            rows={4}
-            className="bg-background resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            These instructions will guide the AI when generating newsletter
-            templates
-          </p>
+      <div className="flex flex-col gap-6 rounded-md border border-gray-300 bg-white p-4 sm:p-6">
+        <div className="flex flex-col gap-2">
+          <h4 className="font-semibold">Basic Instructions</h4>
+          <div className="overflow-hidden border-b border-b-gray-300">
+            <h5
+              onClick={() => setExpandBasicInstructions((prev) => !prev)}
+              className="flex w-full cursor-pointer items-center justify-between rounded-md py-2 text-left text-sm font-medium hover:underline"
+            >
+              <span>Newsletter Generation Instructions</span>
+              <ChevronDownIcon
+                className={`h-4 w-4 duration-200 ${expandBasicInstructions ? "rotate-180" : ""}`}
+              />
+            </h5>
+            <div
+              className={`flex flex-col gap-2 duration-300 ease-in-out ${
+                expandBasicInstructions
+                  ? "max-h-80 py-2 pb-4"
+                  : "max-h-0 overflow-hidden"
+              }`}
+            >
+              <textarea
+                rows={8}
+                disabled={loading}
+                value={basicInstructions}
+                onChange={(e) => setBasicInstructions(e.target.value)}
+                placeholder={"Basic Instructions"}
+                className="bg-background mx-1 resize-none rounded-md border border-gray-300 px-3 py-2 text-sm"
+              ></textarea>
+              <p className="mt-1 text-xs text-gray-500">
+                These instructions will guide the AI when generating newsletter
+                templates
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -138,40 +138,39 @@ export function NewsletterTemplateSettings({
         <h4 className="font-semibold">Newsletter Examples</h4>
         {examples.length ? (
           examples.map((example, index) => (
-            <div key={index} className="space-y-2 rounded-lg bg-gray-100 p-4">
+            <div key={index} className="rounded-lg bg-gray-100 p-4">
               <div className="flex items-center justify-between">
-                <h5 className="text-xs font-medium">Example {index + 1}</h5>
+                <h5
+                  onClick={() => toggleExample(index)}
+                  className="cursor-pointer text-xs font-medium hover:underline"
+                >
+                  Example {index + 1}
+                </h5>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => toggleExample(index)}
                     className="hover:bg-accent rounded-md p-2 duration-200 hover:text-white"
                   >
-                    {expandedExamples[index] ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
+                    <ChevronDownIcon
+                      className={`h-4 w-4 duration-200 ${expandedExamples.includes(index) ? "rotate-180" : ""}`}
+                    />
                   </button>
                   <button
                     onClick={() => removeExample(index)}
-                    className="hover:bg-accent rounded-md p-2 duration-200 hover:text-white"
+                    className="hover:bg-accent-red rounded-md p-2 duration-200 hover:text-white"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
-              <div className="bg-background rounded border p-3">
-                <pre
-                  className={`font-mono text-sm whitespace-pre-wrap ${expandedExamples[index] ? "" : "line-clamp-4"}`}
-                >
-                  {example}
-                </pre>
-                <button
-                  onClick={() => toggleExample(index)}
-                  className="text-accent mt-2 h-auto p-0 text-xs hover:underline"
-                >
-                  Show {!expandedExamples[index] ? "more" : "less"}
-                </button>
+              <div
+                className={`overflow-hidden duration-300 ${expandedExamples.includes(index) ? "mt-2 max-h-80" : "max-h-0"}`}
+              >
+                <textarea
+                  disabled
+                  value={example}
+                  className={`h-80 w-full rounded border bg-white p-3 font-mono text-sm whitespace-pre-wrap`}
+                ></textarea>
               </div>
             </div>
           ))
