@@ -37,11 +37,11 @@ export default function Sidebar({ user }: { user: UserType }) {
   return (
     <>
       <aside
-        className={`bg-accent-black-200 sticky top-0 hidden h-dvh flex-col overflow-hidden text-sm text-white duration-200 md:flex ${sidebarOpen ? "w-52" : "w-0"}`}
+        className={`bg-accent-black-200 sticky top-0 hidden h-dvh flex-col overflow-hidden text-sm text-white duration-200 md:flex ${sidebarOpen ? "w-56" : "w-0"}`}
       >
         <div className="flex items-center gap-2 p-4 font-semibold">
           <FileVideoIcon className="h-6 w-6" />
-          <span>VidLeads</span>
+          <span>Clinic Lead Stack</span>
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
             className={`ml-auto duration-200 ${!sidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}

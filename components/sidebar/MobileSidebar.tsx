@@ -48,11 +48,11 @@ export default function MobileSidebar({ user }: { user: UserType }) {
       >
         <aside
           onClick={(e) => e.stopPropagation()}
-          className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-52 flex-col overflow-hidden text-sm text-white duration-200 ${mobileSidebarOpen ? "" : "-translate-x-full"}`}
+          className={`bg-accent-black-200 fixed top-0 left-0 flex h-dvh w-56 flex-col overflow-hidden text-sm text-white duration-200 ${mobileSidebarOpen ? "" : "-translate-x-full"}`}
         >
           <div className="flex items-center gap-2 p-4 font-semibold">
             <FileVideoIcon className="h-6 w-6" />
-            <span>VidLeads</span>
+            <span>Clinic Lead Stack</span>
             <button
               onClick={() => setSidebarOpen((prev) => !prev)}
               className={`ml-auto duration-200 ${!mobileSidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}

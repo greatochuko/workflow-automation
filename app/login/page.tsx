@@ -11,7 +11,7 @@ export default async function LoginPage() {
               <FileVideo className="h-7 w-7 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold">VidLeads</h1>
+          <h1 className="text-2xl font-bold">Clinic Lead Stack</h1>
           <p className="text-gray-500">Sign in to your account</p>
         </div>
 

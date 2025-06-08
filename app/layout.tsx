@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VidLeads",
+  title: "Clinic Lead Stack",
   description: "",
 };
 
