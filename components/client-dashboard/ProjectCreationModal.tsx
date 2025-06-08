@@ -134,6 +134,17 @@ export default function ProjectCreationModal({
     setUploadedFiles((prev) => prev.filter((file) => file.metadata.id !== id));
   }
 
+  function handleChangeVideoScriptId(value: string) {
+    setVideoScriptId(value);
+    const selectedVideoScript = videoScripts.find((vs) => vs.id === value);
+    if (selectedVideoScript) {
+      setTitle(selectedVideoScript.topic);
+      setDescription(
+        `${selectedVideoScript.content.hookLine}\n\n${selectedVideoScript.content.body}\n\n${selectedVideoScript.content.cta} `,
+      );
+    }
+  }
+
   // async function uploadFile(file: File) {
   //   const { url, key } = await getPresignedUrl(file.type);
 
@@ -303,14 +314,19 @@ export default function ProjectCreationModal({
                   Script
                 </label>
                 <Select
-                  onChange={(value) => setVideoScriptId(value)}
+                  onChange={handleChangeVideoScriptId}
                   value={videoScriptId}
                   options={videoScripts.map((vt) => ({
-                    label: <span>{vt.topic}</span>,
+                    label: (
+                      <span className="truncate overflow-hidden">
+                        {vt.topic}
+                      </span>
+                    ),
                     value: vt.id,
                   }))}
                   placeholder={<span>Select Video Script (optional)</span>}
                   showCheckmark
+                  dropdownClassname="w-full"
                 />
               </div>
 
@@ -334,7 +350,7 @@ export default function ProjectCreationModal({
                   Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  rows={4}
+                  rows={6}
                   id="description"
                   name="description"
                   value={description}

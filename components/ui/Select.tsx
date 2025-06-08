@@ -13,6 +13,7 @@ export default function Select({
   placeholder = "Select",
   className,
   containerClassName,
+  dropdownClassname,
   disabled = false,
   showCheckmark = false,
 }: {
@@ -22,6 +23,7 @@ export default function Select({
   placeholder?: React.ReactNode;
   className?: string;
   containerClassName?: string;
+  dropdownClassname?: string;
   disabled?: boolean;
   showCheckmark?: boolean;
 }) {
@@ -111,7 +113,12 @@ export default function Select({
       </div>
 
       {open && (
-        <div className="absolute top-full z-10 mt-1 max-h-60 w-fit min-w-full overflow-y-auto rounded-md border border-gray-300 bg-white p-1 shadow duration-200">
+        <div
+          className={twMerge(
+            "absolute top-full z-10 mt-1 max-h-60 w-fit min-w-full overflow-y-auto rounded-md border border-gray-300 bg-white p-1 shadow duration-200",
+            dropdownClassname,
+          )}
+        >
           {options.map((opt) => (
             <div
               key={opt.value}
