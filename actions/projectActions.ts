@@ -13,6 +13,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/aws-s3";
 import { signProjectFiles } from "@/services/projectServices";
 import { VideoScriptContentType, VideoScriptType } from "@/types/videoScript";
+import { sendProjectCreationEmail } from "./emailActions";
 
 type ProjectDataType = {
   title: string;
@@ -104,6 +105,7 @@ export async function createProject(
 
     const user = (await prisma.user.findFirst({
       where: { id: payload.user.id },
+      include: { assignedFreelancers: true },
     })) as unknown as UserType | null;
 
     if (!user) {
@@ -127,6 +129,14 @@ export async function createProject(
     })) as ProjectType;
 
     const signedProject = await signProjectFiles([newProject]);
+
+    await sendProjectCreationEmail({
+      clientName: user.fullName,
+      freelancerName: user.assignedFreelancers[0]?.fullName.split(" ")[0] || "",
+      freelancerEmail: user.assignedFreelancers[0]?.email || "",
+      projectTitle: newProject.title,
+      projectDescription: newProject.description,
+    });
 
     return { data: signedProject[0], error: null };
   } catch {
