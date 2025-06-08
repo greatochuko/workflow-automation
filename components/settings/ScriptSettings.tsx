@@ -12,7 +12,9 @@ import { toast } from "sonner";
 import { saveUserVideoScriptSettings } from "@/actions/userActions";
 
 export default function ScriptSettings({ client }: { client: UserType }) {
-  const [examples, setExamples] = useState<string[]>([]);
+  const [examples, setExamples] = useState<string[]>(
+    client.videoScriptExamples,
+  );
   const [newExample, setNewExample] = useState("");
   const [expandedExamples, setExpandedExamples] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
