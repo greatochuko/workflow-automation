@@ -12,7 +12,7 @@ import {
 import { render } from "@react-email/render";
 import { CSSProperties } from "react";
 
-export default function NewProjectEmail({
+export default function ProjectCreationEmail({
   freelancerName,
   clientName,
   projectTitle,
@@ -142,7 +142,7 @@ const styles: Record<string, CSSProperties> = {
   },
 };
 
-export const createProjectEmail = async ({
+export const renderProjectCreationEmail = async ({
   freelancerName,
   clientName,
   projectTitle,
@@ -156,7 +156,7 @@ export const createProjectEmail = async ({
   projectLink: string;
 }) =>
   await render(
-    <NewProjectEmail
+    <ProjectCreationEmail
       freelancerName={freelancerName}
       clientName={clientName}
       projectTitle={projectTitle}
