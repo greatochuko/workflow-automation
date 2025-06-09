@@ -23,7 +23,7 @@ import LogoutModal from "../auth/LogoutModal";
 const sidebarLinks = [
   // { title: "Main", url: "/", icon: HomeIcon },
   { title: "Users", url: "/users", icon: UsersIcon },
-  { title: "Settings", url: "/settings", icon: SettingsIcon },
+  { title: "User Settings", url: "/settings", icon: SettingsIcon },
 ];
 
 export default function MobileSidebar({ user }: { user: UserType }) {
