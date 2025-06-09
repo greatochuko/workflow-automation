@@ -13,7 +13,11 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3Client } from "@/lib/aws-s3";
 import { signProjectFiles } from "@/services/projectServices";
 import { VideoScriptContentType, VideoScriptType } from "@/types/videoScript";
-import { sendProjectCreationEmail } from "./emailActions";
+import {
+  sendProjectCreationEmail,
+  sendProjectFeedbackEmail,
+  sendProjectSubmissionEmail,
+} from "./emailActions";
 
 type ProjectDataType = {
   title: string;
@@ -131,7 +135,7 @@ export async function createProject(
     const signedProject = await signProjectFiles([newProject]);
 
     await sendProjectCreationEmail({
-      clientName: user.fullName,
+      clientName: user.fullName.split(" ")[0],
       freelancerName: user.assignedFreelancers[0]?.fullName.split(" ")[0] || "",
       freelancerEmail: user.assignedFreelancers[0]?.email || "",
       projectTitle: newProject.title,
@@ -267,6 +271,22 @@ export async function submitProjectFiles(
     const updatedProject = await prisma.project.update({
       where: { id: projectId },
       data: { submissionDate: new Date(), completedFile, status: "SUBMITTED" },
+      include: {
+        createdBy: {
+          select: { fullName: true, email: true },
+          include: { assignedFreelancers: { select: { fullName: true } } },
+        },
+      },
+    });
+
+    await sendProjectSubmissionEmail({
+      clientName: updatedProject.createdBy.fullName.split(" ")[0],
+      freelancerName:
+        updatedProject.createdBy.assignedFreelancers[0]?.fullName.split(
+          " ",
+        )[0] || "",
+      clientEmail: updatedProject.createdBy.email,
+      projectTitle: updatedProject.title,
     });
 
     return { data: updatedProject as unknown as ProjectType, error: null };
@@ -281,15 +301,36 @@ export async function rejectProject(projectId: string, feedback: string) {
       where: { id: projectId },
     })) as ProjectType;
 
-    const updatedProject = (await prisma.project.update({
+    const updatedProject = await prisma.project.update({
       where: { id: projectId },
       data: { feedback, status: "REJECTED", completedFile: {} },
-    })) as ProjectType;
+      include: {
+        createdBy: {
+          select: { fullName: true, email: true },
+          include: {
+            assignedFreelancers: { select: { fullName: true, email: true } },
+          },
+        },
+      },
+    });
 
     await deleteFilesFromS3([
       projectToUpdate.completedFile.url,
       projectToUpdate.completedFile.thumbnailUrl,
     ]);
+
+    await sendProjectFeedbackEmail({
+      clientName: updatedProject.createdBy.fullName.split(" ")[0],
+      freelancerName:
+        updatedProject.createdBy.assignedFreelancers[0]?.fullName.split(
+          " ",
+        )[0] || "",
+      freelancerEmail:
+        updatedProject.createdBy.assignedFreelancers[0]?.email || "",
+      projectTitle: updatedProject.title,
+      feedback,
+      status: "rejected",
+    });
 
     return { data: updatedProject as unknown as ProjectType, error: null };
   } catch {
@@ -302,6 +343,27 @@ export async function approveProject(projectId: string, feedback?: string) {
     const updatedProject = await prisma.project.update({
       where: { id: projectId },
       data: { feedback, status: "APPROVED" },
+      include: {
+        createdBy: {
+          select: { fullName: true, email: true },
+          include: {
+            assignedFreelancers: { select: { fullName: true, email: true } },
+          },
+        },
+      },
+    });
+
+    await sendProjectFeedbackEmail({
+      clientName: updatedProject.createdBy.fullName.split(" ")[0],
+      freelancerName:
+        updatedProject.createdBy.assignedFreelancers[0]?.fullName.split(
+          " ",
+        )[0] || "",
+      freelancerEmail:
+        updatedProject.createdBy.assignedFreelancers[0]?.email || "",
+      projectTitle: updatedProject.title,
+      feedback,
+      status: "approved",
     });
 
     return { data: updatedProject as unknown as ProjectType, error: null };

@@ -1,6 +1,7 @@
 "use server";
 
 import { renderProjectCreationEmail } from "@/components/email/ProjectCreationEmail";
+import { renderProjectFeedbackEmail } from "@/components/email/ProjectFeedbackEmail";
 import { renderProjectSubmissionEmail } from "@/components/email/ProjectSubmissionEmail";
 import { Resend } from "resend";
 
@@ -48,19 +49,19 @@ export async function sendProjectCreationEmail({
 
 export async function sendProjectSubmissionEmail({
   freelancerName,
-  freelancerEmail,
+  clientEmail,
   projectTitle,
   clientName,
 }: {
   projectTitle: string;
   freelancerName: string;
-  freelancerEmail: string;
+  clientEmail: string;
   clientName: string;
 }) {
   try {
     const { data, error } = await resend.emails.send({
       from: "noreply@clinicleadstack.com",
-      to: freelancerEmail,
+      to: clientEmail,
       subject: `Project Submitted: ${projectTitle}`,
       html: await renderProjectSubmissionEmail({
         freelancerName,
@@ -76,6 +77,46 @@ export async function sendProjectSubmissionEmail({
   } catch (err) {
     const error = err as Error;
     console.log("Error sending submission email: ", error.message);
+    return { data: false, error: "Server Error" };
+  }
+}
+
+export async function sendProjectFeedbackEmail({
+  freelancerName,
+  freelancerEmail,
+  projectTitle,
+  clientName,
+  status,
+  feedback,
+}: {
+  projectTitle: string;
+  freelancerName: string;
+  freelancerEmail: string;
+  clientName: string;
+  status: "approved" | "rejected";
+  feedback?: string;
+}) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "noreply@clinicleadstack.com",
+      to: freelancerEmail,
+      subject: `Project Submitted: ${projectTitle}`,
+      html: await renderProjectFeedbackEmail({
+        status,
+        feedback,
+        freelancerName,
+        clientName,
+        projectLink: "https://www.clinicleadstack.com/",
+        projectTitle,
+      }),
+    });
+
+    if (error) throw new Error(error.message);
+
+    return { data, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error sending feedback email: ", error.message);
     return { data: false, error: "Server Error" };
   }
 }
