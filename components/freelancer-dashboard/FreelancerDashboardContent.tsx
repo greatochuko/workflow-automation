@@ -62,11 +62,13 @@ export default function FreelancerDashboardContent({
       </div>
 
       <ProjectDetailsModal
+        key={projectToView?.id}
         closeModal={closeProjectDetailsModal}
         open={projectDetailsModalOpen}
         project={projectToView}
         showAiResponse={true}
         removeFromProjectList={removeFromProjectList}
+        updateProjectList={updateProjectList}
       />
     </>
   );

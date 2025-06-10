@@ -20,10 +20,16 @@ export default function DatePicker({
   date,
   onChange,
   className = "",
+  containerClassname = "",
+  position = "top",
+  closeAfterSelection,
 }: {
   date: Date | null;
   onChange: (newDate: Date) => void;
   className?: string;
+  containerClassname?: string;
+  position?: "top" | "bottom";
+  closeAfterSelection?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(date || new Date());
@@ -33,7 +39,7 @@ export default function DatePicker({
   });
 
   const renderHeader = () => (
-    <div className="flex items-center justify-between p-2">
+    <div className="flex flex-1 items-center justify-between p-2">
       <button
         className="hover:bg-accent hover:border-accent rounded-md border border-gray-200 p-1.5 duration-200 hover:text-white"
         onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
@@ -86,7 +92,10 @@ export default function DatePicker({
         days.push(
           <button
             key={cloneDay.toString()}
-            onClick={() => onChange(cloneDay)}
+            onClick={() => {
+              onChange(cloneDay);
+              if (closeAfterSelection) setOpen(false);
+            }}
             disabled={isDisabled}
             className={`hover:bg-accent flex h-9 w-9 items-center justify-center rounded-md text-sm transition-colors hover:text-white disabled:hover:bg-gray-200 ${isToday(day) ? "border border-gray-300" : ""} ${
               isSelected
@@ -113,7 +122,10 @@ export default function DatePicker({
   };
 
   return (
-    <div ref={datePickerRef} className="relative">
+    <div
+      ref={datePickerRef}
+      className={twMerge("relative", containerClassname)}
+    >
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={twMerge(
@@ -126,7 +138,7 @@ export default function DatePicker({
       </button>
 
       <div
-        className={`absolute bottom-0 left-1/2 w-[260px] -translate-x-1/2 -translate-y-10 overflow-hidden rounded-md border border-gray-300 bg-white shadow ${open ? "" : "hidden"}`}
+        className={`absolute left-0 w-[260px] overflow-hidden rounded-md border border-gray-300 bg-white shadow ${open ? "" : "hidden"} ${position === "top" ? "bottom-0 -translate-y-10" : "top-[calc(100%+.5rem)]"}`}
       >
         {renderHeader()}
         {renderDays()}

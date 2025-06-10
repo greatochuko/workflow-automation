@@ -78,12 +78,14 @@ export default function ClientDashboardContent({
       </div>
 
       <ProjectDetailsModal
+        key={projectToView?.id}
         closeModal={closeProjectDetailsModal}
         open={projectDetailsModalOpen}
         project={projectToView}
         showAiResponse={projectToView?.status !== "IN_PROGRESS"}
         isClientProject
         removeFromProjectList={removeFromProjectList}
+        updateProjectList={updateProjectList}
       />
     </>
   );

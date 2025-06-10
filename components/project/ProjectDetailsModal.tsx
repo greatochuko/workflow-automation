@@ -15,8 +15,13 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { isBefore, startOfDay } from "date-fns";
 import DeleteProjectModal from "./DeleteProjectModal";
-import { updateProjectDescription } from "@/actions/projectActions";
+import {
+  updateProjectDate,
+  updateProjectDescription,
+} from "@/actions/projectActions";
 import ProjectThumbnail from "./ProjectThumbnail";
+import DatePicker from "../ui/DatePicker";
+import Button from "../ui/Button";
 
 // const AIGeneratedResponse = {
 //   hook: "Unwinding tensions, one adjustment at a time! 🌀",
@@ -58,6 +63,7 @@ export default function ProjectDetailsModal({
   showAiResponse = false,
   isClientProject = false,
   removeFromProjectList,
+  updateProjectList,
 }: {
   open: boolean;
   closeModal: () => void;
@@ -65,14 +71,17 @@ export default function ProjectDetailsModal({
   showAiResponse?: boolean;
   isClientProject?: boolean;
   removeFromProjectList(deletedProjectId: string): void;
+  updateProjectList(updatedProject: ProjectType): void;
 }) {
   const [project, setProject] = useState(initialProject);
   const [loading, setLoading] = useState(false);
+  const [rescheduling, setRescheduling] = useState(false);
   const [canEditProject, setCanEditProject] = useState(false);
   const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useState(false);
   const [descriptionInput, setDescriptionInput] = useState(
     project?.description || "",
   );
+  const [date, setDate] = useState<Date | null>(project?.scheduledDate || null);
 
   useEffect(() => {
     if (initialProject) {
@@ -124,6 +133,20 @@ export default function ProjectDetailsModal({
       setCanEditProject(false);
     }
     setLoading(false);
+  }
+
+  async function handleRescheduleProject() {
+    if (project && date) {
+      setRescheduling(true);
+      const { data } = await updateProjectDate(project.id, date);
+      if (data) {
+        updateProjectList({ ...project, scheduledDate: date });
+        toast.success("Project rescheduled successfully!");
+      } else {
+        toast.error("Unable to reschedule project!");
+      }
+      setRescheduling(false);
+    }
   }
 
   return (
@@ -215,6 +238,35 @@ export default function ProjectDetailsModal({
                     .replace(/^\w/, (c) => c.toUpperCase())
                 : "No status"}
             </span>
+          </div>
+
+          <div className="flex flex-col gap-2 text-sm">
+            <label htmlFor="description" className="font-medium">
+              Reschedule Project
+            </label>
+            <div className="flex gap-2">
+              <DatePicker
+                className="ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2"
+                date={date}
+                onChange={setDate}
+                position="bottom"
+                closeAfterSelection
+                containerClassname="flex-1"
+              />
+              <Button disabled={rescheduling} onClick={handleRescheduleProject}>
+                {rescheduling ? (
+                  <>
+                    <LoaderIcon className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <SaveIcon className="h-4 w-4" />
+                    Save
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">
