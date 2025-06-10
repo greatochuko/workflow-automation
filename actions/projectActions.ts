@@ -273,7 +273,6 @@ export async function submitProjectFiles(
       data: { submissionDate: new Date(), completedFile, status: "SUBMITTED" },
       include: {
         createdBy: {
-          select: { fullName: true, email: true },
           include: { assignedFreelancers: { select: { fullName: true } } },
         },
       },
@@ -290,7 +289,9 @@ export async function submitProjectFiles(
     });
 
     return { data: updatedProject as unknown as ProjectType, error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error submitting file: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -306,7 +307,6 @@ export async function rejectProject(projectId: string, feedback: string) {
       data: { feedback, status: "REJECTED", completedFile: {} },
       include: {
         createdBy: {
-          select: { fullName: true, email: true },
           include: {
             assignedFreelancers: { select: { fullName: true, email: true } },
           },
@@ -345,7 +345,6 @@ export async function approveProject(projectId: string, feedback?: string) {
       data: { feedback, status: "APPROVED" },
       include: {
         createdBy: {
-          select: { fullName: true, email: true },
           include: {
             assignedFreelancers: { select: { fullName: true, email: true } },
           },
