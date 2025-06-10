@@ -143,7 +143,9 @@ export async function createProject(
     });
 
     return { data: signedProject[0], error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error creating project: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -166,7 +168,9 @@ export async function getPresignedUrl(fileName: string, fileType: string) {
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 }); // 1 min
 
     return { url: signedUrl, key: uniqueFileName };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error getting presigned URL: ", error.message);
     return { url: null, key: null };
   }
 }
@@ -179,7 +183,9 @@ export async function updateProjectDate(projectId: string, newDate: Date) {
     });
 
     return { data: updatedProject, error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error rescheduling project date: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -223,7 +229,9 @@ export async function updateProjectDescription(
 
     const signedProject = await signProjectFiles([updatedProject]);
     return { data: signedProject[0], error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error updating project description: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -258,7 +266,9 @@ export async function deleteProject(projectId: string) {
     await deleteFilesFromS3(fileKeys);
 
     return { data: deletedProject, error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error deleting project: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -291,7 +301,7 @@ export async function submitProjectFiles(
     return { data: updatedProject as unknown as ProjectType, error: null };
   } catch (err) {
     const error = err as Error;
-    console.log("Error submitting file: ", error.message);
+    console.log("Error submitting project files: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -333,7 +343,9 @@ export async function rejectProject(projectId: string, feedback: string) {
     });
 
     return { data: updatedProject as unknown as ProjectType, error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error rejecting project: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
@@ -366,7 +378,9 @@ export async function approveProject(projectId: string, feedback?: string) {
     });
 
     return { data: updatedProject as unknown as ProjectType, error: null };
-  } catch {
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error approving project: ", error.message);
     return { data: null, error: "Server Error" };
   }
 }
