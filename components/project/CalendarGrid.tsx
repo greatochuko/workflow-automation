@@ -28,14 +28,14 @@ export default function CalendarGrid({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="grid max-w-full grid-cols-7 gap-2 overflow-hidden">
+      <div className="grid max-w-full grid-cols-7 gap-1.5 overflow-hidden sm:gap-2">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, i) => (
           <div key={i} className="py-1 text-center text-sm font-medium">
             {day}
           </div>
         ))}
       </div>
-      <div className="grid max-w-full grid-cols-7 gap-2 overflow-hidden">
+      <div className="grid max-w-full grid-cols-7 gap-1.5 overflow-hidden sm:gap-2">
         {viewMode === "month"
           ? weeks.map((weekIndex) => {
               const weekDays = calendarDates.slice(

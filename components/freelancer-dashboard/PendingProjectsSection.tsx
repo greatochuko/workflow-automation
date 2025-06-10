@@ -42,7 +42,7 @@ export default function PendingProjectsSection({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-4">
+        <div className="flex flex-wrap justify-between gap-x-4 gap-y-2">
           <h3 className="text-lg font-semibold sm:text-xl">
             Projects requiring your attention ({unCompletedProjects.length})
           </h3>

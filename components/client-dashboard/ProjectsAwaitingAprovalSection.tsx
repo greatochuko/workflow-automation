@@ -29,16 +29,18 @@ export default function ProjectsAwaitingApprovalSection({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-4">
+        <div className="flex flex-wrap justify-between gap-x-4 gap-y-2">
           <h3 className="text-lg font-semibold sm:text-xl">
             Projects requiring your attention ({submittedProjects.length})
           </h3>
-          <button
-            onClick={() => setShowAll((prev) => !prev)}
-            className="text-accent text-sm font-medium whitespace-nowrap hover:underline focus-visible:underline"
-          >
-            {showAll ? "Show less" : "Show all"}
-          </button>
+          {submittedProjects.length > 2 && (
+            <button
+              onClick={() => setShowAll((prev) => !prev)}
+              className="text-accent text-sm font-medium whitespace-nowrap hover:underline focus-visible:underline"
+            >
+              {showAll ? "Show less" : "Show all"}
+            </button>
+          )}
         </div>
         <div className="w-full overflow-x-auto">
           {submittedProjects.length > 0 ? (
