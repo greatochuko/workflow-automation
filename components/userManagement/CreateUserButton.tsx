@@ -4,8 +4,13 @@ import React, { useState } from "react";
 import Button from "../ui/Button";
 import { UserPlus } from "lucide-react";
 import CreateUserModal from "./CreateUserModal";
+import { UserType } from "@/types/user";
 
-export default function CreateUserButton() {
+export default function CreateUserButton({
+  addNewUserToList,
+}: {
+  addNewUserToList(newUser: UserType): void;
+}) {
   const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
 
   return (
@@ -17,6 +22,7 @@ export default function CreateUserButton() {
       <CreateUserModal
         closeModal={() => setCreateUserModalOpen(false)}
         open={createUserModalOpen}
+        addNewUserToList={addNewUserToList}
       />
     </>
   );

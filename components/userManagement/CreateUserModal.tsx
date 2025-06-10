@@ -6,6 +6,7 @@ import Image from "next/image";
 import { resizeImage } from "@/lib/utils/imageResize";
 import { createUser } from "@/actions/userActions";
 import { uploadImage } from "@/lib/utils/imageUpload";
+import { UserType } from "@/types/user";
 
 type UserDataType = {
   fullName: string;
@@ -34,9 +35,11 @@ const initialUserData: UserDataType = {
 export default function CreateUserModal({
   open,
   closeModal: closeUserModal,
+  addNewUserToList,
 }: {
   open: boolean;
   closeModal: () => void;
+  addNewUserToList(newUser: UserType): void;
 }) {
   const [userData, setUserData] = useState<UserDataType>(initialUserData);
   const [loading, setLoading] = useState(false);
@@ -87,15 +90,16 @@ export default function CreateUserModal({
       uploadedImageUrl = url;
     }
 
-    const { error: createUserError } = await createUser({
+    const { data, error: createUserError } = await createUser({
       ...userData,
       specialties: userData.specialties.split(",").map((s) => s.trim()),
       profilePicture: uploadedImageUrl,
     });
-    if (createUserError) {
-      setError(createUserError);
-    } else {
+    if (data) {
+      addNewUserToList(data);
       closeModal();
+    } else {
+      setError(createUserError);
     }
 
     setLoading(false);

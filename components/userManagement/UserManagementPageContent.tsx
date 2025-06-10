@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { UserType as User } from "@/types/user";
+import { UserType as User, UserType } from "@/types/user";
 import CreateUserButton from "./CreateUserButton";
 import UserManagementCard from "./UserManagementCard";
 
@@ -43,6 +43,10 @@ export default function UserManagementPageContent({
     [filteredUsers, searchQuery],
   );
 
+  function addNewUserToList(newUser: UserType) {
+    setUserList((prev) => [newUser, ...prev]);
+  }
+
   function removeFromUserList(deletedUserId: string) {
     setUserList((prev) => prev.filter((user) => user.id !== deletedUserId));
   }
@@ -57,7 +61,7 @@ export default function UserManagementPageContent({
           placeholder="Search users..."
           className="w-0 max-w-60 flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm"
         />
-        <CreateUserButton />
+        <CreateUserButton addNewUserToList={addNewUserToList} />
       </div>
       <div className="flex w-fit rounded-md bg-gray-100 p-1 text-sm font-medium">
         <button

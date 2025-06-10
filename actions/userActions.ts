@@ -23,6 +23,13 @@ export async function createUser(userData: {
   specialties: string[];
 }) {
   try {
+    const userExists = await prisma.user.findFirst({
+      where: { email: userData.email },
+    });
+    if (userExists) {
+      return { data: null, error: "User with email already exists" };
+    }
+
     const hashedPassword = await hashPassword(userData.password);
 
     const { data: defaultVideoTypes } = await getVideoTypes();
@@ -35,11 +42,13 @@ export async function createUser(userData: {
           userData.role === "CLIENT" ? defaultKnowledgeBaseItems : undefined,
         videoTypes: defaultVideoTypes,
       },
+      include: {
+        assignedClients: true,
+        assignedFreelancers: true,
+      },
     });
 
-    revalidatePath("/users");
-
-    return { data: newUser, error: null };
+    return { data: newUser as unknown as UserType, error: null };
   } catch {
     return { data: null, error: "Server Error" };
   }
