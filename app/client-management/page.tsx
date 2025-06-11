@@ -15,11 +15,11 @@ export default async function UserManagementPage() {
         </h1>
       </div>
       <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
-        <div className="grid min-[480px]:grid-cols-2 sm:grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))]">
+        <div className="grid gap-4 min-[480px]:grid-cols-2 sm:grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))]">
           {clients.map((client) => (
             <div
               key={client.id}
-              className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 p-4 shadow-xl duration-200 sm:p-6"
+              className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 p-4 shadow-md duration-200 sm:p-6"
             >
               <Avatar user={client} className="h-20 w-20" />
               <div className="flex flex-1 flex-col items-center text-center">
