@@ -16,10 +16,12 @@ export default function ClientNewsletterPageContent({
   projects,
   creditsUsedThisMonth,
   totalCredits,
+  userId,
 }: {
   projects: ProjectType[];
   creditsUsedThisMonth: number;
   totalCredits: number;
+  userId?: string;
 }) {
   const [projectList, setProjectList] = useState(projects);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -59,6 +61,7 @@ export default function ClientNewsletterPageContent({
     const { data: newTemplate, error } = await createNewsletterTemplate(
       selectedProjectId,
       projectNewsLetters.at(-1)?.content,
+      userId,
     );
 
     if (newTemplate) {

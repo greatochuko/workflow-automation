@@ -92,16 +92,23 @@ async function generateNewsletterTemplate(
 export async function createNewsletterTemplate(
   projectId: string,
   existingTemplate?: string,
+  userId?: string,
 ) {
   try {
-    const { payload } = await getTokenFromCookie();
+    let resolvedUserId = userId;
+    let payload;
 
-    if (!payload?.user.id) {
-      return { data: null, error: "Invalid token" };
+    if (!resolvedUserId) {
+      const tokenResult = await getTokenFromCookie();
+      payload = tokenResult.payload;
+      if (!payload?.user.id) {
+        return { data: null, error: "Invalid token" };
+      }
+      resolvedUserId = payload.user.id;
     }
 
     const user = await prisma.user.findFirst({
-      where: { id: payload.user.id },
+      where: { id: resolvedUserId },
       include: { newsletterTemplates: true },
     });
 
@@ -114,7 +121,7 @@ export async function createNewsletterTemplate(
     })) as unknown as ProjectType;
 
     if (!project) {
-      return { data: null, error: "Invalid user ID. User not found." };
+      return { data: null, error: "Invalid project ID. Project not found." };
     }
 
     const aiContent = await generateNewsletterTemplate(
@@ -127,7 +134,7 @@ export async function createNewsletterTemplate(
     const newNewsletterTemplate = await prisma.newsletterTemplate.create({
       data: {
         content: aiContent || "",
-        clientId: payload.user.id,
+        clientId: resolvedUserId,
         projectId,
       },
     });
