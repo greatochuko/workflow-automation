@@ -134,7 +134,8 @@ export async function getFreelancerClientProjects(clientIds: string[]) {
     const projects = (await prisma.project.findMany({
       where: { createdById: { in: clientIds } },
       orderBy: { createdAt: "desc" },
-    })) as ProjectType[];
+      include: { createdBy: true },
+    })) as unknown as ProjectType[];
 
     const signedProjects = await signProjectFiles(projects);
 

@@ -2,15 +2,11 @@
 
 import { type UserType } from "@/types/user";
 import {
-  EditIcon,
   FileVideoIcon,
   HomeIcon,
   LogOutIcon,
-  MailIcon,
   PanelLeftIcon,
-  SettingsIcon,
   UserCogIcon,
-  UsersIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,12 +14,7 @@ import React, { useState } from "react";
 import Avatar from "../ui/Avatar";
 import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
-
-const sidebarLinks = [
-  // { title: "Main", url: "/", icon: HomeIcon },
-  { title: "Users", url: "/users", icon: UsersIcon },
-  { title: "User Settings", url: "/settings", icon: SettingsIcon },
-];
+import { sidebarLinks } from "@/lib/data/constants";
 
 export default function Sidebar({ user }: { user: UserType }) {
   const pathname = usePathname();
@@ -41,7 +32,7 @@ export default function Sidebar({ user }: { user: UserType }) {
       >
         <div className="flex items-center gap-2 p-4 font-semibold">
           <FileVideoIcon className="h-6 w-6" />
-          <span>Clinic Lead Stack</span>
+          <span className="whitespace-nowrap">Clinic Lead Stack</span>
           <button
             onClick={() => setSidebarOpen((prev) => !prev)}
             className={`ml-auto duration-200 ${!sidebarOpen ? "text-accent-black-200 translate-x-10" : "text-gray-300 hover:text-white"}`}
@@ -69,41 +60,12 @@ export default function Sidebar({ user }: { user: UserType }) {
                   </Link>
                 </li>
               )}
-              {user.role === "CLIENT" && (
-                <>
-                  <li>
-                    <Link
-                      href={"/script-generator"}
-                      className={`flex items-center gap-4 rounded-md p-2 ${
-                        pathname.startsWith("/script-generator")
-                          ? "text-accent-black-200 bg-white font-semibold"
-                          : "font-medium hover:bg-white/10"
-                      }`}
-                    >
-                      <EditIcon className="h-4 w-4" />
-                      Script Generator
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/newsletter-content"}
-                      className={`flex items-center gap-4 rounded-md p-2 ${
-                        pathname === "/newsletter-content"
-                          ? "text-accent-black-200 bg-white font-semibold"
-                          : "font-medium hover:bg-white/10"
-                      }`}
-                    >
-                      <MailIcon className="h-4 w-4" />
-                      Newsletter Content
-                    </Link>
-                  </li>
-                </>
-              )}
+
               {sidebarLinks.map((link) => (
-                <li key={link.title} hidden={user.role !== "ADMIN"}>
+                <li key={link.title} hidden={user.role !== link.validUserRole}>
                   <Link
                     href={link.url}
-                    className={`flex items-center gap-4 rounded-md p-2 ${
+                    className={`flex items-center gap-4 rounded-md p-2 whitespace-nowrap ${
                       pathname.startsWith(link.url)
                         ? "text-accent-black-200 bg-white font-semibold"
                         : "font-medium hover:bg-white/10"

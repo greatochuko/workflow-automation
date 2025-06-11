@@ -2,15 +2,11 @@
 
 import { type UserType } from "@/types/user";
 import {
-  EditIcon,
   FileVideoIcon,
   HomeIcon,
   LogOutIcon,
-  MailIcon,
   PanelLeftIcon,
-  SettingsIcon,
   UserCogIcon,
-  UsersIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,12 +15,7 @@ import Avatar from "../ui/Avatar";
 import ModalContainer from "../ui/ModalContainer";
 import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
-
-const sidebarLinks = [
-  // { title: "Main", url: "/", icon: HomeIcon },
-  { title: "Users", url: "/users", icon: UsersIcon },
-  { title: "User Settings", url: "/settings", icon: SettingsIcon },
-];
+import { sidebarLinks } from "@/lib/data/constants";
 
 export default function MobileSidebar({ user }: { user: UserType }) {
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
@@ -81,42 +72,11 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                   </li>
                 )}
 
-                {user.role === "CLIENT" && (
-                  <>
-                    <li onClick={closeSidebar}>
-                      <Link
-                        href={"/script-generator"}
-                        className={`flex items-center gap-4 rounded-md p-2 ${
-                          pathname.startsWith("/script-generator")
-                            ? "text-accent-black-200 bg-white font-semibold"
-                            : "font-medium hover:bg-white/10"
-                        }`}
-                      >
-                        <EditIcon className="h-4 w-4" />
-                        Script Generator
-                      </Link>
-                    </li>
-                    <li onClick={closeSidebar}>
-                      <Link
-                        href={"/newsletter-content"}
-                        className={`flex items-center gap-4 rounded-md p-2 ${
-                          pathname === "/newsletter-content"
-                            ? "text-accent-black-200 bg-white font-semibold"
-                            : "font-medium hover:bg-white/10"
-                        }`}
-                      >
-                        <MailIcon className="h-4 w-4" />
-                        Newsletter Content
-                      </Link>
-                    </li>
-                  </>
-                )}
-
                 {sidebarLinks.map((link) => (
                   <li
                     onClick={closeSidebar}
                     key={link.title}
-                    hidden={user.role !== "ADMIN"}
+                    hidden={user.role !== link.validUserRole}
                   >
                     <Link
                       href={link.url}

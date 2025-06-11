@@ -6,12 +6,17 @@ import { logoutUser } from "@/actions/authActions";
 
 export default function LogoutModal({
   open,
-  closeModal,
+  closeModal: closeLogoutModal,
 }: {
   open: boolean;
   closeModal: () => void;
 }) {
   const [loading, setLoading] = useState(false);
+
+  function closeModal() {
+    if (loading) return;
+    closeLogoutModal();
+  }
 
   async function handleLogout() {
     setLoading(true);
