@@ -8,15 +8,19 @@ import { ProjectType } from "@/types/project";
 import ProjectDetailsModal from "../project/ProjectDetailsModal";
 import ProjectsAwaitingApprovalSection from "./ProjectsAwaitingAprovalSection";
 import { VideoScriptType } from "@/types/videoScript";
+import Link from "next/link";
+import { ArrowLeftIcon } from "lucide-react";
 
 export default function ClientDashboardContent({
   clientVideoTypes,
   clientVideoScripts,
   projects: fetchedProjects,
+  permission = "BASIC",
 }: {
   clientVideoTypes: string[];
   clientVideoScripts: VideoScriptType[];
   projects: ProjectType[];
+  permission?: "BASIC" | "FULL";
 }) {
   const [projects, setProjects] = useState(fetchedProjects);
   const [projectDetailsModalOpen, setProjectDetailsModalOpen] = useState(false);
@@ -54,11 +58,20 @@ export default function ClientDashboardContent({
           <ToggleSidebarButton />
           Client Dashboard
         </h1>
-        <UploadVideoButton
-          updateProjects={updateProjects}
-          videoTypes={clientVideoTypes}
-          videoScripts={clientVideoScripts}
-        />
+        {permission === "FULL" ? (
+          <UploadVideoButton
+            updateProjects={updateProjects}
+            videoTypes={clientVideoTypes}
+            videoScripts={clientVideoScripts}
+          />
+        ) : (
+          <Link
+            href={"/client-management"}
+            className="flex items-center gap-2 hover:underline"
+          >
+            <ArrowLeftIcon className="h-4 w-4" /> Back
+          </Link>
+        )}
       </div>
 
       <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">

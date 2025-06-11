@@ -22,6 +22,7 @@ export default async function Home() {
           clientVideoTypes={user?.videoTypes || []}
           clientVideoScripts={user?.videoScripts || []}
           projects={projects}
+          permission="FULL"
         />
       ) : (
         <FreelancerDashboardContent projects={projects} />

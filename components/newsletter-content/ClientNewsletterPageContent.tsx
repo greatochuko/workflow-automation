@@ -133,7 +133,7 @@ export default function ClientNewsletterPageContent({
         </div>
 
         <div className="mx-auto flex w-[90%] max-w-7xl flex-1 flex-col gap-6 py-4 lg:max-h-[calc(100vh-6rem)] lg:flex-row lg:overflow-y-auto">
-          <div className="flex max-h-[calc(100vh-10rem)] flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:p-6 lg:h-auto lg:flex-1">
+          <div className="flex max-h-[calc(100vh-10rem)] flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:p-6 lg:h-auto lg:max-h-full lg:flex-1">
             <h2 className="font-semibold sm:text-lg md:text-xl xl:text-2xl">
               Select Approved Video
             </h2>
