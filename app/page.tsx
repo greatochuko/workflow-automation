@@ -5,6 +5,8 @@ import {
   getClientProjects,
   getFreelancerClientProjects,
 } from "@/services/projectServices";
+import { getFreelancerClients } from "@/services/userServices";
+import { UserType } from "@/types/user";
 
 export default async function Home() {
   const { data: user } = await getSession();
@@ -14,6 +16,13 @@ export default async function Home() {
       : await getFreelancerClientProjects(
           user?.assignedClients.map((cl) => cl.id) || [],
         );
+
+  let clients: UserType[] = [];
+
+  if (user?.role === "FREELANCER") {
+    const { data } = await getFreelancerClients(user.id);
+    clients = data;
+  }
 
   return (
     <main className="w-full flex-1">
@@ -25,7 +34,7 @@ export default async function Home() {
           permission="FULL"
         />
       ) : (
-        <FreelancerDashboardContent projects={projects} />
+        <FreelancerDashboardContent projects={projects} clients={clients} />
       )}
     </main>
   );

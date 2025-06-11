@@ -104,3 +104,29 @@ export async function getClients(): Promise<{
     return { data: [], error: error.message };
   }
 }
+
+export async function getFreelancerClients(userId: string): Promise<{
+  data: UserType[];
+  error: string | null;
+}> {
+  try {
+    let users = await prisma.user.findMany({
+      where: { role: "CLIENT", assignedFreelancers: { some: { id: userId } } },
+      include: {
+        assignedClients: true,
+        assignedFreelancers: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    users = users.map((user) => ({
+      ...user,
+      videoTypes: user.videoTypes.sort((a, b) => a.localeCompare(b)),
+    }));
+
+    return { data: users as unknown as UserType[], error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { data: [], error: error.message };
+  }
+}

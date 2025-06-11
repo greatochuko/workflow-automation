@@ -46,12 +46,14 @@ export default function PendingProjectsSection({
           <h3 className="text-lg font-semibold sm:text-xl">
             Projects requiring your attention ({unCompletedProjects.length})
           </h3>
-          <button
-            onClick={() => setShowAll((prev) => !prev)}
-            className="text-accent text-sm font-medium whitespace-nowrap hover:underline focus-visible:underline"
-          >
-            {showAll ? "Show less" : "Show all"}
-          </button>
+          {unCompletedProjects.length > 2 && (
+            <button
+              onClick={() => setShowAll((prev) => !prev)}
+              className="text-accent text-sm font-medium whitespace-nowrap hover:underline focus-visible:underline"
+            >
+              {showAll ? "Show less" : "Show all"}
+            </button>
+          )}
         </div>
         {unCompletedProjects.length > 0 ? (
           <div
