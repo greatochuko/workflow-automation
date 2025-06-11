@@ -18,6 +18,7 @@ import {
   sendProjectFeedbackEmail,
   sendProjectSubmissionEmail,
 } from "./emailActions";
+import { Prisma } from "@prisma/client";
 
 type ProjectDataType = {
   title: string;
@@ -314,7 +315,7 @@ export async function rejectProject(projectId: string, feedback: string) {
 
     const updatedProject = await prisma.project.update({
       where: { id: projectId },
-      data: { feedback, status: "REJECTED", completedFile: {} },
+      data: { feedback, status: "REJECTED", completedFile: Prisma.JsonNull },
       include: {
         createdBy: {
           include: {
