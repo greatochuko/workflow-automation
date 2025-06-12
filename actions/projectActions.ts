@@ -385,3 +385,25 @@ export async function approveProject(projectId: string, feedback?: string) {
     return { data: null, error: "Server Error" };
   }
 }
+
+export async function markProjectAsPosted(projectId: string, reelId: string) {
+  try {
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data: { publishStatus: "POSTED", reelId },
+      include: {
+        createdBy: {
+          include: {
+            assignedFreelancers: { select: { fullName: true, email: true } },
+          },
+        },
+      },
+    });
+
+    return { data: updatedProject as unknown as ProjectType, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.error("Error approving project: ", error.message);
+    return { data: null, error: "Server Error" };
+  }
+}

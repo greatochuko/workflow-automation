@@ -19,11 +19,12 @@ export type UserType = {
   location: string;
   monthlyCredits: number;
   newsLetterBasicInstructions: string;
-  instagramAuth?: {
+  facebookAuth?: {
     access_token: string;
-    user_id: string;
     expires_in: number;
+    token_type: number;
     updated_at: Date;
+    instagram_user_id: string;
   };
   newsletterExamples: string[];
   specialties: string[];

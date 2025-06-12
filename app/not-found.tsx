@@ -1,10 +1,6 @@
-"use client";
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import BackButton from "@/components/ui/BackButton";
 
 export default function NotFound() {
-  const router = useRouter();
-
   return (
     <div className="text-foreground flex min-h-screen flex-1 flex-col items-center justify-center bg-white px-4">
       <div className="flex flex-col items-center gap-4 text-center">
@@ -14,13 +10,7 @@ export default function NotFound() {
           Sorry, the page you are looking for doesn&apos;t exist or has been
           moved.
         </p>
-        <button
-          className="bg-accent-black flex items-center gap-2 rounded-full px-8 py-3 font-medium text-white"
-          onClick={() => router.back()}
-        >
-          <ArrowLeft />
-          Go Back
-        </button>
+        <BackButton />
       </div>
     </div>
   );

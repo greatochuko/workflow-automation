@@ -1,4 +1,4 @@
-import { ProjectStatus } from "@prisma/client";
+import { ProjectPublishStatus, ProjectStatus } from "@prisma/client";
 import { UserType } from "./user";
 import { NewsletterTemplateType } from "./newsletter";
 import { VideoScriptType } from "./videoScript";
@@ -27,10 +27,12 @@ export type ProjectType = {
     captionContent: string;
   };
   feedback: string;
+  reelId: string;
   submissionDate: Date;
   completedFile: Omit<ProjectFileType, "description">;
   files: ProjectFileType[];
   status: ProjectStatus;
+  publishStatus: ProjectPublishStatus;
   newsletterTemplates: NewsletterTemplateType[];
   createdAt: Date;
   updatedAt: Date;

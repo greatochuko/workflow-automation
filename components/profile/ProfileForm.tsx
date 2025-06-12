@@ -240,7 +240,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
         </label>
 
         {user.role === "CLIENT" &&
-          (user.instagramAuth ? (
+          (user.facebookAuth ? (
             <div className="mt-2 flex items-center gap-2">
               <Image
                 src={"/instagram-logo.svg"}
