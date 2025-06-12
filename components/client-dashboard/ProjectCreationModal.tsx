@@ -145,6 +145,22 @@ export default function ProjectCreationModal({
     }
   }
 
+  function handleChangePublishTime(event: React.ChangeEvent<HTMLInputElement>) {
+    const timeValue = event.target.value;
+    if (!timeValue) return;
+    if (!date) {
+      setError("Please select a date first.");
+      return;
+    }
+    const [hours, minutes] = timeValue.split(":").map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return;
+    const newDate = new Date(date);
+    newDate.setHours(hours, minutes, 0, 0);
+    setDate(newDate);
+  }
+
+  console.log(date?.toString());
+
   // async function uploadFile(file: File) {
   //   const { url, key } = await getPresignedUrl(file.type);
 
@@ -360,15 +376,38 @@ export default function ProjectCreationModal({
                 />
               </div>
 
-              <div className="flex flex-col gap-2 text-sm">
-                <label htmlFor="description" className="font-medium">
-                  Target Publish Date <span className="text-red-500">*</span>
-                </label>
-                <DatePicker
-                  className="ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2"
-                  date={date}
-                  onChange={setDate}
-                />
+              <div className="flex gap-4 text-sm">
+                <div className="flex flex-1 flex-col gap-2">
+                  <label htmlFor="target-publish-date" className="font-medium">
+                    Target Publish Date <span className="text-red-500">*</span>
+                  </label>
+                  <DatePicker
+                    className="ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2"
+                    date={date}
+                    onChange={setDate}
+                    closeAfterSelection
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-2">
+                  <label htmlFor="target-publish-time" className="font-medium">
+                    Target Publish Time <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    name="target-publish-time"
+                    id="target-publish-time"
+                    value={
+                      date
+                        ? `${date.getHours().toString().padStart(2, "0")}:${date
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, "0")}`
+                        : "12:00"
+                    }
+                    onChange={handleChangePublishTime}
+                    className="ring-accent-black/70 bg-background rounded-md border border-gray-300 px-4 py-2 ring-offset-1 duration-200 focus-visible:ring-2"
+                  />
+                </div>
               </div>
 
               {error && (
