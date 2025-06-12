@@ -239,33 +239,34 @@ export default function ProfileForm({ user }: { user: UserType }) {
           Upload profile picture
         </label>
 
-        {user.instagramAuth ? (
-          <div className="mt-2 flex items-center gap-2">
-            <Image
-              src={"/instagram-logo.svg"}
-              alt="Instagram Logo"
-              width={16}
-              height={16}
-            />
-            <span className="font-medium text-[#E4405F]">
-              Instagram Connected
-            </span>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={openInstagramOauthLink}
-            className="mt-2 flex items-center gap-2 rounded-md border border-[#E4405F] px-4 py-2 font-medium text-[#E4405F] duration-200 hover:bg-[#E4405F]/5"
-          >
-            <Image
-              src={"/instagram-logo.svg"}
-              alt="Instagram Logo"
-              width={16}
-              height={16}
-            />
-            Connect Business Account
-          </button>
-        )}
+        {user.role === "CLIENT" &&
+          (user.instagramAuth ? (
+            <div className="mt-2 flex items-center gap-2">
+              <Image
+                src={"/instagram-logo.svg"}
+                alt="Instagram Logo"
+                width={16}
+                height={16}
+              />
+              <span className="font-medium text-[#E4405F]">
+                Instagram Connected
+              </span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={openInstagramOauthLink}
+              className="mt-2 flex items-center gap-2 rounded-md border border-[#E4405F] px-4 py-2 font-medium text-[#E4405F] duration-200 hover:bg-[#E4405F]/5"
+            >
+              <Image
+                src={"/instagram-logo.svg"}
+                alt="Instagram Logo"
+                width={16}
+                height={16}
+              />
+              Connect Business Account
+            </button>
+          ))}
       </div>
       <div className="flex flex-col gap-6">
         <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
