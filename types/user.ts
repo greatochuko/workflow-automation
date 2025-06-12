@@ -19,6 +19,12 @@ export type UserType = {
   location: string;
   monthlyCredits: number;
   newsLetterBasicInstructions: string;
+  instagramAuth?: {
+    access_token: string;
+    user_id: string;
+    expires_in: number;
+    updated_at: Date;
+  };
   newsletterExamples: string[];
   specialties: string[];
   videoScriptExamples: string[];

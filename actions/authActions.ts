@@ -101,3 +101,17 @@ export async function setNewPassword(newPassword: string) {
     if (canRedirect) redirect("/");
   }
 }
+
+export async function generateInstagramOauthLink(userId: string) {
+  const authUrl = new URL("https://api.instagram.com/oauth/authorize");
+  authUrl.searchParams.set("client_id", process.env.INSTAGRAM_CLIENT_ID!);
+  authUrl.searchParams.set("redirect_uri", process.env.INSTAGRAM_REDIRECT_URI!);
+  authUrl.searchParams.set(
+    "scope",
+    "instagram_business_basic,instagram_business_content_publish",
+  );
+  authUrl.searchParams.set("response_type", "code");
+  authUrl.searchParams.set("state", userId);
+
+  return authUrl.toString();
+}

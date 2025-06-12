@@ -42,7 +42,7 @@ export async function sendProjectCreationEmail({
     return { data, error: null };
   } catch (err) {
     const error = err as Error;
-    console.log("Error sending creation email: ", error.message);
+    console.error("Error sending creation email: ", error.message);
     return { data: false, error: "Server Error" };
   }
 }
@@ -76,7 +76,7 @@ export async function sendProjectSubmissionEmail({
     return { data, error: null };
   } catch (err) {
     const error = err as Error;
-    console.log("Error sending submission email: ", error.message);
+    console.error("Error sending submission email: ", error.message);
     return { data: false, error: "Server Error" };
   }
 }
@@ -116,7 +116,7 @@ export async function sendProjectFeedbackEmail({
     return { data, error: null };
   } catch (err) {
     const error = err as Error;
-    console.log("Error sending feedback email: ", error.message);
+    console.error("Error sending feedback email: ", error.message);
     return { data: false, error: "Server Error" };
   }
 }

@@ -38,6 +38,7 @@ model User {
   newsletterExamples          String[]
   monthlyCredits              Int      @default(0)
   passwordChanged             Boolean  @default(false)
+  instagramAuth               Json?
 
   // Self-relations
   assignedFreelancers User[] @relation("FreelancerToClient")

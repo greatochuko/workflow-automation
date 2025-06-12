@@ -15,6 +15,8 @@ import Button from "../ui/Button";
 import { toast } from "sonner";
 import { uploadImage } from "@/lib/utils/imageUpload";
 import { updateUserProfile } from "@/actions/userActions";
+import Image from "next/image";
+import { generateInstagramOauthLink } from "@/actions/authActions";
 
 type PersonalInfoFieldType = {
   label: string;
@@ -202,6 +204,13 @@ export default function ProfileForm({ user }: { user: UserType }) {
     }));
   }
 
+  async function openInstagramOauthLink() {
+    const oauthLink = await generateInstagramOauthLink(user.id);
+    if (oauthLink) {
+      window.location.href = oauthLink;
+    }
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -229,6 +238,34 @@ export default function ProfileForm({ user }: { user: UserType }) {
           <UploadIcon className="h-4 w-4" />
           Upload profile picture
         </label>
+
+        {user.instagramAuth ? (
+          <div className="mt-2 flex items-center gap-2">
+            <Image
+              src={"/instagram-logo.svg"}
+              alt="Instagram Logo"
+              width={16}
+              height={16}
+            />
+            <span className="font-medium text-[#E4405F]">
+              Instagram Connected
+            </span>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={openInstagramOauthLink}
+            className="mt-2 flex items-center gap-2 rounded-md border border-[#E4405F] px-4 py-2 font-medium text-[#E4405F] duration-200 hover:bg-[#E4405F]/5"
+          >
+            <Image
+              src={"/instagram-logo.svg"}
+              alt="Instagram Logo"
+              width={16}
+              height={16}
+            />
+            Connect Business Account
+          </button>
+        )}
       </div>
       <div className="flex flex-col gap-6">
         <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
