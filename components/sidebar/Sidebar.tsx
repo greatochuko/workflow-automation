@@ -16,7 +16,12 @@ import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
 import { sidebarLinks } from "@/lib/data/constants";
 
-const noSidebarRoutes = ["/login", "/change-password", "/privacy-policy"];
+const noSidebarRoutes = [
+  "/login",
+  "/change-password",
+  "/privacy-policy",
+  "/terms-of-service",
+];
 
 export default function Sidebar({ user }: { user: UserType }) {
   const pathname = usePathname();

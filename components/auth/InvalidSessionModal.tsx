@@ -7,12 +7,18 @@ import Button from "../ui/Button";
 import { logoutUser } from "@/actions/authActions";
 import { usePathname } from "next/navigation";
 
+const noModalRoutes = [
+  "/login",
+  "/change-password",
+  "/privacy-policy",
+  "/terms-of-service",
+];
+
 export default function InvalidSessionModal({ open }: { open: boolean }) {
   const pathname = usePathname();
   const [loading, setLoading] = useState(false);
 
-  if (pathname.startsWith("/login") || pathname.startsWith("/change-password"))
-    return null;
+  if (noModalRoutes.some((route) => pathname.startsWith(route))) return null;
 
   async function handleLogout() {
     setLoading(true);
