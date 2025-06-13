@@ -159,8 +159,6 @@ export default function ProjectCreationModal({
     setDate(newDate);
   }
 
-  console.log(date?.toString());
-
   // async function uploadFile(file: File) {
   //   const { url, key } = await getPresignedUrl(file.type);
 
