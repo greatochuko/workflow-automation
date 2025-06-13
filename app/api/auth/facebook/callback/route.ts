@@ -73,7 +73,6 @@ async function getInstagramUserId(long_access_token: string): Promise<
       `${FACEBOOK_GRAPH_BASE_URL}me/accounts?access_token=${long_access_token}`,
     );
     const pagesJson = await pagesRes.json();
-    console.log(pagesJson);
     if (!pagesRes.ok || !pagesJson.data?.length) {
       throw new Error("Failed to fetch Facebook Pages or none found.");
     }
