@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Call /api/publish-reels endpoint
         run: |
-          curl -X GET "https://workflow-automation-dev.vercel.app/api/publish-reels?token=${{ secrets.CRON_SECRET }}"
+          curl -X GET "https://www.clinicleadstack.com/api/publish-reels?token=${{ secrets.CRON_SECRET }}"

@@ -101,3 +101,22 @@ export async function setNewPassword(newPassword: string) {
     if (canRedirect) redirect("/");
   }
 }
+
+export async function generateInstagramOauthLink(userId: string) {
+  const authUrl = new URL("https://www.facebook.com/dialog/oauth");
+  authUrl.searchParams.set("client_id", process.env.FACEBOOK_APP_ID!);
+  authUrl.searchParams.set("display", "page");
+  authUrl.searchParams.set(
+    "extras",
+    `{"setup":{"channel":"IG_API_ONBOARDING"}}.`,
+  );
+  authUrl.searchParams.set("redirect_uri", process.env.FACEBOOK_REDIRECT_URI!);
+  authUrl.searchParams.set("response_type", "code");
+  authUrl.searchParams.set(
+    "scope",
+    "pages_show_list,instagram_basic,pages_read_engagement,pages_read_user_content,instagram_content_publish,business_management",
+  );
+  authUrl.searchParams.set("state", userId);
+
+  return authUrl.toString();
+}

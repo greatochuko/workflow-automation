@@ -38,6 +38,7 @@ model User {
   newsletterExamples          String[]
   monthlyCredits              Int      @default(0)
   passwordChanged             Boolean  @default(false)
+  facebookAuth                Json?
 
   // Self-relations
   assignedFreelancers User[] @relation("FreelancerToClient")
@@ -74,20 +75,27 @@ enum ProjectStatus {
   REJECTED
 }
 
+enum ProjectPublishStatus {
+  PENDING
+  POSTED
+}
+
 model Project {
-  id             String        @id @default(cuid())
+  id             String               @id @default(cuid())
   title          String
   description    String
   scheduledDate  DateTime
   videoType      String
   files          Json[]
   status         ProjectStatus
+  publishStatus  ProjectPublishStatus @default(PENDING)
   submissionDate DateTime?
-  feedback       String        @default("")
+  feedback       String               @default("")
   completedFile  Json?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
   captionData    Json?
+  reelId         String               @default("")
 
   createdBy   User   @relation(fields: [createdById], references: [id])
   createdById String

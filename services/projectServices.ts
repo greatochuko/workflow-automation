@@ -148,3 +148,25 @@ export async function getFreelancerClientProjects(clientIds: string[]) {
     return { data: [], error: error.message };
   }
 }
+
+export async function getScheduledProjects() {
+  try {
+    const scheduledProjects = await prisma.project.findMany({
+      where: {
+        status: "APPROVED",
+        publishStatus: "PENDING",
+        scheduledDate: { lte: new Date() },
+      },
+      include: { createdBy: { select: { facebookAuth: true } } },
+    });
+
+    const signedScheduledProjects = await signProjectFiles(
+      scheduledProjects as unknown as ProjectType[],
+    );
+
+    return { data: signedScheduledProjects, error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { data: [], error: error.message };
+  }
+}
