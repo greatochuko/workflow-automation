@@ -134,7 +134,7 @@ export default function DatePicker({
         )}
       >
         <CalendarIcon className="h-4 w-4" />
-        {date ? format(new Date(date), "MMMM do, yyyy") : "Select Date"}
+        {date ? format(new Date(date), "MMM d, yyyy") : "Select Date"}
       </button>
 
       <div

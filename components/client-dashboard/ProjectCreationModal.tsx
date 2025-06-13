@@ -374,8 +374,8 @@ export default function ProjectCreationModal({
                 />
               </div>
 
-              <div className="flex gap-4 text-sm">
-                <div className="flex flex-1 flex-col gap-2">
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex min-w-52 flex-1 flex-col gap-2">
                   <label htmlFor="target-publish-date" className="font-medium">
                     Target Publish Date <span className="text-red-500">*</span>
                   </label>
@@ -386,7 +386,7 @@ export default function ProjectCreationModal({
                     closeAfterSelection
                   />
                 </div>
-                <div className="flex flex-1 flex-col gap-2">
+                <div className="flex min-w-40 flex-1 flex-col gap-2">
                   <label htmlFor="target-publish-time" className="font-medium">
                     Target Publish Time <span className="text-red-500">*</span>
                   </label>
