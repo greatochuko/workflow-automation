@@ -6,7 +6,15 @@ const authRoutes = ["/login"];
 
 const adminRoutes = ["/users", "/settings"];
 
+const publicRoutes = ["/privacy-policy", "/terms-of-service"];
+
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get("auth_token")?.value || "";
 
   let isAuthenticated = false;
@@ -21,8 +29,6 @@ export async function middleware(request: NextRequest) {
       userHasChangedPassword = payload.user.passwordChanged;
     }
   }
-
-  const { pathname } = request.nextUrl;
 
   // If authenticated and trying to access login, redirect to /
   if (isAuthenticated && authRoutes.includes(pathname)) {

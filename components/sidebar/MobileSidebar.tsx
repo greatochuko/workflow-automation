@@ -17,6 +17,13 @@ import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
 import { sidebarLinks } from "@/lib/data/constants";
 
+const noSidebarRoutes = [
+  "/login",
+  "/change-password",
+  "/privacy-policy",
+  "/terms-of-service",
+];
+
 export default function MobileSidebar({ user }: { user: UserType }) {
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
@@ -25,6 +32,8 @@ export default function MobileSidebar({ user }: { user: UserType }) {
   const mobileSidebarOpen = !sidebarOpen;
 
   const pathname = usePathname();
+
+  if (noSidebarRoutes.some((route) => pathname.startsWith(route))) return null;
 
   function closeSidebar() {
     setSidebarOpen(true);

@@ -15,8 +15,9 @@ import Button from "../ui/Button";
 import { toast } from "sonner";
 import { uploadImage } from "@/lib/utils/imageUpload";
 import { updateUserProfile } from "@/actions/userActions";
-import Image from "next/image";
 import { generateInstagramOauthLink } from "@/actions/authActions";
+import FacebookLogo from "@/lib/svg-icons/FacebookLogo";
+import DisconnectFacebookModal from "./DisconnectFacebookModal";
 
 type PersonalInfoFieldType = {
   label: string;
@@ -123,6 +124,8 @@ export default function ProfileForm({ user }: { user: UserType }) {
   );
   const [newSpecialty, setNewSpecialty] = useState("");
   const [newCertification, setNewCertification] = useState("");
+  const [disconnectFacebookModalOpen, setDisconnectFacebookModalOpen] =
+    useState(false);
 
   function updateUserData<T extends keyof UserType>(
     field: T,
@@ -212,226 +215,238 @@ export default function ProfileForm({ user }: { user: UserType }) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 text-sm sm:p-6"
-    >
-      <h2 className="flex items-center gap-2 text-xl font-semibold sm:text-2xl">
-        <UserIcon className="h-5 w-5" />
-        Profile Information
-      </h2>
-      <div className="flex flex-col items-center">
-        <Avatar user={userData} className="h-24 w-24" />
-        <input
-          type="file"
-          name="profile-picture"
-          id="profile-picture"
-          hidden
-          disabled={loading}
-          onChange={handleChangeProfilePicture}
-          accept="image/png, image/jpg, image/jpeg"
-        />
-        <label
-          htmlFor="profile-picture"
-          className="flex cursor-pointer items-center gap-2 p-2"
-        >
-          <UploadIcon className="h-4 w-4" />
-          Upload profile picture
-        </label>
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 text-sm sm:p-6"
+      >
+        <h2 className="flex items-center gap-2 text-xl font-semibold sm:text-2xl">
+          <UserIcon className="h-5 w-5" />
+          Profile Information
+        </h2>
+        <div className="flex flex-col items-center">
+          <Avatar user={userData} className="h-24 w-24" />
+          <input
+            type="file"
+            name="profile-picture"
+            id="profile-picture"
+            hidden
+            disabled={loading}
+            onChange={handleChangeProfilePicture}
+            accept="image/png, image/jpg, image/jpeg"
+          />
+          <label
+            htmlFor="profile-picture"
+            className="flex cursor-pointer items-center gap-2 p-2"
+          >
+            <UploadIcon className="h-4 w-4" />
+            Upload profile picture
+          </label>
 
-        {user.role === "CLIENT" &&
-          (user.facebookAuth ? (
-            <div className="mt-2 flex items-center gap-2">
-              <Image
-                src={"/instagram-logo.svg"}
-                alt="Instagram Logo"
-                width={16}
-                height={16}
-              />
-              <span className="font-medium text-[#E4405F]">
-                Instagram Connected
-              </span>
+          {user.role === "CLIENT" &&
+            (user.facebookAuth ? (
+              <>
+                <div className="mt-2 flex items-center gap-2">
+                  <FacebookLogo size={20} color="#1877F2" />
+                  <span className="font-medium text-[#1877F2]">
+                    Facebook Connected
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDisconnectFacebookModalOpen(true)}
+                  className="hover:text-foreground mt-2 font-medium text-gray-500 duration-200 hover:underline"
+                >
+                  Disconnect
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="mt-2 text-center text-gray-500">
+                  Login to Facebook to access your Instagram Professional
+                  Account
+                </span>
+                <button
+                  type="button"
+                  onClick={openInstagramOauthLink}
+                  className="mt-2 flex items-center gap-2 rounded-md bg-[#1877F2] px-4 py-2 font-medium text-white duration-200 hover:bg-[#1877F2]/90"
+                >
+                  <FacebookLogo size={20} />
+                  Continue with Facebook
+                </button>
+              </>
+            ))}
+        </div>
+        <div className="flex flex-col gap-6">
+          <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
+            <h4 className="text-lg font-semibold">Personal Information</h4>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {personalInfoFields.map((field) => (
+                <div
+                  key={field.name}
+                  className="flex flex-col gap-2 sm:last:col-span-2"
+                >
+                  <label className="font-medium" htmlFor={field.name}>
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type || "text"}
+                    name={field.name}
+                    id={field.name}
+                    placeholder={field.placeholder}
+                    autoComplete="off"
+                    required={field.required}
+                    value={userData[field.name] as string}
+                    disabled={loading}
+                    onChange={(e) => updateUserData(field.name, e.target.value)}
+                    className="bg-background w-full rounded-md border border-gray-300 p-2 disabled:opacity-70"
+                  />
+                </div>
+              ))}
             </div>
+          </div>
+
+          <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
+            <h4 className="text-lg font-medium">Social Media</h4>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {socialMediaFields.map((field) => (
+                <div key={field.name} className="flex items-center gap-2">
+                  <label htmlFor={field.name} className="w-[70px] font-medium">
+                    {field.label}
+                  </label>
+                  <input
+                    type="text"
+                    name={field.name}
+                    id={field.name}
+                    placeholder={field.placeholder}
+                    autoComplete="off"
+                    value={userData[field.name] as string}
+                    disabled={loading}
+                    onChange={(e) => updateUserData(field.name, e.target.value)}
+                    className="bg-background w-0 flex-1 rounded-md border border-gray-300 p-2 disabled:opacity-70"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {user.role === "FREELANCER" && (
+            <>
+              <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
+                <h4 className="text-lg font-medium">Specialties</h4>
+                <div className="relative flex">
+                  <input
+                    type="text"
+                    name="new-specialty"
+                    id="new-specialty"
+                    placeholder="Add specialty"
+                    autoComplete="off"
+                    value={newSpecialty}
+                    disabled={loading}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddSpecialty();
+                      }
+                    }}
+                    onChange={(e) => setNewSpecialty(e.target.value)}
+                    className="bg-background w-0 flex-1 rounded-md border border-gray-300 p-2 pr-14 disabled:opacity-70"
+                  />
+                  <Button
+                    onClick={handleAddSpecialty}
+                    className="absolute top-0 right-0 h-full rounded-l-none"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+                {userData.specialties.length > 0 && (
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {userData.specialties.map((specialty, index) => (
+                      <p
+                        key={index}
+                        className="bg-background flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1.5 text-sm"
+                      >
+                        <span className="flex-1">{specialty}</span>
+                        <button
+                          onClick={() => removeSpecialty(specialty)}
+                          type="button"
+                          className="hover:text-foreground rounded-md p-1 text-gray-500 duration-200 hover:bg-gray-200"
+                        >
+                          <XIcon className="h-4 w-4" />
+                        </button>
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
+                <h4 className="text-lg font-medium">Certifications</h4>
+                <div className="relative flex">
+                  <input
+                    type="text"
+                    name="new-certification"
+                    id="new-certification"
+                    placeholder="Add certification"
+                    autoComplete="off"
+                    value={newCertification}
+                    disabled={loading}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddCertification();
+                      }
+                    }}
+                    onChange={(e) => setNewCertification(e.target.value)}
+                    className="bg-background w-0 flex-1 rounded-md border border-gray-300 p-2 pr-14 disabled:opacity-70"
+                  />
+                  <Button
+                    onClick={handleAddCertification}
+                    className="absolute top-0 right-0 h-full rounded-l-none"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+                {userData.certifications.length > 0 && (
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {userData.certifications.map((certification, index) => (
+                      <p
+                        key={index}
+                        className="bg-background flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1.5 text-sm"
+                      >
+                        <span className="flex-1">{certification}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeCertification(certification)}
+                          className="hover:text-foreground rounded-md p-1 text-gray-500 duration-200 hover:bg-gray-200"
+                        >
+                          <XIcon className="h-4 w-4" />
+                        </button>
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        <Button disabled={loading} type="submit" className="w-fit self-end">
+          {loading ? (
+            <>
+              <LoaderIcon className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
           ) : (
-            <button
-              type="button"
-              onClick={openInstagramOauthLink}
-              className="mt-2 flex items-center gap-2 rounded-md border border-[#E4405F] px-4 py-2 font-medium text-[#E4405F] duration-200 hover:bg-[#E4405F]/5"
-            >
-              <Image
-                src={"/instagram-logo.svg"}
-                alt="Instagram Logo"
-                width={16}
-                height={16}
-              />
-              Connect Business Account
-            </button>
-          ))}
-      </div>
-      <div className="flex flex-col gap-6">
-        <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
-          <h4 className="text-lg font-semibold">Personal Information</h4>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {personalInfoFields.map((field) => (
-              <div
-                key={field.name}
-                className="flex flex-col gap-2 sm:last:col-span-2"
-              >
-                <label className="font-medium" htmlFor={field.name}>
-                  {field.label}
-                </label>
-                <input
-                  type={field.type || "text"}
-                  name={field.name}
-                  id={field.name}
-                  placeholder={field.placeholder}
-                  autoComplete="off"
-                  required={field.required}
-                  value={userData[field.name] as string}
-                  disabled={loading}
-                  onChange={(e) => updateUserData(field.name, e.target.value)}
-                  className="bg-background w-full rounded-md border border-gray-300 p-2 disabled:opacity-70"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+            "Save Profile"
+          )}
+        </Button>
+      </form>
 
-        <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
-          <h4 className="text-lg font-medium">Social Media</h4>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {socialMediaFields.map((field) => (
-              <div key={field.name} className="flex items-center gap-2">
-                <label htmlFor={field.name} className="w-[70px] font-medium">
-                  {field.label}
-                </label>
-                <input
-                  type="text"
-                  name={field.name}
-                  id={field.name}
-                  placeholder={field.placeholder}
-                  autoComplete="off"
-                  value={userData[field.name] as string}
-                  disabled={loading}
-                  onChange={(e) => updateUserData(field.name, e.target.value)}
-                  className="bg-background w-0 flex-1 rounded-md border border-gray-300 p-2 disabled:opacity-70"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {user.role === "FREELANCER" && (
-          <>
-            <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
-              <h4 className="text-lg font-medium">Specialties</h4>
-              <div className="relative flex">
-                <input
-                  type="text"
-                  name="new-specialty"
-                  id="new-specialty"
-                  placeholder="Add specialty"
-                  autoComplete="off"
-                  value={newSpecialty}
-                  disabled={loading}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddSpecialty();
-                    }
-                  }}
-                  onChange={(e) => setNewSpecialty(e.target.value)}
-                  className="bg-background w-0 flex-1 rounded-md border border-gray-300 p-2 pr-14 disabled:opacity-70"
-                />
-                <Button
-                  onClick={handleAddSpecialty}
-                  className="absolute top-0 right-0 h-full rounded-l-none"
-                >
-                  <PlusIcon className="h-4 w-4" />
-                </Button>
-              </div>
-              {userData.specialties.length > 0 && (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {userData.specialties.map((specialty, index) => (
-                    <p
-                      key={index}
-                      className="bg-background flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1.5 text-sm"
-                    >
-                      <span className="flex-1">{specialty}</span>
-                      <button
-                        onClick={() => removeSpecialty(specialty)}
-                        type="button"
-                        className="hover:text-foreground rounded-md p-1 text-gray-500 duration-200 hover:bg-gray-200"
-                      >
-                        <XIcon className="h-4 w-4" />
-                      </button>
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
-              <h4 className="text-lg font-medium">Certifications</h4>
-              <div className="relative flex">
-                <input
-                  type="text"
-                  name="new-certification"
-                  id="new-certification"
-                  placeholder="Add certification"
-                  autoComplete="off"
-                  value={newCertification}
-                  disabled={loading}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddCertification();
-                    }
-                  }}
-                  onChange={(e) => setNewCertification(e.target.value)}
-                  className="bg-background w-0 flex-1 rounded-md border border-gray-300 p-2 pr-14 disabled:opacity-70"
-                />
-                <Button
-                  onClick={handleAddCertification}
-                  className="absolute top-0 right-0 h-full rounded-l-none"
-                >
-                  <PlusIcon className="h-4 w-4" />
-                </Button>
-              </div>
-              {userData.certifications.length > 0 && (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {userData.certifications.map((certification, index) => (
-                    <p
-                      key={index}
-                      className="bg-background flex items-center gap-2 rounded-md border border-gray-200 px-2 py-1.5 text-sm"
-                    >
-                      <span className="flex-1">{certification}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeCertification(certification)}
-                        className="hover:text-foreground rounded-md p-1 text-gray-500 duration-200 hover:bg-gray-200"
-                      >
-                        <XIcon className="h-4 w-4" />
-                      </button>
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-
-      <Button disabled={loading} type="submit" className="w-fit self-end">
-        {loading ? (
-          <>
-            <LoaderIcon className="h-4 w-4 animate-spin" />
-            Saving...
-          </>
-        ) : (
-          "Save Profile"
-        )}
-      </Button>
-    </form>
+      <DisconnectFacebookModal
+        closeModal={() => setDisconnectFacebookModalOpen(false)}
+        open={disconnectFacebookModalOpen}
+      />
+    </>
   );
 }
