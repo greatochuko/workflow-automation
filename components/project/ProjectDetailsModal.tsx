@@ -149,6 +149,18 @@ export default function ProjectDetailsModal({
     }
   }
 
+  function handleChangePublishTime(event: React.ChangeEvent<HTMLInputElement>) {
+    const timeValue = event.target.value;
+    if (!timeValue) return;
+    if (!date) return;
+
+    const [hours, minutes] = timeValue.split(":").map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return;
+    const newDate = new Date(date);
+    newDate.setHours(hours, minutes, 0, 0);
+    setDate(newDate);
+  }
+
   return (
     <>
       <ModalContainer open={open} closeModal={closeModal}>
@@ -244,15 +256,33 @@ export default function ProjectDetailsModal({
             <label htmlFor="description" className="font-medium">
               Reschedule Project
             </label>
-            <div className="flex gap-2">
-              <DatePicker
-                className="ring-accent-black/70 ring-offset-1 duration-200 focus-visible:ring-2"
-                date={date}
-                onChange={setDate}
-                position="bottom"
-                closeAfterSelection
-                containerClassname="flex-1"
-              />
+            <div className="flex flex-col gap-2 text-sm sm:flex-row">
+              <div className="flex flex-1 flex-wrap gap-2.5 text-sm sm:gap-4">
+                <DatePicker
+                  className="ring-accent-black/70 min-w-36 flex-1 px-3 ring-offset-1 duration-200 focus-visible:ring-2 sm:px-4"
+                  date={date}
+                  onChange={setDate}
+                  position="bottom"
+                  closeAfterSelection
+                  containerClassname="flex-1"
+                />
+
+                <input
+                  type="time"
+                  name="target-publish-time"
+                  id="target-publish-time"
+                  value={
+                    date
+                      ? `${date.getHours().toString().padStart(2, "0")}:${date
+                          .getMinutes()
+                          .toString()
+                          .padStart(2, "0")}`
+                      : "12:00"
+                  }
+                  onChange={handleChangePublishTime}
+                  className="ring-accent-black/70 bg-background flex-1 rounded-md border border-gray-300 px-3 py-2 ring-offset-1 duration-200 focus-visible:ring-2 sm:px-4"
+                />
+              </div>
               <Button disabled={rescheduling} onClick={handleRescheduleProject}>
                 {rescheduling ? (
                   <>

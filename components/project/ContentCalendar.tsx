@@ -23,13 +23,25 @@ export default function ContentCalendar({
   const [viewMode, setViewMode] = useState<"twoWeeks" | "month">("twoWeeks");
 
   async function handleProjectDrop(projectId: string, newDate: Date) {
+    let updatedDate: Date | null = null;
     setProjects((prev) =>
-      prev.map((proj) =>
-        proj.id === projectId ? { ...proj, scheduledDate: newDate } : proj,
-      ),
+      prev.map((proj) => {
+        if (proj.id !== projectId) return proj;
+        const oldDate = new Date(proj.scheduledDate);
+        updatedDate = new Date(newDate);
+        updatedDate.setHours(
+          oldDate.getHours(),
+          oldDate.getMinutes(),
+          oldDate.getSeconds(),
+          oldDate.getMilliseconds(),
+        );
+        return { ...proj, scheduledDate: updatedDate };
+      }),
     );
     toast.success("Content rescheduled successfully!");
-    await updateProjectDate(projectId, newDate);
+    if (updatedDate) {
+      await updateProjectDate(projectId, updatedDate);
+    }
   }
 
   return (
