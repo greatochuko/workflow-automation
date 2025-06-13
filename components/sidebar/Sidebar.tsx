@@ -16,14 +16,15 @@ import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
 import { sidebarLinks } from "@/lib/data/constants";
 
+const noSidebarRoutes = ["/login", "/change-password", "/privacy-policy"];
+
 export default function Sidebar({ user }: { user: UserType }) {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
-  if (pathname.startsWith("/login") || pathname.startsWith("/change-password"))
-    return null;
+  if (noSidebarRoutes.some((route) => pathname.startsWith(route))) return null;
 
   return (
     <>
