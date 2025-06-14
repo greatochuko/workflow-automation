@@ -4,11 +4,17 @@ import { ProjectType } from "@/types/project";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-async function getFileUrl(fileKey: string, fileName?: string) {
+async function getFileUrl(
+  fileKey: string,
+  fileName?: string,
+  asDownload = true,
+) {
   const command = new GetObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileKey,
-    ResponseContentDisposition: `attachment; filename="${fileName || fileKey}"`,
+    ResponseContentDisposition: asDownload
+      ? `attachment; filename="${fileName || fileKey}"`
+      : undefined,
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
@@ -17,6 +23,7 @@ async function getFileUrl(fileKey: string, fileName?: string) {
 
 export async function signProjectFiles(
   projects: ProjectType[],
+  asDownload = true,
 ): Promise<ProjectType[]> {
   return Promise.all(
     projects.map(async (project) => {
@@ -47,6 +54,7 @@ export async function signProjectFiles(
           const signedCompletedfileUrl = await getFileUrl(
             project.completedFile.url,
             project.completedFile.name,
+            asDownload,
           );
           const signedCompletedThumbnailUrl = await getFileUrl(
             project.completedFile.thumbnailUrl,
@@ -162,6 +170,7 @@ export async function getScheduledProjects() {
 
     const signedScheduledProjects = await signProjectFiles(
       scheduledProjects as unknown as ProjectType[],
+      false,
     );
 
     return { data: signedScheduledProjects, error: null };

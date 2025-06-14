@@ -4,9 +4,9 @@ import { markProjectAsPosted, rejectProject } from "@/actions/projectActions";
 
 const INSTAGRAM_GRAPH_BASE_URL = "https://graph.instagram.com";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const token = req.nextUrl.searchParams.get("token");
+    const token = req.headers.get("authorization")?.split(" ")[1];
     if (token !== process.env.CRON_SECRET) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -40,9 +40,16 @@ export async function GET(req: NextRequest) {
           throw new Error("Invalid video url");
         }
 
-        // Step 1: Create container
-        const createContainerUrl = encodeURI(
-          `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media?access_token=${userInstagramAccessToken}&video_url=${projectMediaUrl}&media_type=REELS&caption=${projectCaption}`,
+        const createContainerUrl = new URL(
+          `/${userInstagramId}/media`,
+          INSTAGRAM_GRAPH_BASE_URL,
+        );
+        createContainerUrl.searchParams.set("media_type", "REELS");
+        createContainerUrl.searchParams.set("caption", projectCaption);
+        createContainerUrl.searchParams.set("video_url", projectMediaUrl);
+        createContainerUrl.searchParams.set(
+          "access_token",
+          userInstagramAccessToken,
         );
         const createRes = await fetch(createContainerUrl, {
           method: "POST",
@@ -51,7 +58,7 @@ export async function GET(req: NextRequest) {
         const createData = await createRes.json();
         if (!createRes.ok || !createData.id) {
           throw new Error(
-            `Container creation failed for project ${project.id}: ${createData.error.message}`,
+            `Container creation failed for project ${project.id}: ${createData.error?.message}`,
           );
         }
 
@@ -60,14 +67,17 @@ export async function GET(req: NextRequest) {
         // Step 2: Poll for media readiness
         let status = "IN_PROGRESS";
         let retries = 0;
-        while (status !== "FINISHED" && retries < 5) {
-          await new Promise((res) => setTimeout(res, 5000));
+        while (status !== "FINISHED" && retries < 4) {
+          await new Promise((res) => setTimeout(res, 8000));
           const statusRes = await fetch(
             `${INSTAGRAM_GRAPH_BASE_URL}/${creationId}?fields=status_code&access_token=${userInstagramAccessToken}`,
           );
           const statusData = await statusRes.json();
           status = statusData.status_code;
           retries++;
+          if (status === "ERROR") {
+            break;
+          }
         }
 
         if (status !== "FINISHED") {
@@ -90,7 +100,7 @@ export async function GET(req: NextRequest) {
         const publishData = await publishRes.json();
         if (!publishRes.ok || !publishData.id) {
           throw new Error(
-            `Reel publish failed for project ${project.id}: ${createData.error.message}`,
+            `Reel publish failed for project ${project.id}: ${publishData.error?.message}`,
           );
         }
 

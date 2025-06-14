@@ -38,6 +38,7 @@ export default function ProjectSubmissionModal({
   );
   const [uploading, setUploading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const uploadPercentage =
     Object.keys(uploadProgress).length > 0
@@ -56,9 +57,76 @@ export default function ProjectSubmissionModal({
     closeModal();
   }
 
+  type ReelsValidationResult = {
+    valid: boolean;
+    errors: string[];
+  };
+
+  async function validateReelsVideo(
+    file: File,
+  ): Promise<ReelsValidationResult> {
+    const errors: string[] = [];
+
+    if (
+      !file.type.includes("mp4") &&
+      !file.name.toLowerCase().endsWith(".mov")
+    ) {
+      errors.push("File must be in MP4 or MOV format.");
+    }
+
+    if (file.size > 300 * 1024 * 1024) {
+      errors.push("Video file size must not exceed 300MB.");
+    }
+
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+
+    return new Promise((resolve) => {
+      video.preload = "metadata";
+      video.src = url;
+
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(url);
+
+        const { videoWidth, videoHeight, duration } = video;
+        const aspectRatio = videoWidth / videoHeight;
+
+        if (videoWidth > 1920) {
+          errors.push("Video width must not exceed 1920 pixels.");
+        }
+
+        if (aspectRatio < 0.01 || aspectRatio > 10) {
+          errors.push(
+            "Aspect ratio must be between 0.01:1 and 10:1. Recommended: 9:16.",
+          );
+        }
+
+        if (duration < 3 || duration > 900) {
+          errors.push("Duration must be between 3 seconds and 15 minutes.");
+        }
+
+        resolve({ valid: errors.length === 0, errors });
+      };
+
+      video.onerror = () => {
+        errors.push(
+          "Unable to read video metadata. Ensure it's a valid MP4 or MOV file.",
+        );
+        resolve({ valid: false, errors });
+      };
+    });
+  }
+
   async function handleChangeFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
+    setErrors([]);
+    const { errors: validationErrors } = await validateReelsVideo(file);
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     setCompletedFile(file);
     const isVideoFile = file.type.startsWith("video/");
 
@@ -164,8 +232,16 @@ export default function ProjectSubmissionModal({
           className="cursor-pointer rounded-md border border-gray-200 p-1 text-sm file:cursor-pointer file:rounded-md file:border file:border-gray-200 file:bg-gray-100 file:p-2 file:duration-200 placeholder:text-gray-500 hover:file:bg-gray-200"
         />
 
+        <div className="flex flex-col gap-2">
+          {errors.map((error, i) => (
+            <p key={i} className="text-accent-red text-xs">
+              {error}
+            </p>
+          ))}
+        </div>
+
         <Button
-          disabled={loading}
+          disabled={loading || errors.length > 0}
           onClick={handleSubmission}
           className="self-end"
         >
