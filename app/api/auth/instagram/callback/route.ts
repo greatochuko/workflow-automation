@@ -85,7 +85,6 @@ export async function GET(req: NextRequest) {
     const { data: shortTokenData, error: shortTokenError } =
       await getShortLivedToken(code);
     if (shortTokenError !== null) throw new Error(shortTokenError);
-    console.log(shortTokenData);
 
     const { data: longTokenData, error: longTokenError } =
       await getLongLivedToken(shortTokenData.access_token);

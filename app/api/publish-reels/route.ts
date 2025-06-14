@@ -40,13 +40,11 @@ export async function GET(req: NextRequest) {
 
         // Step 1: Create container
         const createContainerUrl = `https://graph.instagram.com/${userInstagramId}/media?access_token=${userInstagramAccessToken}&video_url=${projectMediaUrl}&caption=${projectCaption}&media_type=REELS`;
-        console.log(createContainerUrl);
         const createRes = await fetch(createContainerUrl, {
           method: "POST",
         });
 
         const createData = await createRes.json();
-        console.log(createData);
         if (!createRes.ok || !createData.id) {
           throw new Error(
             `Container creation failed for project ${project.id}`,
