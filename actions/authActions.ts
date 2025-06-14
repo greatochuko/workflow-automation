@@ -103,20 +103,38 @@ export async function setNewPassword(newPassword: string) {
 }
 
 export async function generateInstagramOauthLink(userId: string) {
-  const authUrl = new URL("https://www.facebook.com/dialog/oauth");
-  authUrl.searchParams.set("client_id", process.env.FACEBOOK_APP_ID!);
-  authUrl.searchParams.set("display", "page");
-  authUrl.searchParams.set(
-    "extras",
-    `{"setup":{"channel":"IG_API_ONBOARDING"}}.`,
-  );
-  authUrl.searchParams.set("redirect_uri", process.env.FACEBOOK_REDIRECT_URI!);
+  const authUrl = new URL("https://www.instagram.com/oauth/authorize");
+
+  authUrl.searchParams.set("enable_fb_login", "0");
+  authUrl.searchParams.set("force_authentication", "1");
+  authUrl.searchParams.set("client_id", process.env.INSTAGRAM_CLIENT_ID!);
+  authUrl.searchParams.set("redirect_uri", process.env.INSTAGRAM_REDIRECT_URI!);
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set(
     "scope",
-    "pages_show_list,instagram_basic,pages_read_engagement,pages_read_user_content,instagram_content_publish,business_management",
+    "instagram_business_basic,instagram_business_content_publish",
   );
   authUrl.searchParams.set("state", userId);
 
   return authUrl.toString();
+}
+
+export async function disconnectInstagramAccount() {
+  try {
+    const { payload } = await getTokenFromCookie();
+
+    if (!payload?.user.id) {
+      return { data: false, error: "Invalid token" };
+    }
+
+    await prisma.instagramAccount.delete({
+      where: { userId: payload.user.id },
+    });
+
+    return { data: true, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.error("Error disconnecting instagram account: ", error.message);
+    return { data: false, error: "Server Error" };
+  }
 }

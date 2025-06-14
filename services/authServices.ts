@@ -25,6 +25,7 @@ export async function getSession(): Promise<{
         },
         newsletterTemplates: true,
         videoScripts: true,
+        instagramAccount: true,
       },
     })) as UserType | null;
 

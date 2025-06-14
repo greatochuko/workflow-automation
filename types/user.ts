@@ -1,3 +1,4 @@
+import { InstagramAccount } from "@prisma/client";
 import { NewsletterTemplateType } from "./newsletter";
 import { VideoScriptType } from "./videoScript";
 
@@ -19,13 +20,7 @@ export type UserType = {
   location: string;
   monthlyCredits: number;
   newsLetterBasicInstructions: string;
-  facebookAuth?: {
-    access_token: string;
-    expires_in: number;
-    token_type: number;
-    updated_at: Date;
-    instagram_user_id: string;
-  };
+  instagramAccount?: InstagramAccount;
   newsletterExamples: string[];
   specialties: string[];
   videoScriptExamples: string[];

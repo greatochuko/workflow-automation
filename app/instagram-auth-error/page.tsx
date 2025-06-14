@@ -7,10 +7,10 @@ export default function page() {
       <div className="flex flex-col items-center gap-4 text-center">
         <h1 className="text-9xl font-bold text-gray-300">Error</h1>
         <p className="text-foreground text-2xl font-medium">
-          Facebook Authentication Failed
+          Instagram Authentication Failed
         </p>
         <p className="text-gray-500">
-          Sorry, we couldn&apos;t authenticate you with Facebook. Please try
+          Sorry, we couldn&apos;t authenticate you with Instagram. Please try
           again or use another method.
         </p>
         <Link
