@@ -8,6 +8,32 @@ const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET!;
 const INSTAGRAM_GRAPH_BASE_URL = "https://graph.instagram.com";
 const INSTAGRAM_API_BASE_URL = "https://api.instagram.com";
 
+type IgUserIdResponseType =
+  | {
+      data: { id: string };
+      error: null;
+    }
+  | { data: null; error: string };
+
+async function getInstagramUserId(
+  token: string,
+): Promise<IgUserIdResponseType> {
+  try {
+    const res = await fetch(
+      `${INSTAGRAM_GRAPH_BASE_URL}/me?access_token=${token}`,
+    );
+
+    const igUserIdData = await res.json();
+
+    if (!res.ok) throw new Error(igUserIdData.error.message);
+
+    return { data: igUserIdData, error: null };
+  } catch (err) {
+    const error = err as Error;
+    return { data: null, error: error.message };
+  }
+}
+
 type ShortTokenResponseType =
   | {
       data: { access_token: string; user_id: string; permissions: string[] };
@@ -86,6 +112,12 @@ export async function GET(req: NextRequest) {
       await getShortLivedToken(code);
     if (shortTokenError !== null) throw new Error(shortTokenError);
 
+    const { data, error: igUserIdError } = await getInstagramUserId(
+      shortTokenData.access_token,
+    );
+    if (igUserIdError !== null) throw new Error(igUserIdError);
+    const userInstagramId = data.id;
+
     const { data: longTokenData, error: longTokenError } =
       await getLongLivedToken(shortTokenData.access_token);
     if (longTokenError !== null) throw new Error(longTokenError);
@@ -101,7 +133,7 @@ export async function GET(req: NextRequest) {
         },
         data: {
           accessToken: longTokenData.access_token,
-          instagramUserId: shortTokenData.user_id.toString(),
+          instagramUserId: userInstagramId,
           tokenType: longTokenData.token_type,
           tokenExpiresAt: new Date(
             Date.now() + longTokenData.expires_in * 1000,
@@ -113,7 +145,7 @@ export async function GET(req: NextRequest) {
       await prisma.instagramAccount.create({
         data: {
           accessToken: longTokenData.access_token,
-          instagramUserId: shortTokenData.user_id.toString(),
+          instagramUserId: userInstagramId,
           tokenType: longTokenData.token_type,
           tokenExpiresAt: new Date(
             Date.now() + longTokenData.expires_in * 1000,

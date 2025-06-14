@@ -39,7 +39,9 @@ export async function GET(req: NextRequest) {
           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
 
         // Step 1: Create container
-        const createContainerUrl = `https://graph.instagram.com/${userInstagramId}/media?access_token=${userInstagramAccessToken}&video_url=${projectMediaUrl}&caption=${projectCaption}&media_type=REELS`;
+        const createContainerUrl = encodeURI(
+          `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media?access_token=${userInstagramAccessToken}&video_url=${projectMediaUrl}&media_type=REELS&caption=${projectCaption}`,
+        );
         const createRes = await fetch(createContainerUrl, {
           method: "POST",
         });
@@ -73,17 +75,13 @@ export async function GET(req: NextRequest) {
         }
 
         // Step 3: Publish the reel
-        const formData = new FormData();
-        formData.set("creation_id", creationId);
         const publishRes = await fetch(
-          `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media_publish`,
+          `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media_publish?creation_id=${creationId}`,
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
               authorization: `Bearer ${userInstagramAccessToken}`,
             },
-            body: formData,
           },
         );
 
@@ -101,7 +99,10 @@ export async function GET(req: NextRequest) {
         };
       } catch (err) {
         const error = err as Error;
-        console.error(`Failed for project ${project.id}:`, error.message);
+        console.error(
+          `Project Publishing Failed for project ${project.id}:`,
+          error.message,
+        );
         return {
           projectId: project.id,
           status: "error",
