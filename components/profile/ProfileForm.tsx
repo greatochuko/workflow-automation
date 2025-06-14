@@ -16,8 +16,9 @@ import { toast } from "sonner";
 import { uploadImage } from "@/lib/utils/imageUpload";
 import { updateUserProfile } from "@/actions/userActions";
 import { generateInstagramOauthLink } from "@/actions/authActions";
-import FacebookLogo from "@/lib/svg-icons/FacebookLogo";
-import DisconnectFacebookModal from "./DisconnectFacebookModal";
+import InstagramLogo from "@/lib/svg-icons/InstagramLogo";
+import DisconnectInstagramModal from "./DisconnectInstagramModal";
+import Image from "next/image";
 
 type PersonalInfoFieldType = {
   label: string;
@@ -208,7 +209,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
   }
 
   async function openInstagramOauthLink() {
-    const oauthLink = await generateInstagramOauthLink(user.id);
+    const oauthLink = await generateInstagramOauthLink(userData.id);
     if (oauthLink) {
       window.location.href = oauthLink;
     }
@@ -243,13 +244,18 @@ export default function ProfileForm({ user }: { user: UserType }) {
             Upload profile picture
           </label>
 
-          {user.role === "CLIENT" &&
-            (user.facebookAuth ? (
+          {userData.role === "CLIENT" &&
+            (userData.instagramAccount ? (
               <>
                 <div className="mt-2 flex items-center gap-2">
-                  <FacebookLogo size={20} color="#1877F2" />
-                  <span className="font-medium text-[#1877F2]">
-                    Facebook Connected
+                  <Image
+                    src={"/instagram-logo.svg"}
+                    alt="Instagram Logo"
+                    width={16}
+                    height={16}
+                  />
+                  <span className="font-medium text-[#E4405F]">
+                    Instagram Connected
                   </span>
                 </div>
                 <button
@@ -263,16 +269,20 @@ export default function ProfileForm({ user }: { user: UserType }) {
             ) : (
               <>
                 <span className="mt-2 text-center text-gray-500">
-                  Login to Facebook to access your Instagram Professional
-                  Account
+                  Connect your Instagram Professional Account to enable content
+                  publishing
                 </span>
                 <button
                   type="button"
                   onClick={openInstagramOauthLink}
-                  className="mt-2 flex items-center gap-2 rounded-md bg-[#1877F2] px-4 py-2 font-medium text-white duration-200 hover:bg-[#1877F2]/90"
+                  className="mt-2 flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff0332] to-[#b3378f] px-4 py-2 font-medium text-white duration-200 hover:opacity-90"
+                  // style={{
+                  //   background:
+                  //     "linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4)",
+                  // }}
                 >
-                  <FacebookLogo size={20} />
-                  Continue with Facebook
+                  <InstagramLogo />
+                  Continue with Instagram
                 </button>
               </>
             ))}
@@ -330,7 +340,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
             </div>
           </div>
 
-          {user.role === "FREELANCER" && (
+          {userData.role === "FREELANCER" && (
             <>
               <div className="mt-2 flex flex-col gap-2 sm:col-span-2">
                 <h4 className="text-lg font-medium">Specialties</h4>
@@ -443,9 +453,12 @@ export default function ProfileForm({ user }: { user: UserType }) {
         </Button>
       </form>
 
-      <DisconnectFacebookModal
+      <DisconnectInstagramModal
         closeModal={() => setDisconnectFacebookModalOpen(false)}
         open={disconnectFacebookModalOpen}
+        removeInstagramAccountFromUser={() =>
+          setUserData((prev) => ({ ...prev, instagramAccount: undefined }))
+        }
       />
     </>
   );

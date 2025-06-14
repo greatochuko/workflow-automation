@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getScheduledProjects } from "@/services/projectServices";
 import { markProjectAsPosted } from "@/actions/projectActions";
 
-const FACEBOOK_GRAPH_BASE_URL = "https://graph.facebook.com/v19.0";
+const INSTAGRAM_GRAPH_BASE_URL = "https://graph.instagram.com";
 
 export async function GET(req: NextRequest) {
   try {
@@ -19,42 +19,38 @@ export async function GET(req: NextRequest) {
 
     const publishTasks = projects.map(async (project) => {
       try {
-        if (!project.createdBy.facebookAuth) {
+        if (!project.createdBy.instagramAccount) {
           throw new Error(
-            `User "${project.createdBy.fullName}" Instagram account not connected`,
+            `User with ID ${project.createdBy.id} Instagram account not connected`,
           );
         }
 
         const userInstagramId =
-          project.createdBy.facebookAuth.instagram_user_id;
-        const userFacebookAccessToken =
-          project.createdBy.facebookAuth.access_token;
+          project.createdBy.instagramAccount.instagramUserId;
+        const userInstagramAccessToken =
+          project.createdBy.instagramAccount.accessToken;
         const projectCaption = [
           project.captionData.hook,
           project.captionData.cta1,
           project.captionData.cta2,
           project.captionData.captionContent,
         ].join("\n\n");
+        const projectMediaUrl =
+          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
 
         // Step 1: Create container
-        const createRes = await fetch(
-          `${FACEBOOK_GRAPH_BASE_URL}/${userInstagramId}/media`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              media_type: "REELS",
-              video_url:
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", // Replace with: project.completedFile.url
-              caption: projectCaption,
-              access_token: userFacebookAccessToken,
-            }),
-          },
+        const createContainerUrl = encodeURI(
+          `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media?access_token=${userInstagramAccessToken}&video_url=${projectMediaUrl}&media_type=REELS&caption=${projectCaption}`,
         );
+        const createRes = await fetch(createContainerUrl, {
+          method: "POST",
+        });
 
         const createData = await createRes.json();
         if (!createRes.ok || !createData.id) {
-          throw new Error("Container creation failed");
+          throw new Error(
+            `Container creation failed for project ${project.id}`,
+          );
         }
 
         const creationId = createData.id;
@@ -65,7 +61,7 @@ export async function GET(req: NextRequest) {
         while (status !== "FINISHED" && retries < 5) {
           await new Promise((res) => setTimeout(res, 5000));
           const statusRes = await fetch(
-            `${FACEBOOK_GRAPH_BASE_URL}/${creationId}?fields=status_code&access_token=${userFacebookAccessToken}`,
+            `${INSTAGRAM_GRAPH_BASE_URL}/${creationId}?fields=status_code&access_token=${userInstagramAccessToken}`,
           );
           const statusData = await statusRes.json();
           status = statusData.status_code;
@@ -80,14 +76,12 @@ export async function GET(req: NextRequest) {
 
         // Step 3: Publish the reel
         const publishRes = await fetch(
-          `${FACEBOOK_GRAPH_BASE_URL}/${userInstagramId}/media_publish`,
+          `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media_publish?creation_id=${creationId}`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              creation_id: creationId,
-              access_token: userFacebookAccessToken,
-            }),
+            headers: {
+              authorization: `Bearer ${userInstagramAccessToken}`,
+            },
           },
         );
 
@@ -105,7 +99,10 @@ export async function GET(req: NextRequest) {
         };
       } catch (err) {
         const error = err as Error;
-        console.error(`Failed for project ${project.id}:`, error.message);
+        console.error(
+          `Project Publishing Failed for project ${project.id}:`,
+          error.message,
+        );
         return {
           projectId: project.id,
           status: "error",

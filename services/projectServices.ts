@@ -157,7 +157,7 @@ export async function getScheduledProjects() {
         publishStatus: "PENDING",
         scheduledDate: { lte: new Date() },
       },
-      include: { createdBy: { select: { facebookAuth: true } } },
+      include: { createdBy: { select: { id: true, instagramAccount: true } } },
     });
 
     const signedScheduledProjects = await signProjectFiles(
