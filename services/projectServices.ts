@@ -163,7 +163,7 @@ export async function getScheduledProjects() {
       where: {
         status: "APPROVED",
         publishStatus: "PENDING",
-        scheduledDate: { lte: new Date() },
+        scheduledDate: { lte: new Date(Date.now() + 10 * 60 * 1000) },
       },
       include: { createdBy: { select: { id: true, instagramAccount: true } } },
     });

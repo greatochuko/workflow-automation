@@ -96,21 +96,22 @@ enum ProjectPublishStatus {
 }
 
 model Project {
-  id             String               @id @default(cuid())
-  title          String
-  description    String
-  scheduledDate  DateTime
-  videoType      String
-  files          Json[]
-  status         ProjectStatus
-  publishStatus  ProjectPublishStatus @default(PENDING)
-  submissionDate DateTime?
-  feedback       String               @default("")
-  completedFile  Json?
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  captionData    Json?
-  reelId         String               @default("")
+  id                   String               @id @default(cuid())
+  title                String
+  description          String
+  scheduledDate        DateTime
+  videoType            String
+  files                Json[]
+  status               ProjectStatus
+  publishStatus        ProjectPublishStatus @default(PENDING)
+  submissionDate       DateTime?
+  feedback             String               @default("")
+  completedFile        Json?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  captionData          Json?
+  reelId               String               @default("")
+  instagramContainerId String               @default("")
 
   createdBy   User   @relation(fields: [createdById], references: [id])
   createdById String

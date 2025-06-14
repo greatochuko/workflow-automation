@@ -28,6 +28,7 @@ export type ProjectType = {
   };
   feedback: string;
   reelId: string;
+  instagramContainerId: string;
   submissionDate: Date;
   completedFile: Omit<ProjectFileType, "description">;
   files: ProjectFileType[];
