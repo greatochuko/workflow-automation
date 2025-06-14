@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getScheduledProjects } from "@/services/projectServices";
-import { markProjectAsPosted } from "@/actions/projectActions";
+import { markProjectAsPosted, rejectProject } from "@/actions/projectActions";
 
 const INSTAGRAM_GRAPH_BASE_URL = "https://graph.instagram.com";
 
@@ -32,6 +32,14 @@ export async function GET(req: NextRequest) {
         const projectCaption = project.captionData.captionContent;
         const projectMediaUrl = project.completedFile.url;
 
+        if (!projectCaption) {
+          throw new Error("Invalid project caption");
+        }
+
+        if (!projectMediaUrl) {
+          throw new Error("Invalid video url");
+        }
+
         // Step 1: Create container
         const createContainerUrl = encodeURI(
           `${INSTAGRAM_GRAPH_BASE_URL}/${userInstagramId}/media?access_token=${userInstagramAccessToken}&video_url=${projectMediaUrl}&media_type=REELS&caption=${projectCaption}`,
@@ -43,7 +51,7 @@ export async function GET(req: NextRequest) {
         const createData = await createRes.json();
         if (!createRes.ok || !createData.id) {
           throw new Error(
-            `Container creation failed for project ${project.id}`,
+            `Container creation failed for project ${project.id}: ${createData.error.message}`,
           );
         }
 
@@ -81,7 +89,9 @@ export async function GET(req: NextRequest) {
 
         const publishData = await publishRes.json();
         if (!publishRes.ok || !publishData.id) {
-          throw new Error("Reel publish failed");
+          throw new Error(
+            `Reel publish failed for project ${project.id}: ${createData.error.message}`,
+          );
         }
 
         await markProjectAsPosted(project.id, publishData.id);
@@ -93,9 +103,10 @@ export async function GET(req: NextRequest) {
         };
       } catch (err) {
         const error = err as Error;
+        await rejectProject(project.id, error.message);
         console.error(
-          `Project Publishing Failed for project ${project.id}:`,
-          error.message,
+          error.message ||
+            `Project Publishing Failed for project ${project.id}:`,
         );
         return {
           projectId: project.id,
@@ -106,7 +117,6 @@ export async function GET(req: NextRequest) {
     });
 
     const results = await Promise.all(publishTasks);
-    console.log(results);
     return NextResponse.json({ results });
   } catch (err) {
     const error = err as Error;
