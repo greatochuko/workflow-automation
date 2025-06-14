@@ -67,8 +67,8 @@ export async function POST(req: NextRequest) {
         // Step 2: Poll for media readiness
         let status = "IN_PROGRESS";
         let retries = 0;
-        while (status !== "FINISHED" && retries < 4) {
-          await new Promise((res) => setTimeout(res, 8000));
+        while (status !== "FINISHED" && retries < 5) {
+          await new Promise((res) => setTimeout(res, 5000));
           const statusRes = await fetch(
             `${INSTAGRAM_GRAPH_BASE_URL}/${creationId}?fields=status_code&access_token=${userInstagramAccessToken}`,
           );
