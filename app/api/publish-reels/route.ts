@@ -106,6 +106,7 @@ export async function GET(req: NextRequest) {
     });
 
     const results = await Promise.all(publishTasks);
+    console.log(results);
     return NextResponse.json({ results });
   } catch (err) {
     const error = err as Error;
