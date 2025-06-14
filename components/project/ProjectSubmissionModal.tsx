@@ -158,7 +158,7 @@ export default function ProjectSubmissionModal({
           type="file"
           name="finished-project"
           id="finished-project"
-          accept="video/*,image/*"
+          accept="video/*"
           ref={fileInputRef}
           onChange={handleChangeFile}
           className="cursor-pointer rounded-md border border-gray-200 p-1 text-sm file:cursor-pointer file:rounded-md file:border file:border-gray-200 file:bg-gray-100 file:p-2 file:duration-200 placeholder:text-gray-500 hover:file:bg-gray-200"

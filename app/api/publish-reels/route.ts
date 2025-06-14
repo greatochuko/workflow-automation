@@ -29,14 +29,8 @@ export async function GET(req: NextRequest) {
           project.createdBy.instagramAccount.instagramUserId;
         const userInstagramAccessToken =
           project.createdBy.instagramAccount.accessToken;
-        const projectCaption = [
-          project.captionData.hook,
-          project.captionData.cta1,
-          project.captionData.cta2,
-          project.captionData.captionContent,
-        ].join("\n\n");
-        const projectMediaUrl =
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
+        const projectCaption = project.captionData.captionContent;
+        const projectMediaUrl = project.completedFile.url;
 
         // Step 1: Create container
         const createContainerUrl = encodeURI(
