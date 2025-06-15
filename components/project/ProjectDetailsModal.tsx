@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import ModalContainer from "../ui/ModalContainer";
 import { ProjectType } from "@/types/project";
 import {
-  CloudDownloadIcon,
+  CirclePlayIcon,
   CopyIcon,
   EditIcon,
   LoaderIcon,
@@ -11,7 +11,6 @@ import {
   XIcon,
 } from "lucide-react";
 import { getEventColorClass } from "./CalendarDayCell";
-import Link from "next/link";
 import { toast } from "sonner";
 import { isBefore, startOfDay } from "date-fns";
 import DeleteProjectModal from "./DeleteProjectModal";
@@ -22,6 +21,7 @@ import {
 import ProjectThumbnail from "./ProjectThumbnail";
 import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
+import ProjectMediaPreviewModal from "./ProjectMediaPreviewModal";
 
 // const AIGeneratedResponse = {
 //   hook: "Unwinding tensions, one adjustment at a time! 🌀",
@@ -82,6 +82,10 @@ export default function ProjectDetailsModal({
     project?.description || "",
   );
   const [date, setDate] = useState<Date | null>(project?.scheduledDate || null);
+  const [mediaToPreview, setMediaToPreview] = useState<{
+    type: string;
+    url: string;
+  } | null>(null);
 
   useEffect(() => {
     if (initialProject) {
@@ -351,7 +355,7 @@ export default function ProjectDetailsModal({
                 <p className="flex-1 text-sm font-medium">
                   {project.completedFile.name}
                 </p>
-                <Link
+                {/* <Link
                   href={project.completedFile.url || ""}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -359,8 +363,19 @@ export default function ProjectDetailsModal({
                   className="hover:text-accent p-2 text-gray-500 duration-200"
                   download={project.completedFile.name}
                 >
-                  <CloudDownloadIcon className="h-5 w-5" />
-                </Link>
+                  <CirclePlayIcon className="h-5 w-5" />
+                </Link> */}
+                <button
+                  onClick={() =>
+                    setMediaToPreview({
+                      type: project.completedFile.type,
+                      url: project.completedFile.url,
+                    })
+                  }
+                  className="hover:text-accent p-2 text-gray-500 duration-200"
+                >
+                  <CirclePlayIcon className="h-5 w-5" />
+                </button>
               </li>
             </div>
           )}
@@ -394,7 +409,7 @@ export default function ProjectDetailsModal({
                       </p>
                     )}
                   </div>
-                  <Link
+                  {/* <Link
                     href={file.url || ""}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -402,8 +417,19 @@ export default function ProjectDetailsModal({
                     className="hover:text-accent p-2 text-gray-500 duration-200"
                     download={file.name}
                   >
-                    <CloudDownloadIcon className="h-5 w-5" />
-                  </Link>
+                    <CirclePlayIcon className="h-5 w-5" />
+                  </Link> */}
+                  <button
+                    onClick={() =>
+                      setMediaToPreview({
+                        type: file.type,
+                        url: file.url,
+                      })
+                    }
+                    className="hover:text-accent p-2 text-gray-500 duration-200"
+                  >
+                    <CirclePlayIcon className="h-5 w-5" />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -450,6 +476,12 @@ export default function ProjectDetailsModal({
         projectId={project?.id}
         projectTitle={project?.title}
         removeFromProjectList={removeFromProjectList}
+      />
+
+      <ProjectMediaPreviewModal
+        open={!!mediaToPreview}
+        closeModal={() => setMediaToPreview(null)}
+        media={mediaToPreview}
       />
     </>
   );
