@@ -131,12 +131,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    const start = Date.now();
-
     const results = await Promise.all(tasks);
-
-    const end = Date.now();
-    console.log(`Duration: ${end - start}ms`);
 
     return NextResponse.json({ results });
   } catch (err) {
