@@ -1,8 +1,14 @@
 import SharedDocumentForm from "@/components/shared-document/SharedDocumentForm";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
+import { getSession } from "@/services/authServices";
+import { notFound } from "next/navigation";
 import React from "react";
 
-export default function page() {
+export default async function page() {
+  const { data: user } = await getSession();
+
+  if (user?.role !== "CLIENT") notFound();
+
   return (
     <main className="flex w-full flex-col">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-[5%] py-4">

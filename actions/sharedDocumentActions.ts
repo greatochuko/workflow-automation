@@ -19,9 +19,32 @@ export async function createSharedDocument(title: string, content: string) {
     revalidatePath("/", "layout");
   } catch (err) {
     const error = err as Error;
-    console.log(`Unable to create shared document: ${error.message}`);
+    console.error(`Unable to create shared document: ${error.message}`);
     return { data: null, error: "Server Error" };
   } finally {
     if (redirectUrl) redirect(redirectUrl);
+  }
+}
+
+export async function updateSharedDocument(
+  documentId: string,
+  title: string,
+  content: string,
+) {
+  try {
+    const { payload, error } = await getTokenFromCookie();
+    if (!payload) throw new Error(error);
+
+    const updatedDocument = await prisma.sharedDocument.update({
+      where: { id: documentId },
+      data: { title, content, lastEditedById: payload.user.id },
+    });
+
+    revalidatePath("/", "layout");
+    return { data: updatedDocument, error: null };
+  } catch (err) {
+    const error = err as Error;
+    console.error(`Unable to save shared document: ${error.message}`);
+    return { data: null, error: "Server Error" };
   }
 }

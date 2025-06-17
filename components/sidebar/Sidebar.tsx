@@ -17,14 +17,14 @@ import Avatar from "../ui/Avatar";
 import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
 import { sidebarLinks, noSidebarRoutes } from "@/lib/data/constants";
-import { SharedDocument } from "@prisma/client";
+import { SharedDocumentType } from "@/types/sharedDocument";
 
 export default function Sidebar({
   user,
   sharedDocuments,
 }: {
   user: UserType;
-  sharedDocuments: SharedDocument[];
+  sharedDocuments: SharedDocumentType[];
 }) {
   const pathname = usePathname();
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
@@ -56,7 +56,7 @@ export default function Sidebar({
               <li hidden={user.role === "ADMIN"}>
                 <Link
                   href={"/"}
-                  className={`flex items-center gap-4 rounded-md p-2 ${
+                  className={`flex items-center gap-3 rounded-md p-2 ${
                     pathname === "/"
                       ? "text-accent-black-200 bg-white font-semibold"
                       : "font-medium hover:bg-white/10"
@@ -71,7 +71,7 @@ export default function Sidebar({
                 <li key={link.title} hidden={user.role !== link.validUserRole}>
                   <Link
                     href={link.url}
-                    className={`flex items-center gap-4 rounded-md p-2 whitespace-nowrap ${
+                    className={`flex items-center gap-3 rounded-md p-2 whitespace-nowrap ${
                       pathname.startsWith(link.url)
                         ? "text-accent-black-200 bg-white font-semibold"
                         : "font-medium hover:bg-white/10"
@@ -83,34 +83,40 @@ export default function Sidebar({
                 </li>
               ))}
 
-              <div className="mt-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="px-2 text-xs font-medium text-gray-400">
-                    Shared Documents
-                  </h4>
-                  <Link
-                    href={`/shared-documents/new`}
-                    className={`flex items-center gap-4 rounded-md p-2 font-medium whitespace-nowrap hover:bg-white/10`}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                  </Link>
+              {user.role !== "ADMIN" && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="px-2 text-xs font-medium text-gray-400">
+                      Shared Documents
+                    </h4>
+                    {user.role === "CLIENT" && (
+                      <Link
+                        href={`/shared-documents/new`}
+                        className={`flex items-center gap-3 rounded-md p-2 font-medium whitespace-nowrap hover:bg-white/10`}
+                      >
+                        <PlusIcon className="h-4 w-4" />
+                      </Link>
+                    )}
+                  </div>
+                  {sharedDocuments.map((doc) => (
+                    <li key={doc.id} hidden={user.role === "ADMIN"}>
+                      <Link
+                        href={`/shared-documents/${doc.id}`}
+                        className={`flex items-center gap-3 rounded-md p-2 whitespace-nowrap ${
+                          pathname.startsWith(`/shared-documents/${doc.id}`)
+                            ? "text-accent-black-200 bg-white font-semibold"
+                            : "font-medium hover:bg-white/10"
+                        }`}
+                      >
+                        <FileTextIcon className="h-4 w-4" />
+                        <span className="flex-1 overflow-hidden overflow-ellipsis">
+                          {doc.title}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
                 </div>
-                {sharedDocuments.map((doc) => (
-                  <li key={doc.id} hidden={user.role === "ADMIN"}>
-                    <Link
-                      href={`/shared-documents/${doc.id}`}
-                      className={`flex items-center gap-4 rounded-md p-2 whitespace-nowrap ${
-                        pathname.startsWith(`/shared-documents/${doc.id}`)
-                          ? "text-accent-black-200 bg-white font-semibold"
-                          : "font-medium hover:bg-white/10"
-                      }`}
-                    >
-                      <FileTextIcon className="h-4 w-4" />
-                      {doc.title}
-                    </Link>
-                  </li>
-                ))}
-              </div>
+              )}
             </ul>
           </nav>
         </div>

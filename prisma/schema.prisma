@@ -66,6 +66,8 @@ model User {
   instagramAccount InstagramAccount?
 
   sharedDocuments SharedDocument[]
+
+  editedDocuments SharedDocument[] @relation(name: "EditedDocuments")
 }
 
 model InstagramAccount {
@@ -176,6 +178,9 @@ model SharedDocument {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  lastEditedBy   User?   @relation(fields: [lastEditedById], references: [id], name: "EditedDocuments")
+  lastEditedById String?
 
   createdBy   User   @relation(fields: [createdById], references: [id])
   createdById String

@@ -8,7 +8,7 @@ import { Toaster } from "sonner";
 import InvalidSessionModal from "@/components/auth/InvalidSessionModal";
 import MobileSidebar from "@/components/sidebar/MobileSidebar";
 import { getSharedDocuments } from "@/services/sharedDocumentServices";
-import { SharedDocument } from "@prisma/client";
+import { SharedDocumentType } from "@/types/sharedDocument";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +25,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { data: user } = await getSession();
-  let sharedDocuments: SharedDocument[] = [];
+  let sharedDocuments: SharedDocumentType[] = [];
   if (user?.role === "CLIENT" || user?.role === "FREELANCER") {
     const { data } = await getSharedDocuments();
     sharedDocuments = data;
