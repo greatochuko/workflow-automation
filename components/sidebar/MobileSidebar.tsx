@@ -2,10 +2,12 @@
 
 import { type UserType } from "@/types/user";
 import {
+  FileTextIcon,
   FileVideoIcon,
   HomeIcon,
   LogOutIcon,
   PanelLeftIcon,
+  PlusIcon,
   UserCogIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -16,8 +18,15 @@ import ModalContainer from "../ui/ModalContainer";
 import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
 import { sidebarLinks, noSidebarRoutes } from "@/lib/data/constants";
+import { SharedDocument } from "@prisma/client";
 
-export default function MobileSidebar({ user }: { user: UserType }) {
+export default function MobileSidebar({
+  user,
+  sharedDocuments,
+}: {
+  user: UserType;
+  sharedDocuments: SharedDocument[];
+}) {
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
@@ -93,6 +102,35 @@ export default function MobileSidebar({ user }: { user: UserType }) {
                     </Link>
                   </li>
                 ))}
+
+                <div className="mt-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="px-2 text-xs font-medium text-gray-400">
+                      Shared Documents
+                    </h4>
+                    <Link
+                      href={`/shared-documents/new`}
+                      className={`flex items-center gap-4 rounded-md p-2 font-medium whitespace-nowrap hover:bg-white/10`}
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                    </Link>
+                  </div>
+                  {sharedDocuments.map((doc) => (
+                    <li key={doc.id} hidden={user.role === "ADMIN"}>
+                      <Link
+                        href={`/shared-documents/${doc.id}`}
+                        className={`flex items-center gap-4 rounded-md p-2 whitespace-nowrap ${
+                          pathname.startsWith(`/shared-documents/${doc.id}`)
+                            ? "text-accent-black-200 bg-white font-semibold"
+                            : "font-medium hover:bg-white/10"
+                        }`}
+                      >
+                        <FileTextIcon className="h-4 w-4" />
+                        {doc.title}
+                      </Link>
+                    </li>
+                  ))}
+                </div>
               </ul>
             </nav>
           </div>

@@ -64,6 +64,8 @@ model User {
   videoScripts        VideoScript[]
 
   instagramAccount InstagramAccount?
+
+  sharedDocuments SharedDocument[]
 }
 
 model InstagramAccount {
@@ -166,4 +168,15 @@ model VideoScript {
   client   User      @relation(fields: [clientId], references: [id])
   clientId String
   projects Project[]
+}
+
+model SharedDocument {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String
 }

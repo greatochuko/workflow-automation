@@ -7,6 +7,8 @@ import SidebarProvider from "@/context/SidebarContext";
 import { Toaster } from "sonner";
 import InvalidSessionModal from "@/components/auth/InvalidSessionModal";
 import MobileSidebar from "@/components/sidebar/MobileSidebar";
+import { getSharedDocuments } from "@/services/sharedDocumentServices";
+import { SharedDocument } from "@prisma/client";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,6 +25,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { data: user } = await getSession();
+  let sharedDocuments: SharedDocument[] = [];
+  if (user?.role === "CLIENT" || user?.role === "FREELANCER") {
+    const { data } = await getSharedDocuments();
+    sharedDocuments = data;
+  }
 
   return (
     <html lang="en">
@@ -38,8 +45,8 @@ export default async function RootLayout({
         <SidebarProvider>
           {user && (
             <>
-              <MobileSidebar user={user} />
-              <Sidebar user={user} />
+              <MobileSidebar user={user} sharedDocuments={sharedDocuments} />
+              <Sidebar user={user} sharedDocuments={sharedDocuments} />
             </>
           )}
           <div className="bg-background flex w-full flex-1">{children}</div>

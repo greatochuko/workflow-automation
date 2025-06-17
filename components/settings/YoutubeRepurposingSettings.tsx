@@ -197,7 +197,9 @@ export default function YoutubeRepurposingSettings({
             key={field.id}
             className={`flex flex-col gap-2 ${field.id === "contactLink" || field.type === "textarea" ? "col-span-2" : ""}`}
           >
-            <label htmlFor={field.id}>{field.label}</label>
+            <label htmlFor={field.id} className="font-medium">
+              {field.label}
+            </label>
             {renderFieldInput(field)}
           </div>
         ))}
