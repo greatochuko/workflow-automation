@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { ProjectType } from "@/types/project";
+import { UserType, YoutubeSettingType } from "@/types/user";
 import { YoutubeContentType } from "@/types/youtubeContent";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
@@ -18,31 +19,44 @@ const YoutubeContentResponse = z.object({
 });
 
 async function generateYoutubeContent(
-  location: string,
+  user: UserType,
+  userYoutubeSettings: YoutubeSettingType | null,
   videoDetails: {
     hook: string;
     cta1: string;
     cta2: string;
     captionContent: string;
-    script?: string;
   },
+  videoScript?: string,
 ) {
   try {
+    const location = userYoutubeSettings
+      ? userYoutubeSettings.city + ", " + userYoutubeSettings.state
+      : user.location;
+
     const userContent = `
       You are a content strategist helping generate high-performing YouTube Shorts metadata for a chiropractor based in ${location}.
 
       The following inputs have already been created for the video:
+      - User name: ${user.fullName}
       - Hook: ${videoDetails.hook}
       - CTA 1: ${videoDetails.cta1}
       - CTA 2: ${videoDetails.cta2}
       - Caption: ${videoDetails.captionContent}
-      ${videoDetails.script ? `- Script: ${videoDetails.script}` : ""}
+      ${videoScript ? `- Script: ${videoScript}` : ""}
+      ${
+        userYoutubeSettings
+          ? Object.entries(userYoutubeSettings)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join("\n")
+          : ""
+      }
 
       Using those inputs, generate the following YouTube Shorts metadata:
 
       Title
       - Between 40-70 characters
-      - Includes at least one keyword: 'sports medicine', 'chiropractic care', '${location} chiropractor'
+      - Includes at least one keyword: 'sports medicine', 'chiropractic care', '${location} chiropractor' ${userYoutubeSettings?.keywordsHashtags || ""}
       - Uses one or more of: numbers, current year (2025), direct address ('you', 'your'), or emotionally engaging language
       - Relevant to common pain points (e.g., posture, sports injuries, back/neck pain)
       - Optimized for YouTube and Google SEO
@@ -106,24 +120,18 @@ async function generateYoutubeContent(
   }
 }
 
-export async function createYoutubeContent(projectId: string, userId?: string) {
+export async function createYoutubeContent(projectId: string) {
   try {
-    let resolvedUserId = userId;
-    let payload;
-
-    if (!resolvedUserId) {
-      const tokenResult = await getTokenFromCookie();
-      payload = tokenResult.payload;
-      if (!payload?.user.id) {
-        return { data: null, error: "Invalid token" };
-      }
-      resolvedUserId = payload.user.id;
+    const { payload } = await getTokenFromCookie();
+    if (!payload?.user.id) {
+      throw new Error("Invalid token");
     }
+    const userId = payload.user.id;
 
-    const user = await prisma.user.findFirst({
-      where: { id: resolvedUserId },
+    const user = (await prisma.user.findFirst({
+      where: { id: userId },
       include: { youtubeContent: true },
-    });
+    })) as UserType | null;
 
     if (!user) {
       return { data: null, error: "Invalid user ID. User not found." };
@@ -138,16 +146,18 @@ export async function createYoutubeContent(projectId: string, userId?: string) {
       return { data: null, error: "Invalid project ID. Project not found." };
     }
 
-    const aiContent = await generateYoutubeContent(user.location, {
-      ...project.captionData,
-      script: project.videoScript?.description,
-    });
+    const aiContent = await generateYoutubeContent(
+      user,
+      user.youtubeSettings || null,
+      project.captionData,
+      project.videoScript?.description,
+    );
 
     const newYoutubeContent = await prisma.youtubeContent.create({
       data: aiContent
         ? {
             ...aiContent,
-            clientId: resolvedUserId,
+            clientId: userId,
             projectId,
           }
         : {
@@ -155,7 +165,7 @@ export async function createYoutubeContent(projectId: string, userId?: string) {
             description: "",
             tags: [""],
             thumbnailText: [""],
-            clientId: resolvedUserId,
+            clientId: userId,
             projectId,
           },
     });
