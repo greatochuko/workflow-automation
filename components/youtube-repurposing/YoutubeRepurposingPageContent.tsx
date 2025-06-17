@@ -70,14 +70,19 @@ export default function YoutubeRepurposingPageContent({
     setLoading(false);
   }
 
-  function handleCopyAll() {
-    if (!selectedProject?.youtubeContent) return;
+  function getFullContent(youtubeContent: {
+    title: string;
+    description: string;
+    tags: string[];
+    thumbnailText: string[];
+  }) {
     const allYoutubeContent = {
-      title: selectedProject.youtubeContent.title,
-      description: selectedProject.youtubeContent.description,
-      tags: selectedProject.youtubeContent.tags,
-      "Thumbnail Text Ideas": selectedProject.youtubeContent.thumbnailText,
+      title: youtubeContent.title,
+      description: youtubeContent.description,
+      tags: youtubeContent.tags,
+      "Thumbnail Text Ideas": youtubeContent.thumbnailText,
     };
+
     const fullContent = Object.entries(allYoutubeContent)
       .map(([key, value]) => {
         let content: string;
@@ -91,7 +96,30 @@ export default function YoutubeRepurposingPageContent({
         return key.toUpperCase() + ":\n" + content;
       })
       .join("\n\n");
+
+    return fullContent;
+  }
+
+  function handleCopyAll() {
+    if (!selectedProject?.youtubeContent) return;
+    const fullContent = getFullContent(selectedProject.youtubeContent);
     navigator.clipboard.writeText(fullContent);
+  }
+
+  function handleExport() {
+    if (!selectedProject?.youtubeContent) return;
+    const fullContent = getFullContent(selectedProject.youtubeContent);
+    const blob = new Blob([fullContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `youtube-content-${selectedProject.title.replace(/\s+/g, "-").toLowerCase()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast.success("Content exported successfully!");
   }
 
   return (
@@ -196,7 +224,7 @@ export default function YoutubeRepurposingPageContent({
                     <CopyIcon className="h-4 w-4" />
                     Copy All
                   </Button>
-                  <Button>
+                  <Button onClick={handleExport}>
                     <DownloadIcon className={`h-4 w-4`} />
                     Export
                   </Button>
