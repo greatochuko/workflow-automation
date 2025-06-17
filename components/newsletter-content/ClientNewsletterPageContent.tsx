@@ -148,10 +148,7 @@ export default function ClientNewsletterPageContent({
                   className={`flex cursor-pointer flex-col gap-2 rounded-lg border border-gray-200 p-2 duration-200 hover:border-gray-500 ${selectedProject?.id === project.id ? "bg-background border-gray-700" : ""}`}
                 >
                   <div className="flex items-start gap-2">
-                    <ProjectThumbnail
-                      file={project.files[0]}
-                      type="newsletter"
-                    />
+                    <ProjectThumbnail file={project.files[0]} type="content" />
                     <div className="flex flex-col">
                       <h4 className="text-sm font-medium">{project.title}</h4>
                       <p className="text-xs text-gray-500">

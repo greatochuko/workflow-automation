@@ -15,14 +15,7 @@ import Avatar from "../ui/Avatar";
 import ModalContainer from "../ui/ModalContainer";
 import useSidebarContext from "@/hooks/useSidebarContext";
 import LogoutModal from "../auth/LogoutModal";
-import { sidebarLinks } from "@/lib/data/constants";
-
-const noSidebarRoutes = [
-  "/login",
-  "/change-password",
-  "/privacy-policy",
-  "/terms-of-service",
-];
+import { sidebarLinks, noSidebarRoutes } from "@/lib/data/constants";
 
 export default function MobileSidebar({ user }: { user: UserType }) {
   const { sidebarOpen, setSidebarOpen } = useSidebarContext();

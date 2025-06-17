@@ -4,7 +4,9 @@ import {
   SettingsIcon,
   UserCogIcon,
   UsersIcon,
+  YoutubeIcon,
 } from "lucide-react";
+
 export const sidebarLinks = [
   { title: "Users", url: "/users", icon: UsersIcon, validUserRole: "ADMIN" },
   {
@@ -31,4 +33,17 @@ export const sidebarLinks = [
     icon: MailIcon,
     validUserRole: "CLIENT",
   },
+  {
+    title: "Youtube Repurposing",
+    url: "/youtube-repurposing",
+    icon: YoutubeIcon,
+    validUserRole: "CLIENT",
+  },
+];
+
+export const noSidebarRoutes = [
+  "/login",
+  "/change-password",
+  "/privacy-policy",
+  "/terms-of-service",
 ];

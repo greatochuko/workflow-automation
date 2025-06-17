@@ -9,7 +9,7 @@ export default function ProjectThumbnail({
   type = "primary",
 }: {
   file?: { type: string; thumbnailUrl: string; name: string } | null;
-  type?: "primary" | "small" | "newsletter";
+  type?: "primary" | "small" | "content";
 }) {
   const [loaded, setLoaded] = useState(false);
   const isValidImageUrl =
@@ -24,12 +24,13 @@ export default function ProjectThumbnail({
           fallback:
             "flex aspect-video max-h-[112px] w-full items-center justify-center self-start bg-gray-200",
         }
-      : type === "newsletter"
+      : type === "content"
         ? {
-            wrapper: "aspect-[1.6] rounded-md border border-gray-300 w-20",
+            wrapper:
+              "aspect-[1.6] rounded-md border border-gray-300 w-[5.5rem]",
             image: "object-cover",
             fallback:
-              "flex aspect-[1.6] w-20 items-center justify-center self-start rounded-md",
+              "flex aspect-[1.6] w-[5.5rem] items-center justify-center self-start rounded-md",
           }
         : {
             wrapper: "aspect-video rounded-md border border-gray-300 w-24",

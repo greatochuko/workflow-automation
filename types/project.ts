@@ -2,6 +2,7 @@ import { ProjectPublishStatus, ProjectStatus } from "@prisma/client";
 import { UserType } from "./user";
 import { NewsletterTemplateType } from "./newsletter";
 import { VideoScriptType } from "./videoScript";
+import { YoutubeContentType } from "./youtubeContent";
 
 export type ProjectFileType = {
   id: string;
@@ -35,6 +36,7 @@ export type ProjectType = {
   status: ProjectStatus;
   publishStatus: ProjectPublishStatus;
   newsletterTemplates: NewsletterTemplateType[];
+  youtubeContent: YoutubeContentType;
   createdAt: Date;
   updatedAt: Date;
   createdById: string;

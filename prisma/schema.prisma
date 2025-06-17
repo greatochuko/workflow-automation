@@ -59,6 +59,7 @@ model User {
 
   projects            Project[]
   newsletterTemplates NewsletterTemplate[]
+  youtubeContent      YoutubeContent[]
   videoScripts        VideoScript[]
 
   instagramAccount InstagramAccount?
@@ -117,6 +118,7 @@ model Project {
   createdById String
 
   newsletterTemplates NewsletterTemplate[]
+  youtubeContent      YoutubeContent?
   videoScript         VideoScript?         @relation(fields: [videoScriptId], references: [id])
   videoScriptId       String?
 }
@@ -129,6 +131,22 @@ model NewsletterTemplate {
 
   project   Project @relation(fields: [projectId], references: [id])
   projectId String
+
+  client   User   @relation(fields: [clientId], references: [id])
+  clientId String
+}
+
+model YoutubeContent {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  tags          String[]
+  thumbnailText String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String  @unique
 
   client   User   @relation(fields: [clientId], references: [id])
   clientId String

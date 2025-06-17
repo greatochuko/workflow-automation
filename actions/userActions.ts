@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import { deleteProject } from "./projectActions";
 import { deleteNewsletterTemplate } from "./newsletterActions";
 import { deleteVideoScript } from "./scriptActions";
+import { deleteYoutubeContent } from "./youtubeContentActions";
 
 export async function createUser(userData: {
   fullName: string;
@@ -262,6 +263,7 @@ export async function deleteUser(userId: string) {
         projects: true,
         newsletterTemplates: true,
         videoScripts: true,
+        youtubeContent: true,
       },
     });
 
@@ -270,6 +272,7 @@ export async function deleteUser(userId: string) {
     }
 
     const deletionPromises = [
+      await deleteYoutubeContent(user.youtubeContent?.id),
       ...user.newsletterTemplates.map(async (template) => {
         const { data, error } = await deleteNewsletterTemplate(template.id);
         if (error) {

@@ -23,6 +23,7 @@ export async function getSession(): Promise<{
             fullName: true,
           },
         },
+        youtubeContent: true,
         newsletterTemplates: true,
         videoScripts: true,
         instagramAccount: true,

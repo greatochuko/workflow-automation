@@ -111,7 +111,7 @@ export async function getClientApprovedProjects(clientId?: string) {
     const projects = (await prisma.project.findMany({
       where: { createdById: clientId, status: "APPROVED" },
       orderBy: { createdAt: "desc" },
-      include: { newsletterTemplates: true },
+      include: { newsletterTemplates: true, youtubeContent: true },
     })) as unknown as ProjectType[];
 
     const signedProjects = await signProjectFiles(projects);

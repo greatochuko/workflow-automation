@@ -255,6 +255,9 @@ export async function deleteFilesFromS3(urls: string[]) {
 
 export async function deleteProject(projectId: string) {
   try {
+    await prisma.newsletterTemplate.deleteMany({ where: { projectId } });
+    await prisma.youtubeContent.delete({ where: { projectId } });
+
     const deletedProject = (await prisma.project.delete({
       where: { id: projectId },
     })) as ProjectType;
