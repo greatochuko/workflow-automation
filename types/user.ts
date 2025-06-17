@@ -8,6 +8,17 @@ export type KnowledgeBaseItemType = {
   content: string;
 };
 
+export type YoutubeSettingType = {
+  industry: string;
+  business: string;
+  state: string;
+  city: string;
+  contactLink: string;
+  targetAudience: string;
+  brandVoice: string;
+  keywordsHashtags: string;
+};
+
 export type UserType = {
   id: string;
   fullName: string;
@@ -30,6 +41,7 @@ export type UserType = {
   assignedFreelancers: UserType[];
   assignedClients: UserType[];
   knowledgeBase: KnowledgeBaseItemType[];
+  youtubeSettings?: YoutubeSettingType;
   newsletterTemplates: NewsletterTemplateType[];
   phoneNumber: string;
   website: string;

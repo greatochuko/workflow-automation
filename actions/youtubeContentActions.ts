@@ -171,15 +171,14 @@ export async function createYoutubeContent(projectId: string, userId?: string) {
   }
 }
 
-export async function deleteYoutubeContent(id?: string) {
+export async function deleteYoutubeContent(id: string[]) {
   try {
-    if (!id) return { data: null, error: "Invalid Youtube Content ID" };
-    const deletedYoutubeContent = await prisma.youtubeContent.delete({
-      where: { id },
+    await prisma.youtubeContent.deleteMany({
+      where: { id: { in: id } },
     });
 
-    return { data: deletedYoutubeContent, error: null };
+    return { error: null };
   } catch {
-    return { data: null, error: "Server Error" };
+    return { error: "Server Error" };
   }
 }

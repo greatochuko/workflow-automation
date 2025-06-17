@@ -125,17 +125,14 @@ export default function Select({
               aria-selected={opt.value === value}
               onClick={() => handleSelect(opt.value)}
               className={twMerge(
-                "group aria-selected:bg-accent flex cursor-pointer items-center gap-2 rounded-sm p-2 whitespace-nowrap duration-100 hover:bg-gray-100 aria-selected:text-white",
+                "group aria-selected:bg-accent grid cursor-pointer grid-cols-[1fr_auto] items-center gap-2 rounded-sm p-2 whitespace-nowrap duration-100 hover:bg-gray-100 aria-selected:text-white",
                 value === opt.value && "bg-gray-100",
               )}
             >
-              {showCheckmark &&
-                (value === opt.value ? (
-                  <CheckIcon className="h-4 w-4" />
-                ) : (
-                  <div className="h-4 w-4" />
-                ))}
               {opt.label}
+              {showCheckmark && value === opt.value && (
+                <CheckIcon className="h-4 w-4" />
+              )}
             </div>
           ))}
         </div>

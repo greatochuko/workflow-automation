@@ -154,10 +154,10 @@ export async function saveVideoScript(
   }
 }
 
-export async function deleteVideoScript(id: string) {
+export async function deleteVideoScript(videoScriptIds: string[]) {
   try {
-    const deletedScript = await prisma.videoScript.delete({
-      where: { id },
+    const deletedScript = await prisma.videoScript.deleteMany({
+      where: { id: { in: videoScriptIds } },
     });
 
     return { data: deletedScript, error: null };

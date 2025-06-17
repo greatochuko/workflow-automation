@@ -150,14 +150,14 @@ export async function createNewsletterTemplate(
   }
 }
 
-export async function deleteNewsletterTemplate(id: string) {
+export async function deleteNewsletterTemplate(newsletterIds: string[]) {
   try {
-    const deletedNewsletterTemplate = await prisma.newsletterTemplate.delete({
-      where: { id },
+    await prisma.newsletterTemplate.deleteMany({
+      where: { id: { in: newsletterIds } },
     });
 
-    return { data: deletedNewsletterTemplate, error: null };
+    return { error: null };
   } catch {
-    return { data: null, error: "Server Error" };
+    return { error: "Server Error" };
   }
 }

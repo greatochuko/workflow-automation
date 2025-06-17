@@ -5,11 +5,14 @@ import { defaultKnowledgeBaseItems } from "@/lib/data/knowledgeBase";
 import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { getVideoTypes } from "@/services/videoTypeServices";
-import { KnowledgeBaseItemType, type UserType } from "@/types/user";
+import {
+  KnowledgeBaseItemType,
+  YoutubeSettingType,
+  type UserType,
+} from "@/types/user";
 import { revalidatePath } from "next/cache";
 import { deleteProject } from "./projectActions";
 import { deleteNewsletterTemplate } from "./newsletterActions";
-import { deleteVideoScript } from "./scriptActions";
 import { deleteYoutubeContent } from "./youtubeContentActions";
 
 export async function createUser(userData: {
@@ -251,7 +254,23 @@ export async function saveUserNewsletterSettings(
     revalidatePath("/settings");
     return { error: null };
   } catch {
-    return { error: "Server Error: Unable to update user knowledge base" };
+    return { error: "Server Error: Unable to update user newsletter settings" };
+  }
+}
+
+export async function saveYoutubeSettings(
+  clientId: string,
+  youtubeSettings: YoutubeSettingType,
+) {
+  try {
+    await prisma.user.update({
+      where: { id: clientId },
+      data: { youtubeSettings },
+    });
+    revalidatePath("/settings");
+    return { error: null };
+  } catch {
+    return { error: "Server Error: Unable to update user youtube settings" };
   }
 }
 
@@ -272,17 +291,8 @@ export async function deleteUser(userId: string) {
     }
 
     const deletionPromises = [
-      await deleteYoutubeContent(user.youtubeContent?.id),
-      ...user.newsletterTemplates.map(async (template) => {
-        const { data, error } = await deleteNewsletterTemplate(template.id);
-        if (error) {
-          console.error(
-            `Error deleting newsletter template with ID ${template.id}`,
-            error,
-          );
-        }
-        return data;
-      }),
+      deleteYoutubeContent(user.youtubeContent.map((yc) => yc.id)),
+      deleteNewsletterTemplate(user.newsletterTemplates.map((nt) => nt.id)),
       ...user.projects.map(async (project) => {
         const { data, error } = await deleteProject(project.id);
         if (error) {
@@ -290,13 +300,7 @@ export async function deleteUser(userId: string) {
         }
         return data;
       }),
-      ...user.videoScripts.map(async (script) => {
-        const { data, error } = await deleteVideoScript(script.id);
-        if (error) {
-          console.error(`Error deleting video script: ${script.topic}`, error);
-        }
-        return data;
-      }),
+      deleteNewsletterTemplate(user.videoScripts.map((vs) => vs.id)),
     ];
 
     await Promise.all(deletionPromises);

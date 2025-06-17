@@ -10,6 +10,7 @@ import {
 } from "@/actions/videoTypeActions";
 import { NewsletterTemplateSettings } from "./NewsletterTemplateSettings";
 import ScriptSettings from "./ScriptSettings";
+import YoutubeRepurposingSettings from "./YoutubeRepurposingSettings";
 
 export default function ClientSettingsPage({
   clients,
@@ -106,6 +107,7 @@ export default function ClientSettingsPage({
           <KnowledgeBase client={selectedClient} />
           <ScriptSettings client={selectedClient} />
           <NewsletterTemplateSettings client={selectedClient} />
+          <YoutubeRepurposingSettings client={selectedClient} />
         </React.Fragment>
       )}
     </>

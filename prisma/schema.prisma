@@ -32,6 +32,7 @@ model User {
   specialties                 String[]
   certifications              String[]
   knowledgeBase               Json[]
+  youtubeSettings             Json?
   videoTypes                  String[]
   videoScriptExamples         String[]
   newsLetterBasicInstructions String   @default("")
