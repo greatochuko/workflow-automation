@@ -3,6 +3,7 @@ import ModalContainer from "../ui/ModalContainer";
 import { ProjectType } from "@/types/project";
 import {
   CirclePlayIcon,
+  ClipboardListIcon,
   CopyIcon,
   EditIcon,
   LoaderIcon,
@@ -22,6 +23,7 @@ import ProjectThumbnail from "./ProjectThumbnail";
 import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
 import ProjectMediaPreviewModal from "./ProjectMediaPreviewModal";
+import ClientSOPModal from "./ClientSOPModal";
 
 // const AIGeneratedResponse = {
 //   hook: "Unwinding tensions, one adjustment at a time! 🌀",
@@ -77,6 +79,7 @@ export default function ProjectDetailsModal({
   const [loading, setLoading] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
   const [canEditProject, setCanEditProject] = useState(false);
+  const [SOPModalOpen, setSOPModalOpen] = useState(false);
   const [deleteProjectModalOpen, setDeleteProjectModalOpen] = useState(false);
   const [descriptionInput, setDescriptionInput] = useState(
     project?.description || "",
@@ -183,6 +186,13 @@ export default function ProjectDetailsModal({
               <XIcon className="h-4 w-4" />
             </button>
           </div>
+          <Button
+            onClick={() => setSOPModalOpen(true)}
+            variant="outline"
+            className="hover:bg-accent w-fit duration-150 hover:text-white"
+          >
+            <ClipboardListIcon size={16} /> Client SOP
+          </Button>
           {!isBeforeToday && (
             <div className="flex items-center gap-4">
               {canEditProject ? (
@@ -482,6 +492,12 @@ export default function ProjectDetailsModal({
         open={!!mediaToPreview}
         closeModal={() => setMediaToPreview(null)}
         media={mediaToPreview}
+      />
+
+      <ClientSOPModal
+        open={SOPModalOpen}
+        closeModal={() => setSOPModalOpen(false)}
+        SOPChecklist={project?.createdBy.SOPSettings || []}
       />
     </>
   );
