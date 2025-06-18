@@ -104,7 +104,7 @@ export default function MobileSidebar({
                 ))}
 
                 {user.role !== "ADMIN" && (
-                  <div className="mt-4">
+                  <div className="mt-4 flex flex-col gap-2">
                     <div className="flex items-center justify-between">
                       <h4 className="px-2 text-xs font-medium text-gray-400">
                         Shared Documents

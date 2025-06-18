@@ -48,3 +48,30 @@ export async function updateSharedDocument(
     return { data: null, error: "Server Error" };
   }
 }
+
+export async function deleteSharedDocument(id: string) {
+  let canRedirect;
+  try {
+    const { payload, error } = await getTokenFromCookie();
+    if (!payload) throw new Error(error);
+
+    const docToDelete = await prisma.sharedDocument.findFirst({
+      where: { id },
+    });
+    if (docToDelete?.createdById !== payload.user.id) {
+      return { error: "User Unauthorized" };
+    }
+
+    await prisma.sharedDocument.delete({
+      where: { id },
+    });
+
+    canRedirect = true;
+  } catch (err) {
+    const error = err as Error;
+    console.error(`Unable to delete shared document: ${error.message}`);
+    return { dataerror: "Server Error" };
+  } finally {
+    if (canRedirect) redirect("/");
+  }
+}

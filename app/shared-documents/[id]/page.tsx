@@ -13,6 +13,7 @@ export default async function page({
   const { id } = await params;
   const { data: user } = await getSession();
   const { data: document } = await getSharedDocumentById(id);
+
   if (!document) notFound();
 
   return (

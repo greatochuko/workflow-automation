@@ -24,7 +24,7 @@ export default async function page() {
         </div>
       </div>
       <div className="mx-auto flex w-[90%] max-w-7xl flex-1 py-4">
-        <SharedDocumentForm />
+        <SharedDocumentForm userId={user.id} />
       </div>
     </main>
   );
