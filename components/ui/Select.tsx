@@ -16,6 +16,7 @@ export default function Select({
   dropdownClassname,
   disabled = false,
   showCheckmark = false,
+  dropdownPosition = "bottom",
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -26,6 +27,7 @@ export default function Select({
   dropdownClassname?: string;
   disabled?: boolean;
   showCheckmark?: boolean;
+  dropdownPosition?: "bottom" | "top";
 }) {
   const [open, setOpen] = useState(false);
   const [selectRef] = useClickOutside(() => setOpen(false));
@@ -115,7 +117,10 @@ export default function Select({
       {open && (
         <div
           className={twMerge(
-            "absolute top-full z-10 mt-1 max-h-60 w-fit min-w-full overflow-y-auto rounded-md border border-gray-300 bg-white p-1 shadow duration-200",
+            "absolute z-10 mt-1 max-h-60 w-fit min-w-full overflow-y-auto rounded-md border border-gray-300 bg-white p-1 shadow duration-200",
+            dropdownPosition === "top"
+              ? "bottom-full -translate-y-2"
+              : "top-full",
             dropdownClassname,
           )}
         >

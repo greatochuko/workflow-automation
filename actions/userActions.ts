@@ -7,6 +7,7 @@ import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { getVideoTypes } from "@/services/videoTypeServices";
 import {
   KnowledgeBaseItemType,
+  SOPSettingType as SOPSettingsType,
   YoutubeSettingType,
   type UserType,
 } from "@/types/user";
@@ -271,6 +272,22 @@ export async function saveYoutubeSettings(
     return { error: null };
   } catch {
     return { error: "Server Error: Unable to update user youtube settings" };
+  }
+}
+
+export async function saveSOPSettings(
+  clientId: string,
+  SOPSettings: SOPSettingsType[],
+) {
+  try {
+    await prisma.user.update({
+      where: { id: clientId },
+      data: { SOPSettings },
+    });
+    revalidatePath("/settings");
+    return { error: null };
+  } catch {
+    return { error: "Server Error: Unable to update user client SOP settings" };
   }
 }
 

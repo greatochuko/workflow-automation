@@ -64,7 +64,7 @@ export default function SharedDocumentModal({
     );
     if (data) {
       updateDocumentList(data);
-      toast.success("Document created successfully!");
+      toast.success("Document saved successfully!");
       closeModal();
     } else {
       toast.error(error);

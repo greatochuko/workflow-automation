@@ -2,6 +2,8 @@ import { InstagramAccount } from "@prisma/client";
 import { NewsletterTemplateType } from "./newsletter";
 import { VideoScriptType } from "./videoScript";
 
+export type SOPSettingType = { id: string; type: string; content: string };
+
 export type KnowledgeBaseItemType = {
   id: string;
   title: string;
@@ -30,6 +32,7 @@ export type UserType = {
   industry: string;
   location: string;
   monthlyCredits: number;
+  SOPSettings: SOPSettingType[];
   newsLetterBasicInstructions: string;
   instagramAccount?: InstagramAccount;
   newsletterExamples: string[];

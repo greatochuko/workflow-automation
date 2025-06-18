@@ -11,6 +11,7 @@ import {
 import { NewsletterTemplateSettings } from "./NewsletterTemplateSettings";
 import ScriptSettings from "./ScriptSettings";
 import YoutubeRepurposingSettings from "./YoutubeRepurposingSettings";
+import ClientSOPSettings from "./ClientSOPSettings";
 
 export default function ClientSettingsPage({
   clients,
@@ -108,6 +109,7 @@ export default function ClientSettingsPage({
           <ScriptSettings client={selectedClient} />
           <NewsletterTemplateSettings client={selectedClient} />
           <YoutubeRepurposingSettings client={selectedClient} />
+          <ClientSOPSettings client={selectedClient} />
         </React.Fragment>
       )}
     </>
