@@ -10,18 +10,23 @@ export default function DeleteSharedDocumentModal({
   open,
   closeModal,
   document,
+  removeDocumentFromList,
 }: {
   open: boolean;
   closeModal: () => void;
   document: SharedDocumentType;
+  removeDocumentFromList(deletedDocumentId: string): void;
 }) {
   const [loading, setLoading] = useState(false);
 
   async function handleDeleteDocument() {
     setLoading(true);
-    const res = await deleteSharedDocument(document.id);
-    if (res?.error) {
-      toast.success(res.error);
+    const { error } = await deleteSharedDocument(document.id);
+    if (error) {
+      toast.success(error);
+    } else {
+      removeDocumentFromList(document.id);
+      closeModal();
     }
     setLoading(false);
   }

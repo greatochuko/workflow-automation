@@ -1,6 +1,5 @@
 import SharedDocumentForm from "@/components/shared-document/SharedDocumentForm";
 import ToggleSidebarButton from "@/components/sidebar/ToggleSidebarButton";
-import { getSession } from "@/services/authServices";
 import { getSharedDocumentById } from "@/services/sharedDocumentServices";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -11,7 +10,6 @@ export default async function page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { data: user } = await getSession();
   const { data: document } = await getSharedDocumentById(id);
 
   if (!document) notFound();
@@ -30,7 +28,7 @@ export default async function page({
         </div>
       </div>
       <div className="mx-auto flex w-[90%] max-w-7xl flex-1 py-4">
-        <SharedDocumentForm document={document} userId={user?.id} />
+        <SharedDocumentForm document={document} />
       </div>
     </main>
   );

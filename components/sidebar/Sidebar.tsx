@@ -7,7 +7,6 @@ import {
   HomeIcon,
   LogOutIcon,
   PanelLeftIcon,
-  PlusIcon,
   UserCogIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -85,19 +84,9 @@ export default function Sidebar({
 
               {user.role !== "ADMIN" && (
                 <div className="mt-4 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h4 className="px-2 text-xs font-medium text-gray-400">
-                      Shared Documents
-                    </h4>
-                    {user.role === "CLIENT" && (
-                      <Link
-                        href={`/shared-documents/new`}
-                        className={`flex items-center gap-3 rounded-md p-2 font-medium whitespace-nowrap hover:bg-white/10`}
-                      >
-                        <PlusIcon className="h-4 w-4" />
-                      </Link>
-                    )}
-                  </div>
+                  <h4 className="px-2 text-xs font-medium text-gray-400">
+                    Shared Documents
+                  </h4>
                   {sharedDocuments.map((doc) => (
                     <li key={doc.id} hidden={user.role === "ADMIN"}>
                       <Link

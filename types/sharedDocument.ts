@@ -10,4 +10,6 @@ export type SharedDocumentType = {
   content: string;
   lastEditedBy: UserType | null;
   lastEditedById: string | null;
+  client: UserType;
+  clientId: string;
 };

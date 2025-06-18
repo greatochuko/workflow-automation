@@ -10,20 +10,36 @@ export async function getSharedDocuments() {
 
     if (payload.user.role === "CLIENT") {
       const sharedDocuments = await prisma.sharedDocument.findMany({
-        where: { createdById: payload.user.id },
+        where: { clientId: payload.user.id },
+        include: { client: true },
       });
 
-      return { data: sharedDocuments as SharedDocumentType[], error: null };
+      return {
+        data: sharedDocuments as unknown as SharedDocumentType[],
+        error: null,
+      };
     } else if (payload.user.role === "FREELANCER") {
       const { data: clients } = await getFreelancerClients(payload.user.id);
 
       const sharedDocuments = await prisma.sharedDocument.findMany({
-        where: { createdById: { in: clients.map((cl) => cl.id) } },
+        where: { clientId: { in: clients.map((cl) => cl.id) } },
+        include: { client: true },
       });
 
-      return { data: sharedDocuments as SharedDocumentType[], error: null };
+      return {
+        data: sharedDocuments as unknown as SharedDocumentType[],
+        error: null,
+      };
     } else {
-      throw new Error("Admin do not have access to shared documents");
+      const sharedDocuments = await prisma.sharedDocument.findMany({
+        where: { createdById: payload.user.id },
+        include: { client: true },
+      });
+
+      return {
+        data: sharedDocuments as unknown as SharedDocumentType[],
+        error: null,
+      };
     }
   } catch (err) {
     const error = err as Error;

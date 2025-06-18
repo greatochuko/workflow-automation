@@ -68,6 +68,8 @@ model User {
   sharedDocuments SharedDocument[]
 
   editedDocuments SharedDocument[] @relation(name: "EditedDocuments")
+
+  assignedDocuments SharedDocument[] @relation(name: "AssignedDocuments")
 }
 
 model InstagramAccount {
@@ -181,6 +183,9 @@ model SharedDocument {
 
   lastEditedBy   User?   @relation(fields: [lastEditedById], references: [id], name: "EditedDocuments")
   lastEditedById String?
+
+  client   User   @relation(fields: [clientId], references: [id], name: "AssignedDocuments")
+  clientId String
 
   createdBy   User   @relation(fields: [createdById], references: [id])
   createdById String
