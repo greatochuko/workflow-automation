@@ -497,7 +497,7 @@ export default function ProjectDetailsModal({
       <ClientSOPModal
         open={SOPModalOpen}
         closeModal={() => setSOPModalOpen(false)}
-        SOPChecklist={project?.createdBy.SOPSettings || []}
+        SOPChecklist={project?.createdBy?.SOPSettings || []}
       />
     </>
   );

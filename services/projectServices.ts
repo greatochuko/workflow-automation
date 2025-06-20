@@ -88,12 +88,15 @@ export async function signProjectFiles(
 
 export async function getClientProjects(clientId: string) {
   try {
-    const projects = (await prisma.project.findMany({
+    const projects = await prisma.project.findMany({
       where: { createdById: clientId },
       orderBy: { createdAt: "desc" },
-    })) as ProjectType[];
+      include: { createdBy: true },
+    });
 
-    const signedProjects = await signProjectFiles(projects);
+    const signedProjects = await signProjectFiles(
+      projects as unknown as ProjectType[],
+    );
 
     return {
       data: signedProjects as ProjectType[],
