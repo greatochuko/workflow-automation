@@ -18,6 +18,7 @@ const sopTypeOptions = [
   { label: <span>Subtitles</span>, value: "Subtitles" },
   { label: <span>Music</span>, value: "Music" },
   { label: <span>Cover Photo</span>, value: "Cover Photo" },
+  { label: <span>Other</span>, value: "Other" },
 ];
 
 export default function ClientSOPSettings({ client }: { client: UserType }) {

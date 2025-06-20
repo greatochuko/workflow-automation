@@ -8,7 +8,6 @@ import Button from "../ui/Button";
 import {
   CalendarIcon,
   CopyIcon,
-  DownloadIcon,
   LoaderIcon,
   SparklesIcon,
   VideoIcon,
@@ -105,22 +104,6 @@ export default function YoutubeRepurposingPageContent({
     navigator.clipboard.writeText(fullContent);
   }
 
-  function handleExport() {
-    if (!selectedProject?.youtubeContent) return;
-    const fullContent = getFullContent(selectedProject.youtubeContent);
-    const blob = new Blob([fullContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `youtube-content-${selectedProject.title.replace(/\s+/g, "-").toLowerCase()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    toast.success("Content exported successfully!");
-  }
-
   return (
     <div className="mx-auto flex w-[90%] max-w-7xl flex-1 flex-col gap-6 py-4 lg:max-h-[calc(100vh-6rem)] lg:flex-row lg:overflow-y-auto">
       <div className="flex max-h-[calc(100vh-10rem)] flex-col gap-4 rounded-md border border-gray-200 bg-white p-4 sm:p-6 lg:h-auto lg:max-h-full lg:flex-1">
@@ -201,20 +184,14 @@ export default function YoutubeRepurposingPageContent({
               <h2 className="font-semibold whitespace-nowrap md:text-lg xl:text-xl">
                 Generated Youtube Content
               </h2>
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleCopyAll}
-                  variant="outline"
-                  className="hover:bg-accent bg-gray-50 hover:text-white disabled:pointer-events-none disabled:text-gray-500"
-                >
-                  <CopyIcon className="h-4 w-4" />
-                  Copy All
-                </Button>
-                <Button onClick={handleExport}>
-                  <DownloadIcon className={`h-4 w-4`} />
-                  Export
-                </Button>
-              </div>
+              <Button
+                onClick={handleCopyAll}
+                variant="outline"
+                className="hover:bg-accent bg-gray-50 hover:text-white disabled:pointer-events-none disabled:text-gray-500"
+              >
+                <CopyIcon className="h-4 w-4" />
+                Copy All
+              </Button>
             </div>
 
             <div className="bg-background flex flex-col rounded-md border border-gray-200 p-4">
