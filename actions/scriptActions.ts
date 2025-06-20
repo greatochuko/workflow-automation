@@ -76,17 +76,22 @@ export async function createVideoScript(
   topic: string,
   description: string,
   durationInSeconds: number,
+  userId?: string,
 ) {
   let newScriptId;
+  let clientId = userId;
   try {
-    const { payload } = await getTokenFromCookie();
+    if (!clientId) {
+      const { payload } = await getTokenFromCookie();
 
-    if (!payload?.user.id) {
-      return { data: null, error: "Invalid token" };
+      if (!payload?.user.id) {
+        return { data: null, error: "Invalid token" };
+      }
+      clientId = payload.user.id;
     }
 
     const user = await prisma.user.findFirst({
-      where: { id: payload.user.id },
+      where: { id: clientId },
     });
 
     if (!user) {
@@ -116,7 +121,7 @@ export async function createVideoScript(
         description,
         durationInSeconds,
         content: generatedScript,
-        clientId: payload.user.id,
+        clientId,
       },
     });
 
@@ -126,7 +131,15 @@ export async function createVideoScript(
     console.error("Error creating video script: ", error.message);
     return { error: "Server Error" };
   } finally {
-    if (newScriptId) redirect(`/script-generator/${newScriptId}`);
+    if (newScriptId) {
+      if (userId) {
+        redirect(
+          `/client-management/${userId}/script-generator/${newScriptId}`,
+        );
+      } else {
+        redirect(`/script-generator/${newScriptId}`);
+      }
+    }
   }
 }
 
@@ -134,7 +147,6 @@ export async function saveVideoScript(
   scriptId: string,
   content: VideoScriptContentType,
 ) {
-  let newScriptId;
   try {
     const updatedScript = await prisma.videoScript.update({
       where: { id: scriptId },
@@ -149,8 +161,6 @@ export async function saveVideoScript(
     const error = err as Error;
     console.error("Error updating video script: ", error.message);
     return { data: null, error: "An error occured updating video script" };
-  } finally {
-    if (newScriptId) redirect(`/script-generator/${newScriptId}`);
   }
 }
 

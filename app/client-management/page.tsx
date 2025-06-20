@@ -19,7 +19,7 @@ export default async function UserManagementPage() {
           {clients.map((client) => (
             <div
               key={client.id}
-              className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 p-4 shadow-md duration-200 sm:p-6"
+              className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 p-4 shadow-md duration-200"
             >
               <Avatar user={client} className="h-20 w-20" />
               <div className="flex flex-1 flex-col items-center text-center">
@@ -38,6 +38,12 @@ export default async function UserManagementPage() {
                   className="hover:bg-accent rounded-md border border-gray-200 px-4 py-2 text-center text-sm font-medium duration-150 hover:text-white"
                 >
                   Newsletter Content
+                </Link>
+                <Link
+                  href={`/client-management/${client.id}/script-generator`}
+                  className="hover:bg-accent rounded-md border border-gray-200 px-4 py-2 text-center text-sm font-medium duration-150 hover:text-white"
+                >
+                  Script Generator
                 </Link>
               </div>
             </div>

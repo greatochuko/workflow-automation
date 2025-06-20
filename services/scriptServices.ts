@@ -2,19 +2,23 @@ import { prisma } from "@/lib/prisma";
 import { getTokenFromCookie } from "@/lib/utils/tokenHelper";
 import { VideoScriptType } from "@/types/videoScript";
 
-export async function getVideoScripts(): Promise<{
+export async function getVideoScripts(clientId?: string): Promise<{
   data: VideoScriptType[];
   error: string | null;
 }> {
   try {
-    const { payload } = await getTokenFromCookie();
+    let userId = clientId;
+    if (!userId) {
+      const { payload } = await getTokenFromCookie();
 
-    if (!payload?.user.id) {
-      return { data: [], error: "Invalid token" };
+      if (!payload?.user.id) {
+        return { data: [], error: "Invalid token" };
+      }
+      userId = payload.user.id;
     }
 
     const videoScripts = await prisma.videoScript.findMany({
-      where: { clientId: payload.user.id },
+      where: { clientId: userId },
       orderBy: { createdAt: "desc" },
     });
 

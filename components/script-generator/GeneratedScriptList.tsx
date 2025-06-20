@@ -5,8 +5,10 @@ import React from "react";
 
 export default function GeneratedScriptList({
   videoScripts,
+  clientId,
 }: {
   videoScripts: VideoScriptType[];
+  clientId?: string;
 }) {
   return (
     <div className="flex max-h-[calc(100vh-117px)] min-w-[340px] flex-1 flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 sm:gap-6 sm:p-6">
@@ -17,7 +19,7 @@ export default function GeneratedScriptList({
           {videoScripts.map((script) => (
             <li key={script.id}>
               <Link
-                href={`/script-generator/${script.id}`}
+                href={`${clientId ? `/client-management/${clientId}` : ""}/script-generator/${script.id}`}
                 className="flex flex-col gap-0.5 rounded-lg border border-gray-200 p-4 text-sm duration-200 hover:border-gray-400 hover:bg-gray-50"
               >
                 <h3 className="font-medium">{script.topic}</h3>

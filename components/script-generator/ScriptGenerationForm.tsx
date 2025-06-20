@@ -7,7 +7,7 @@ import { LoaderIcon, SparklesIcon } from "lucide-react";
 import { createVideoScript } from "@/actions/scriptActions";
 import { toast } from "sonner";
 
-export default function ScriptGenerationForm() {
+export default function ScriptGenerationForm({ userId }: { userId?: string }) {
   const [loading, setLoading] = useState(false);
   const [topic, setTopic] = useState("");
   const [description, setDescription] = useState("");
@@ -28,7 +28,12 @@ export default function ScriptGenerationForm() {
 
     setLoading(true);
     const durationInSeconds = Number(minutes) * 60 + Number(seconds);
-    const res = await createVideoScript(topic, description, durationInSeconds);
+    const res = await createVideoScript(
+      topic,
+      description,
+      durationInSeconds,
+      userId,
+    );
     if (res?.error) {
       toast.error(res.error);
     }
