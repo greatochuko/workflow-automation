@@ -19,8 +19,10 @@ import { createYoutubeContent } from "@/actions/youtubeContentActions";
 
 export default function YoutubeRepurposingPageContent({
   projects,
+  userId,
 }: {
   projects: ProjectType[];
+  userId?: string;
 }) {
   const [projectList, setProjectList] = useState(projects);
   const [loading, setLoading] = useState(false);
@@ -57,6 +59,7 @@ export default function YoutubeRepurposingPageContent({
 
     const { data: newYoutubeContent, error } = await createYoutubeContent(
       selectedProject.id,
+      userId,
     );
 
     if (newYoutubeContent) {

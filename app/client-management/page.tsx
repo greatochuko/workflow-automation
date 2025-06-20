@@ -15,7 +15,7 @@ export default async function UserManagementPage() {
         </h1>
       </div>
       <div className="mx-auto flex w-[90%] max-w-7xl flex-col gap-6 py-4">
-        <div className="grid gap-4 min-[480px]:grid-cols-2 sm:grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))]">
+        <div className="grid gap-4 min-[480px]:grid-cols-2 sm:grid-cols-[repeat(auto-fill,_minmax(280px,_1fr))]">
           {clients.map((client) => (
             <div
               key={client.id}
@@ -26,24 +26,30 @@ export default async function UserManagementPage() {
                 <h2 className="text-lg font-semibold">{client.fullName}</h2>
                 <p className="text-sm text-gray-500">{client.companyName}</p>
               </div>
-              <div className="mt-2 flex w-full flex-col gap-2">
+              <div className="mt-2 grid w-full grid-cols-2 gap-2 whitespace-nowrap">
                 <Link
                   href={`/client-management/${client.id}/dashboard`}
                   className="hover:bg-accent rounded-md border border-gray-200 px-4 py-2 text-center text-sm font-medium duration-150 hover:text-white"
                 >
-                  Client Dashboard
+                  Dashboard
                 </Link>
                 <Link
                   href={`/client-management/${client.id}/newsletter-content`}
                   className="hover:bg-accent rounded-md border border-gray-200 px-4 py-2 text-center text-sm font-medium duration-150 hover:text-white"
                 >
-                  Newsletter Content
+                  Newsletter
                 </Link>
                 <Link
                   href={`/client-management/${client.id}/script-generator`}
                   className="hover:bg-accent rounded-md border border-gray-200 px-4 py-2 text-center text-sm font-medium duration-150 hover:text-white"
                 >
-                  Script Generator
+                  Video Script
+                </Link>
+                <Link
+                  href={`/client-management/${client.id}/youtube-repurposing`}
+                  className="hover:bg-accent rounded-md border border-gray-200 px-4 py-2 text-center text-sm font-medium duration-150 hover:text-white"
+                >
+                  Youtube
                 </Link>
               </div>
             </div>

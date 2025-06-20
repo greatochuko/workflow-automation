@@ -120,13 +120,19 @@ async function generateYoutubeContent(
   }
 }
 
-export async function createYoutubeContent(projectId: string) {
+export async function createYoutubeContent(
+  projectId: string,
+  clientId?: string,
+) {
   try {
-    const { payload } = await getTokenFromCookie();
-    if (!payload?.user.id) {
-      throw new Error("Invalid token");
+    let userId = clientId;
+    if (!userId) {
+      const { payload } = await getTokenFromCookie();
+      if (!payload?.user.id) {
+        throw new Error("Invalid token");
+      }
+      userId = payload.user.id;
     }
-    const userId = payload.user.id;
 
     const user = (await prisma.user.findFirst({
       where: { id: userId },
