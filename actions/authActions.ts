@@ -116,7 +116,7 @@ export async function generateInstagramOauthLink(userId: string) {
   );
   authUrl.searchParams.set("state", userId);
 
-  return authUrl.toString();
+  redirect(authUrl.toString());
 }
 
 export async function disconnectInstagramAccount() {

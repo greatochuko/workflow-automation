@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-const ORIGIN = process.env.ORIGIN!;
+const ORIGIN = process.env.NEXT_PUBLIC_BASE_URL!;
 const INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID!;
 const INSTAGRAM_REDIRECT_URI = process.env.INSTAGRAM_REDIRECT_URI!;
 const INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET!;

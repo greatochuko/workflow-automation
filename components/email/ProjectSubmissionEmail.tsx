@@ -45,8 +45,8 @@ export default function ProjectSubmissionEmail({
           </Heading>
           <Text style={styles.paragraph}>Hi {clientName},</Text>
           <Text style={styles.paragraph}>
-            <strong>{freelancerName}</strong> has completed and submitted the
-            project: <strong>{projectTitle}</strong>.
+            The project: <strong>{projectTitle}</strong> has been completed and
+            submitted.
           </Text>
           <Button href={projectLink} style={styles.button}>
             View Submission

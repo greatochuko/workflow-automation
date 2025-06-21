@@ -209,10 +209,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
   }
 
   async function openInstagramOauthLink() {
-    const oauthLink = await generateInstagramOauthLink(userData.id);
-    if (oauthLink) {
-      window.location.href = oauthLink;
-    }
+    await generateInstagramOauthLink(userData.id);
   }
 
   return (

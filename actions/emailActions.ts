@@ -8,7 +8,9 @@ import { Resend } from "resend";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 if (!RESEND_API_KEY) throw new Error("Invalid Resend API Key!");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
+
+const resend = new Resend(RESEND_API_KEY);
 
 export async function sendProjectCreationEmail({
   freelancerName,
@@ -32,7 +34,7 @@ export async function sendProjectCreationEmail({
         freelancerName,
         clientName,
         projectDescription,
-        projectLink: "https://www.clinicleadstack.com/",
+        projectLink: BASE_URL,
         projectTitle,
       }),
     });
@@ -66,7 +68,7 @@ export async function sendProjectSubmissionEmail({
       html: await renderProjectSubmissionEmail({
         freelancerName,
         clientName,
-        projectLink: "https://www.clinicleadstack.com/",
+        projectLink: BASE_URL,
         projectTitle,
       }),
     });
@@ -106,7 +108,7 @@ export async function sendProjectFeedbackEmail({
         feedback,
         freelancerName,
         clientName,
-        projectLink: "https://www.clinicleadstack.com/",
+        projectLink: BASE_URL,
         projectTitle,
       }),
     });
