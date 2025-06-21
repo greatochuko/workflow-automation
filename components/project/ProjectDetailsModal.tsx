@@ -5,6 +5,7 @@ import {
   CirclePlayIcon,
   ClipboardListIcon,
   CopyIcon,
+  DownloadCloudIcon,
   EditIcon,
   LoaderIcon,
   SaveIcon,
@@ -24,6 +25,7 @@ import DatePicker from "../ui/DatePicker";
 import Button from "../ui/Button";
 import ProjectMediaPreviewModal from "./ProjectMediaPreviewModal";
 import ClientSOPModal from "./ClientSOPModal";
+import Link from "next/link";
 
 // const AIGeneratedResponse = {
 //   hook: "Unwinding tensions, one adjustment at a time! 🌀",
@@ -356,25 +358,45 @@ export default function ProjectDetailsModal({
             project?.status === "APPROVED") && (
             <div className="flex flex-col gap-2">
               <h4 className="font-medium">Completed Project File</h4>
-              <li
+              <li className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2">
+                <ProjectThumbnail type="small" file={project.completedFile} />
+                <div className="flex flex-1 flex-col gap-2 overflow-hidden">
+                  <p className="line-clamp-1 truncate text-sm font-medium">
+                    {project.completedFile.name}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        setMediaToPreview({
+                          type: project.completedFile.type,
+                          url: project.completedFile.url,
+                        })
+                      }
+                      className="hover:text-accent flex items-center gap-1 text-sm text-gray-500 duration-200 sm:gap-2 sm:p-1"
+                    >
+                      <CirclePlayIcon size={16} /> Preview
+                    </button>
+                    <Link
+                      href={project.completedFile.url || ""}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Download File"
+                      className="hover:text-accent flex items-center gap-1 text-sm text-gray-500 duration-200 sm:gap-2 sm:p-1"
+                      download={project.completedFile.name}
+                    >
+                      <DownloadCloudIcon size={16} /> Download
+                    </Link>
+                  </div>
+                </div>
+              </li>
+              {/* <li
                 key={project.completedFile.id}
                 className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
               >
                 <ProjectThumbnail type="small" file={project.completedFile} />
-
                 <p className="flex-1 text-sm font-medium">
                   {project.completedFile.name}
                 </p>
-                {/* <Link
-                  href={project.completedFile.url || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Download File"
-                  className="hover:text-accent p-2 text-gray-500 duration-200"
-                  download={project.completedFile.name}
-                >
-                  <CirclePlayIcon className="h-5 w-5" />
-                </Link> */}
                 <button
                   onClick={() =>
                     setMediaToPreview({
@@ -386,7 +408,17 @@ export default function ProjectDetailsModal({
                 >
                   <CirclePlayIcon className="h-5 w-5" />
                 </button>
-              </li>
+                <Link
+                  href={project.completedFile.url || ""}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Download File"
+                  className="hover:text-accent p-2 text-gray-500 duration-200"
+                  download={project.completedFile.name}
+                >
+                  <DownloadCloudIcon className="h-5 w-5" />
+                </Link>
+              </li> */}
             </div>
           )}
           <div className="flex flex-col gap-2">
@@ -398,48 +430,34 @@ export default function ProjectDetailsModal({
                   className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
                 >
                   <ProjectThumbnail type="small" file={file} />
-                  <div className="flex flex-1 flex-col gap-1">
-                    <p className="text-sm font-medium"> {file.name}</p>
-                    {file.description && (
-                      <p className="text-xs text-gray-500">
-                        {file.description}
-                        <button
-                          type="button"
-                          className="ml-2 rounded p-1 text-gray-400 duration-200 hover:bg-gray-100 hover:text-gray-600"
-                          title="Copy to clipboard"
-                          onClick={() => {
-                            navigator.clipboard.writeText(file.description);
-                            toast.success("Copied to clipboard!", {
-                              duration: 2000,
-                            });
-                          }}
-                        >
-                          <CopyIcon className="h-3 w-3" />
-                        </button>
-                      </p>
-                    )}
+                  <div className="flex flex-1 flex-col gap-2 overflow-hidden">
+                    <p className="line-clamp-1 truncate text-sm font-medium">
+                      {file.name}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          setMediaToPreview({
+                            type: file.type,
+                            url: file.url,
+                          })
+                        }
+                        className="hover:text-accent flex items-center gap-1 text-sm text-gray-500 duration-200 sm:gap-2 sm:p-1"
+                      >
+                        <CirclePlayIcon size={16} /> Preview
+                      </button>
+                      <Link
+                        href={file.url || ""}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Download File"
+                        className="hover:text-accent flex items-center gap-1 text-sm text-gray-500 duration-200 sm:gap-2 sm:p-1"
+                        download={file.name}
+                      >
+                        <DownloadCloudIcon size={16} /> Download
+                      </Link>
+                    </div>
                   </div>
-                  {/* <Link
-                    href={file.url || ""}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Download File"
-                    className="hover:text-accent p-2 text-gray-500 duration-200"
-                    download={file.name}
-                  >
-                    <CirclePlayIcon className="h-5 w-5" />
-                  </Link> */}
-                  <button
-                    onClick={() =>
-                      setMediaToPreview({
-                        type: file.type,
-                        url: file.url,
-                      })
-                    }
-                    className="hover:text-accent p-2 text-gray-500 duration-200"
-                  >
-                    <CirclePlayIcon className="h-5 w-5" />
-                  </button>
                 </li>
               ))}
             </ul>

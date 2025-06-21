@@ -33,7 +33,7 @@ export default function ProjectThumbnail({
               "flex aspect-[1.6] w-[5.5rem] items-center justify-center self-start rounded-md",
           }
         : {
-            wrapper: "aspect-video rounded-md border border-gray-300 w-24",
+            wrapper: "aspect-[1.5] rounded-md border border-gray-300 w-24",
             image: "object-cover",
             fallback:
               "flex aspect-video w-24 items-center justify-center self-start rounded-md",
@@ -41,7 +41,7 @@ export default function ProjectThumbnail({
 
   if (isValidImageUrl) {
     return (
-      <div className={`${styles.wrapper} relative overflow-hidden`}>
+      <div className={`${styles.wrapper} relative shrink-0 overflow-hidden`}>
         {!loaded && (
           <span className={styles.fallback}>
             {file?.type?.startsWith("image/") ? (

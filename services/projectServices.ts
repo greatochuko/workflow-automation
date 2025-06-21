@@ -4,10 +4,13 @@ import { ProjectType } from "@/types/project";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-async function getFileUrl(fileKey: string) {
+async function getFileUrl(fileKey: string, download: boolean = true) {
   const command = new GetObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileKey,
+    ResponseContentDisposition: download
+      ? 'attachment; filename="' + fileKey + '"'
+      : undefined,
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
@@ -16,14 +19,18 @@ async function getFileUrl(fileKey: string) {
 
 export async function signProjectFiles(
   projects: ProjectType[],
+  download: boolean = true,
 ): Promise<ProjectType[]> {
   return Promise.all(
     projects.map(async (project) => {
       const fileResults = await Promise.allSettled(
         project.files.map(async (file) => {
           try {
-            const signedUrl = await getFileUrl(file.url);
-            const signedThumbnailUrl = await getFileUrl(file.thumbnailUrl);
+            const signedUrl = await getFileUrl(file.url, download);
+            const signedThumbnailUrl = await getFileUrl(
+              file.thumbnailUrl,
+              download,
+            );
             return {
               ...file,
               url: signedUrl,
@@ -45,9 +52,11 @@ export async function signProjectFiles(
         try {
           const signedCompletedfileUrl = await getFileUrl(
             project.completedFile.url,
+            download,
           );
           const signedCompletedThumbnailUrl = await getFileUrl(
             project.completedFile.thumbnailUrl,
+            download,
           );
           signedCompletedFile = {
             ...signedCompletedFile,
@@ -162,6 +171,7 @@ export async function getScheduledProjects() {
 
     const signedScheduledProjects = await signProjectFiles(
       scheduledProjects as unknown as ProjectType[],
+      false,
     );
 
     return { data: signedScheduledProjects, error: null };
