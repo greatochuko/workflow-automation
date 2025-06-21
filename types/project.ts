@@ -20,6 +20,7 @@ export type ProjectType = {
   scheduledDate: Date;
   videoType: string;
   videoScriptId?: string;
+  publishToYoutube: boolean;
   videoScript?: VideoScriptType;
   captionData: {
     hook: string;

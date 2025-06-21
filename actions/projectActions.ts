@@ -24,6 +24,7 @@ type ProjectDataType = {
   title: string;
   description: string;
   scheduledDate: Date;
+  publishToYoutube: boolean;
   videoType: string;
   files: ProjectFileType[];
 };

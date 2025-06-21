@@ -14,6 +14,7 @@ import { generateVideoThumbnail } from "@/lib/utils/videoThumbnailGenerator";
 import { resizeImage } from "@/lib/utils/imageResize";
 import { uploadFileWithProgress } from "@/lib/utils/fileUpload";
 import { VideoScriptType } from "@/types/videoScript";
+import Switch from "../ui/Switch";
 
 const MAX_NUMBER_OF_FILES = 5;
 
@@ -35,6 +36,7 @@ export default function ProjectCreationModal({
   const [uploadedFiles, setUploadedFiles] = useState<FileWithPreview[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [publishToYoutube, setPublishToYoutube] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(true);
@@ -159,32 +161,6 @@ export default function ProjectCreationModal({
     setDate(newDate);
   }
 
-  // async function uploadFile(file: File) {
-  //   const { url, key } = await getPresignedUrl(file.type);
-
-  //   if (!key) {
-  //     return key;
-  //   }
-
-  //   try {
-  //     const res = await fetch(url, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": file.type,
-  //       },
-  //       body: file,
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error("Upload failed");
-  //     }
-
-  //     return key;
-  //   } catch {
-  //     return null;
-  //   }
-  // }
-
   async function handleSubmit() {
     setError("");
     if (uploadedFiles.length === 0) {
@@ -247,9 +223,10 @@ export default function ProjectCreationModal({
     setUploading(false);
 
     const projectData = {
-      title: title,
-      description: description,
+      title,
+      description,
       scheduledDate: date,
+      publishToYoutube,
       videoType: videoType,
       files: projectFiles,
     };
@@ -373,6 +350,23 @@ export default function ProjectCreationModal({
                   className="bg-background resize-none rounded-md border border-gray-300 p-2 px-3"
                 />
               </div>
+
+              <label
+                className="flex w-fit cursor-pointer items-center gap-2 text-sm font-medium"
+                htmlFor="publishToYoutube"
+              >
+                <Switch
+                  checked={publishToYoutube}
+                  onCheckChange={() => setPublishToYoutube((prev) => !prev)}
+                  name="publishToYoutube"
+                  id="publishToYoutube"
+                />
+                <span
+                  className={`duration-200 ${publishToYoutube ? "" : "text-gray-500"}`}
+                >
+                  Publish To Youtube
+                </span>
+              </label>
 
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex min-w-52 flex-1 flex-col gap-2">
