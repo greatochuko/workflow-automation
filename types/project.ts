@@ -36,6 +36,7 @@ export type ProjectType = {
   files: ProjectFileType[];
   status: ProjectStatus;
   publishStatus: ProjectPublishStatus;
+  youtubePublishStatus: ProjectPublishStatus;
   newsletterTemplates: NewsletterTemplateType[];
   youtubeContent: YoutubeContentType;
   createdAt: Date;

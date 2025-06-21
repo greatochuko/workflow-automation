@@ -113,6 +113,7 @@ model Project {
   files                Json[]
   status               ProjectStatus
   publishStatus        ProjectPublishStatus @default(PENDING)
+  youtubePublishStatus ProjectPublishStatus @default(PENDING)
   submissionDate       DateTime?
   publishToYoutube     Boolean              @default(false)
   feedback             String               @default("")
