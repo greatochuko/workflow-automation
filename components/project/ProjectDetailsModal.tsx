@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { getEventColorClass } from "./CalendarDayCell";
 import { toast } from "sonner";
-import { isBefore, startOfDay } from "date-fns";
 import DeleteProjectModal from "./DeleteProjectModal";
 import {
   updateProjectDate,
@@ -97,10 +96,6 @@ export default function ProjectDetailsModal({
       setProject(initialProject);
     }
   }, [initialProject]);
-
-  const isBeforeToday = project?.scheduledDate
-    ? isBefore(project.scheduledDate, startOfDay(new Date()))
-    : true;
 
   const sortedCaptionData = useMemo(
     () =>
@@ -195,7 +190,7 @@ export default function ProjectDetailsModal({
           >
             <ClipboardListIcon size={16} /> Client SOP
           </Button>
-          {!isBeforeToday && (
+          {project?.publishStatus === "PENDING" && (
             <div className="flex items-center gap-4">
               {canEditProject ? (
                 <>
